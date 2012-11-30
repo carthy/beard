@@ -4,3 +4,9 @@
 [submodule "vendor/gmp"]
 	path = vendor/gmp
 	url = git://github.com/carthy/beard.gmp
+[submodule "vendor/judy"]
+	path = vendor/judy
+	url = git://github.com/carthy/beard.judy
+[submodule "vendor/tinytest"]
+	path = vendor/tinytest
+	url = git://github.com/carthy/beard.tinytest

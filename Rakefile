@@ -4,12 +4,12 @@ require 'tmpdir'
 
 CC      = 'gcc'
 AR      = 'ar'
-CFLAGS  = '-std=gnu99 -Iinclude -Ivendor/gmp -Ivendor/onigmo'
+CFLAGS  = '-std=gnu99 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src'
 LDFLAGS = '-lm -ldl -lpthread -lrt'
 
 SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
-DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a']
+DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a']
 
 CLEAN.include(OBJECTS)
 CLOBBER.include('beard.so', 'beard-static.a', 'test/run', DEPENDENCIES)
@@ -45,6 +45,13 @@ namespace :build do
 		end
 	end
 
+	task :judy => 'submodules:judy' do
+		Dir.chdir 'vendor/judy' do
+			sh './configure --enable-static --disable-shared'
+			sh 'make'
+		end
+	end
+
 	file 'beard.so' => DEPENDENCIES + OBJECTS do
 		sh "#{CC} #{CFLAGS} -fPIC #{OBJECTS} #{DEPENDENCIES} -shared -Wl,-soname,beard -o beard.so #{LDFLAGS}"
 	end
@@ -70,6 +77,10 @@ namespace :build do
 
 	file 'vendor/onigmo/.libs/libonig.a' do
 		Rake::Task['build:onigmo'].invoke
+	end
+
+	file 'vendor/judy/src/obj/.libs/libJudy.a' do
+		Rake::Task['build:judy'].invoke
 	end
 end
 
@@ -101,6 +112,7 @@ namespace :submodules do
 
 	task :gmp      => 'vendor/gmp/configure'
 	task :onigmo   => 'vendor/onigmo/configure.in'
+	task :judy     => 'vendor/judy/configure'
 	task :tinytest => 'vendor/tinytest/tinytest.c'
 
 	file 'vendor/gmp/configure' do
@@ -108,6 +120,10 @@ namespace :submodules do
 	end
 
 	file 'vendor/onigmo/configure' do
+		Rake::Task['submodules:fetch'].invoke
+	end
+
+	file 'vendor/judy/configure' do
 		Rake::Task['submodules:fetch'].invoke
 	end
 
