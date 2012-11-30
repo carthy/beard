@@ -1,0 +1,6 @@
+[submodule "vendor/onigmo"]
+	path = vendor/onigmo
+	url = git://github.com/carthy/beard.onigmo
+[submodule "vendor/gmp"]
+	path = vendor/gmp
+	url = git://github.com/carthy/beard.gmp
