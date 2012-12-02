@@ -11,9 +11,6 @@ SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
 DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a']
 
-CLEAN.include(OBJECTS)
-CLOBBER.include('libbeard.so', 'libbeard-static.a', 'test/run', DEPENDENCIES)
-
 task :default => :build
 
 task :build, :mode do |t, args|
@@ -30,33 +27,30 @@ task :build, :mode do |t, args|
 end
 
 namespace :build do
-	task :beard => ['libbeard.so', 'libbeard-static.a', 'beard.h']
+	task :beard => ['libbeard.a', 'beard.h']
 
 	task :gmp => 'submodules:gmp' do
-		Dir.chdir 'vendor/gmp' do
+		Dir.chdir('vendor/gmp') do
 			sh './configure --enable-static --disable-shared'
 			sh 'make'
 		end
 	end
 
 	task :onigmo => 'submodules:onigmo' do
-		Dir.chdir 'vendor/onigmo' do
-			sh 'make'
-		end
-	end
-
-	task :judy => 'submodules:judy' do
-		Dir.chdir 'vendor/judy' do
+		Dir.chdir('vendor/onigmo') do
 			sh './configure --enable-static --disable-shared'
 			sh 'make'
 		end
 	end
 
-	file 'libbeard.so' => DEPENDENCIES + OBJECTS do
-		sh "#{CC} #{CFLAGS} -fPIC #{OBJECTS} #{DEPENDENCIES} -shared -Wl,-soname,libbeard -o libbeard.so #{LDFLAGS}"
+	task :judy => 'submodules:judy' do
+		Dir.chdir('vendor/judy') do
+			sh './configure --enable-static --disable-shared'
+			sh 'make'
+		end
 	end
 
-	file 'libbeard-static.a' => DEPENDENCIES + OBJECTS do
+	file 'libbeard.a' => DEPENDENCIES + OBJECTS do
 		Dir.mktmpdir {|path|
 			DEPENDENCIES.each {|name|
 				real = File.realpath(name)
@@ -67,14 +61,14 @@ namespace :build do
 				end
 			}
 
-			sh "#{AR} rcs libbeard-static.a #{OBJECTS} #{path}/*/*.o"
+			sh "#{AR} rcs libbeard.a #{OBJECTS} #{path}/*/*.o"
 		}
 	end
 
 	file 'beard.h' do
 		header = ''
 
-		FileList['include/public/*'].each {|f|
+		FileList['include/public/{Value,GC,Integer}.h'].each {|f|
 			header << File.read(f)
 		}
 
@@ -111,8 +105,8 @@ namespace :test do
 		file path
 	}
 
-	file 'test/run' => ['libbeard-static.a', 'beard.h', *files] do
-		sh "#{CC} -std=gnu99 -I. -Ivendor/tinytest -Ivendor/libuv/include -o test/run test/run.c vendor/tinytest/tinytest.c -L. -lbeard-static #{LDFLAGS}"
+	file 'test/run' => ['libbeard.a', 'beard.h', *files] do
+		sh "#{CC} -std=gnu99 -Iinclude -Ivendor/tinytest -Ivendor/libuv/include -o test/run test/run.c vendor/tinytest/tinytest.c -L. -lbeard #{LDFLAGS}"
 	end
 end
 
@@ -145,5 +139,29 @@ namespace :submodules do
 end
 
 rule '.o' => '.c' do |t|
-	sh "#{CC} -fPIC #{CFLAGS} -o #{t.name} -c #{t.source}"
+	sh "#{CC} #{CFLAGS} -o #{t.name} -c #{t.source}"
 end
+
+task :clean do
+	FileList['vendor/gmp', 'vendor/onigmo', 'vendor/judy'].each {|dir|
+		if File.directory? dir
+			Dir.chdir(dir) do
+				sh 'make clean' rescue nil
+			end
+		end
+	}
+end
+
+CLEAN.include(OBJECTS)
+
+task :clobber do
+	FileList['vendor/gmp', 'vendor/onigmo', 'vendor/judy'].each {|dir|
+		if File.directory? dir
+			Dir.chdir(dir) do
+				sh 'make distclean' rescue nil
+			end
+		end
+	}
+end
+
+CLOBBER.include('libbeard.a', 'test/run', DEPENDENCIES)
