@@ -27,10 +27,12 @@
 
 #include "value.c"
 #include "free_list.c"
+#include "gc.c"
 
 struct testgroup_t groups[] = {
 	{ "value/", value_tests },
 	{ "free_list/", free_list_tests },
+	{ "gc/", gc_tests },
 
 	END_OF_GROUPS
 };
