@@ -32,7 +32,9 @@ struct GC {
 };
 
 mpz_t* GC_get_integer (GC* self);
+
 mpf_t* GC_get_floating (GC* self);
+
 mpq_t* GC_get_rational (GC* self);
 
 #endif

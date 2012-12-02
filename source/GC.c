@@ -19,10 +19,62 @@
 #include <private/GC.h>
 #include <private/common.h>
 
+static void*
+_mpz_constructor (void)
+{
+	mpz_t* value = malloc(sizeof(mpz_t));
+	mpz_init(*value);
+
+	return value;
+}
+
+static void
+_mpz_destructor (void* value)
+{
+	mpz_clear(*(mpz_t*) value);
+	free(value);
+}
+
+static void*
+_mpf_constructor (void)
+{
+	mpf_t* value = malloc(sizeof(mpf_t));
+	mpf_init(*value);
+
+	return value;
+}
+
+static void
+_mpf_destructor (void* value)
+{
+	mpf_clear(*(mpf_t*) value);
+	free(value);
+}
+
+static void*
+_mpq_constructor (void)
+{
+	mpq_t* value = malloc(sizeof(mpq_t));
+	mpq_init(*value);
+
+	return value;
+}
+
+static void
+_mpq_destructor (void* value)
+{
+	mpq_clear(*(mpq_t*) value);
+	free(value);
+}
+
 GC*
 GC_new (void)
 {
 	GC* self = malloc(sizeof(GC));
+
+	self->integer  = FreeList_new(_mpz_constructor, _mpz_destructor);
+	self->floating = FreeList_new(_mpf_constructor, _mpf_destructor);
+	self->rational = FreeList_new(_mpq_constructor, _mpq_destructor);
 
 	return self;
 }
@@ -30,6 +82,10 @@ GC_new (void)
 void
 GC_destroy (GC* self)
 {
+	FreeList_destroy(self->integer);
+	FreeList_destroy(self->floating);
+	FreeList_destroy(self->rational);
+
 	free(self);
 }
 
@@ -37,4 +93,22 @@ void*
 GC_allocate (ValueType type)
 {
 
+}
+
+mpz_t*
+GC_get_integer (GC* self)
+{
+	return FreeList_get(self->integer);
+}
+
+mpf_t*
+GC_get_floating (GC* self)
+{
+	return FreeList_get(self->floating);
+}
+
+mpq_t*
+GC_get_rational (GC* self)
+{
+	return FreeList_get(self->rational);
 }
