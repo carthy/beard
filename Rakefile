@@ -12,7 +12,7 @@ OBJECTS      = SOURCES.ext('o')
 DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a']
 
 CLEAN.include(OBJECTS)
-CLOBBER.include('beard.so', 'beard-static.a', 'test/run', DEPENDENCIES)
+CLOBBER.include('libbeard.so', 'libbeard-static.a', 'test/run', DEPENDENCIES)
 
 task :default => :build
 
@@ -30,7 +30,7 @@ task :build, :mode do |t, args|
 end
 
 namespace :build do
-	task :beard => ['beard.so', 'beard-static.a']
+	task :beard => ['libbeard.so', 'libbeard-static.a', 'beard.h']
 
 	task :gmp => 'submodules:gmp' do
 		Dir.chdir 'vendor/gmp' do
@@ -52,11 +52,11 @@ namespace :build do
 		end
 	end
 
-	file 'beard.so' => DEPENDENCIES + OBJECTS do
-		sh "#{CC} #{CFLAGS} -fPIC #{OBJECTS} #{DEPENDENCIES} -shared -Wl,-soname,beard -o beard.so #{LDFLAGS}"
+	file 'libbeard.so' => DEPENDENCIES + OBJECTS do
+		sh "#{CC} #{CFLAGS} -fPIC #{OBJECTS} #{DEPENDENCIES} -shared -Wl,-soname,libbeard -o libbeard.so #{LDFLAGS}"
 	end
 
-	file 'beard-static.a' => DEPENDENCIES + OBJECTS do
+	file 'libbeard-static.a' => DEPENDENCIES + OBJECTS do
 		Dir.mktmpdir {|path|
 			DEPENDENCIES.each {|name|
 				real = File.realpath(name)
@@ -67,7 +67,19 @@ namespace :build do
 				end
 			}
 
-			sh "#{AR} rcs beard-static.a #{OBJECTS} #{path}/*/*.o"
+			sh "#{AR} rcs libbeard-static.a #{OBJECTS} #{path}/*/*.o"
+		}
+	end
+
+	file 'beard.h' do
+		header = ''
+
+		FileList['include/public/*'].each {|f|
+			header << File.read(f)
+		}
+
+		File.open('beard.h', 'w') {|f|
+			f.puts(header)
 		}
 	end
 
@@ -99,8 +111,8 @@ namespace :test do
 		file path
 	}
 
-	file 'test/run' => ['libtor-static.a', *files] do
-		sh "#{CC} -std=gnu99 -Iinclude -Ivendor/tinytest -Ivendor/libuv/include -o test/run test/run.c vendor/tinytest/tinytest.c -L. -ltor-static #{LDFLAGS}"
+	file 'test/run' => ['libbeard-static.a', 'beard.h', *files] do
+		sh "#{CC} -std=gnu99 -I. -Ivendor/tinytest -Ivendor/libuv/include -o test/run test/run.c vendor/tinytest/tinytest.c -L. -lbeard-static #{LDFLAGS}"
 	end
 end
 
