@@ -84,7 +84,7 @@ FreeList_put (FreeList* self, void* thing)
 	Word_t size;
 	JLC(size, self->array, 0, -1);
 
-	if (size > self->limit) {
+	if (size >= self->limit) {
 		self->destructor(thing);
 
 		return;
