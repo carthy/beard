@@ -16,31 +16,27 @@
  * along with libtor. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <tinytest.h>
-#include <tinytest_macros.h>
+#include <private/Integer.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <time.h>
-
-#include "value.c"
-#include "free_list.c"
-#include "gc.c"
-#include "integer.c"
-
-struct testgroup_t groups[] = {
-	{ "value/", value_tests },
-	{ "free_list/", free_list_tests },
-	{ "gc/", gc_tests },
-	{ "integer/", integer_tests },
-
-	END_OF_GROUPS
-};
-
-int
-main (int argc, const char* argv[])
+void
+test_integer_is_odd (void* data)
 {
-	return tinytest_main(argc, argv, groups);
+	GC*      gc   = GC_new();
+	Integer* num  = Integer_set(Integer_new(gc), 32L);
+	Integer* num2 = Integer_set(Integer_new(gc), 31L);
+
+	tt_assert(!Integer_is_odd(num));
+	tt_assert(Integer_is_odd(num2));
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+
+	GC_destroy(gc);
 }
+
+struct testcase_t integer_tests[] = {
+	{ "is_odd", test_integer_is_odd },
+
+	END_OF_TESTCASES
+};
