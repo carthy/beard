@@ -16,9 +16,16 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef BEARD_COMMON_H
+#define BEARD_COMMON_H
+
 #include <stdlib.h>
+#include <jemalloc/jemalloc.h>
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
 #include <assert.h>
+
+#endif

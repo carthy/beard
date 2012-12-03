@@ -4,11 +4,11 @@ require 'tmpdir'
 
 CC     = ENV['CC'] || 'clang'
 AR     = ENV['AR'] || 'ar'
-CFLAGS = "-std=c11 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src #{ENV['CFLAGS']}"
+CFLAGS = "-std=c11 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc #{ENV['CFLAGS']}"
 
 SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
-DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a']
+DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a', 'vendor/jemalloc/lib/libjemalloc.a']
 
 task :default => :build
 
@@ -44,6 +44,14 @@ namespace :build do
 	task :judy => 'submodules:judy' do
 		Dir.chdir('vendor/judy') do
 			sh "./configure --enable-static --disable-shared CC=#{CC}"
+			sh 'make'
+		end
+	end
+
+	task :jemalloc => 'submodules:jemalloc' do
+		Dir.chdir('vendor/jemalloc') do
+			sh './autogen.sh'
+			sh "./configure --enable-static --disable-shared --enable-lazy-lock CC=#{CC}"
 			sh 'make'
 		end
 	end
@@ -86,6 +94,11 @@ namespace :build do
 	file 'vendor/judy/src/obj/.libs/libJudy.a' do
 		Rake::Task['build:judy'].invoke
 	end
+
+	file 'vendor/jemalloc/lib/libjemalloc.a' do
+		Rake::Task['build:jemalloc'].invoke
+	end
+
 end
 
 task :test => 'test:run'
@@ -104,7 +117,7 @@ namespace :test do
 	}
 
 	file 'test/run' => ['libbeard.a', 'beard.h', *files] do
-		sh "#{CC} #{CFLAGS} -Ivendor/tinytest -o test/run test/run.c vendor/tinytest/tinytest.c -static -L. -lbeard"
+		sh "#{CC} #{CFLAGS} -Ivendor/tinytest -o test/run test/run.c vendor/tinytest/tinytest.c -pthread -L. -lbeard"
 	end
 end
 
@@ -117,6 +130,7 @@ namespace :submodules do
 	task :gmp      => 'vendor/gmp/configure'
 	task :onigmo   => 'vendor/onigmo/configure.in'
 	task :judy     => 'vendor/judy/configure'
+	task :jemalloc => 'vendor/jemalloc/configure.ac'
 	task :tinytest => 'vendor/tinytest/tinytest.c'
 
 	file 'vendor/gmp/configure' do
@@ -128,6 +142,10 @@ namespace :submodules do
 	end
 
 	file 'vendor/judy/configure' do
+		Rake::Task['submodules:fetch'].invoke
+	end
+
+	file 'vendor/jemalloc/configure.ac' do
 		Rake::Task['submodules:fetch'].invoke
 	end
 
@@ -143,7 +161,7 @@ end
 CLEAN.include(OBJECTS)
 
 task :clobber do
-	FileList['vendor/gmp', 'vendor/onigmo', 'vendor/judy'].each {|dir|
+	FileList['vendor/gmp', 'vendor/onigmo', 'vendor/judy', 'vendor/jemalloc'].each {|dir|
 		if File.directory? dir
 			Dir.chdir(dir) do
 				sh 'make distclean' rescue nil

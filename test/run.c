@@ -25,6 +25,8 @@
 #include <errno.h>
 #include <time.h>
 
+#include <private/common.h>
+
 #include "value.c"
 #include "free_list.c"
 #include "gc.c"

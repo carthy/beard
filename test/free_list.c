@@ -21,7 +21,11 @@
 static void*
 _free_list_constructor (void)
 {
-	return malloc(sizeof(int));
+	void* data = malloc(sizeof(int));
+
+	memset(data, 0, sizeof(int));
+
+	return data;
 }
 
 static void

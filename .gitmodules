@@ -10,3 +10,6 @@
 [submodule "vendor/tinytest"]
 	path = vendor/tinytest
 	url = git://github.com/carthy/beard.tinytest
+[submodule "vendor/jemalloc"]
+	path = vendor/jemalloc
+	url = git://github.com/carthy/beard.jemalloc
