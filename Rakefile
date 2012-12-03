@@ -2,10 +2,9 @@ require 'rake'
 require 'rake/clean'
 require 'tmpdir'
 
-CC      = 'gcc'
-AR      = 'ar'
-CFLAGS  = '-std=gnu99 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src'
-LDFLAGS = '-lm -ldl -lpthread -lrt'
+CC     = ENV['CC'] || 'clang'
+AR     = ENV['AR'] || 'ar'
+CFLAGS = "-std=c11 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src #{ENV['CFLAGS']}"
 
 SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
@@ -31,21 +30,21 @@ namespace :build do
 
 	task :gmp => 'submodules:gmp' do
 		Dir.chdir('vendor/gmp') do
-			sh './configure --enable-static --disable-shared'
+			sh "./configure --enable-static --disable-shared CC=#{CC}"
 			sh 'make'
 		end
 	end
 
 	task :onigmo => 'submodules:onigmo' do
 		Dir.chdir('vendor/onigmo') do
-			sh './configure --enable-static --disable-shared'
+			sh "./configure --enable-static --disable-shared CC=#{CC}"
 			sh 'make'
 		end
 	end
 
 	task :judy => 'submodules:judy' do
 		Dir.chdir('vendor/judy') do
-			sh './configure --enable-static --disable-shared'
+			sh "./configure --enable-static --disable-shared CC=#{CC}"
 			sh 'make'
 		end
 	end
@@ -106,7 +105,7 @@ namespace :test do
 	}
 
 	file 'test/run' => ['libbeard.a', 'beard.h', *files] do
-		sh "#{CC} -std=gnu99 -Iinclude -Ivendor/tinytest -Ivendor/libuv/include -o test/run test/run.c vendor/tinytest/tinytest.c -L. -lbeard #{LDFLAGS}"
+		sh "#{CC} #{CFLAGS} -Ivendor/tinytest -o test/run test/run.c vendor/tinytest/tinytest.c -static -L. -lbeard"
 	end
 end
 
