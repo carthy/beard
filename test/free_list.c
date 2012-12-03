@@ -34,36 +34,31 @@ void
 test_free_list_new (void* data)
 {
 	FreeList* fl = FreeList_new(_free_list_constructor, _free_list_destructor);
-	FreeList_destroy(fl);
+
+	tt_assert(fl);
 
 end:;
+	FreeList_destroy(fl);
 }
 
 void
 test_free_list_get (void* data)
 {
-	FreeList* fl;
-	int*      n;
-
-	fl = FreeList_new(_free_list_constructor, _free_list_destructor);
-	n  = FreeList_get(fl);
+	FreeList* fl = FreeList_new(_free_list_constructor, _free_list_destructor);
+	int*      n  = FreeList_get(fl);
 
 	tt_assert(n != NULL);
 
-	_free_list_destructor(n);
+end:
+	FreeList_put(fl, n);
 	FreeList_destroy(fl);
-
-end:;
 }
 
 void
 test_free_list_put (void* data)
 {
-	FreeList* fl;
-	int*      n;
-
-	fl = FreeList_new(_free_list_constructor, _free_list_destructor);
-	n  = FreeList_get(fl);
+	FreeList* fl = FreeList_new(_free_list_constructor, _free_list_destructor);
+	int*      n  = FreeList_get(fl);
 
 	*n = 42;
 	FreeList_put(fl, n);
@@ -71,20 +66,16 @@ test_free_list_put (void* data)
 
 	tt_int_op(*n, ==, 42);
 
+end:
 	FreeList_put(fl, n);
 	FreeList_destroy(fl);
-
-end:;
 }
 
 void
 test_free_list_limit (void* data)
 {
-	FreeList* fl;
-	int*      n;
-
-	fl = FreeList_new_with_limit(0, _free_list_constructor, _free_list_destructor);
-	n  = FreeList_get(fl);
+	FreeList* fl = FreeList_new_with_limit(0, _free_list_constructor, _free_list_destructor);
+	int*      n  = FreeList_get(fl);
 
 	*n = 42;
 	FreeList_put(fl, n);
@@ -92,10 +83,9 @@ test_free_list_limit (void* data)
 
 	tt_int_op(*n, !=, 42);
 
+end:
 	FreeList_put(fl, n);
 	FreeList_destroy(fl);
-
-end:;
 }
 
 struct testcase_t free_list_tests[] = {
