@@ -141,16 +141,6 @@ rule '.o' => '.c' do |t|
 	sh "#{CC} #{CFLAGS} -o #{t.name} -c #{t.source}"
 end
 
-task :clean do
-	FileList['vendor/gmp', 'vendor/onigmo', 'vendor/judy'].each {|dir|
-		if File.directory? dir
-			Dir.chdir(dir) do
-				sh 'make clean' rescue nil
-			end
-		end
-	}
-end
-
 CLEAN.include(OBJECTS)
 
 task :clobber do
