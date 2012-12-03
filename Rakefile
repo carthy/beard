@@ -14,7 +14,6 @@ task :default => :build
 
 task :build, :mode do |t, args|
 	mode = (args[:mode] || :debug).to_sym
-  mode = :debug
 
 	if mode == :debug
 		CFLAGS << ' -O0 -g3'
