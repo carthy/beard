@@ -22,4 +22,4 @@ GC* GC_new (void);
 
 void GC_destroy (GC* self);
 
-void* GC_allocate (ValueType type);
+Value* GC_allocate (GC* self, ValueType type);

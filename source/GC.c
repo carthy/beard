@@ -19,6 +19,15 @@
 #include <private/GC.h>
 #include <private/common.h>
 
+#include <private/Integer.h>
+#include <private/Floating.h>
+#include <private/Rational.h>
+#include <private/Regexp.h>
+#include <private/String.h>
+#include <private/List.h>
+#include <private/Vector.h>
+#include <private/Map.h>
+
 static void*
 _mpz_constructor (void)
 {
@@ -89,10 +98,56 @@ GC_destroy (GC* self)
 	free(self);
 }
 
-void*
-GC_allocate (ValueType type)
+// TODO: actual garbage collection
+Value*
+GC_allocate (GC* self, ValueType type)
 {
+	Value* value = NULL;
 
+	switch (type) {
+		case VALUE_TYPE_NIL:
+			assert(false);
+
+		case VALUE_TYPE_BOOLEAN:
+			assert(false);
+
+		case VALUE_TYPE_INTEGER:
+			value = malloc(sizeof(Integer));
+			break;
+
+		case VALUE_TYPE_FLOATING:
+			value = malloc(sizeof(Floating));
+			break;
+
+		case VALUE_TYPE_RATIONAL:
+			value = malloc(sizeof(Rational));
+			break;
+
+		case VALUE_TYPE_REGEXP:
+			value = malloc(sizeof(Regexp));
+			break;
+
+		case VALUE_TYPE_STRING:
+			value = malloc(sizeof(String));
+			break;
+
+		case VALUE_TYPE_LIST:
+			value = malloc(sizeof(List));
+			break;
+
+		case VALUE_TYPE_VECTOR:
+			value = malloc(sizeof(Vector));
+			break;
+
+		case VALUE_TYPE_MAP:
+			value = malloc(sizeof(Map));
+			break;
+	}
+
+	value->type = type;
+	value->gc   = self;
+
+	return value;
 }
 
 mpz_t*
