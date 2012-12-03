@@ -101,14 +101,32 @@ GC_get_integer (GC* self)
 	return FreeList_get(self->integer);
 }
 
+void
+GC_put_integer (GC* self, mpz_t* value)
+{
+	FreeList_put(self->integer, value);
+}
+
 mpf_t*
 GC_get_floating (GC* self)
 {
 	return FreeList_get(self->floating);
 }
 
+void
+GC_put_floating (GC* self, mpf_t* value)
+{
+	FreeList_put(self->floating, value);
+}
+
 mpq_t*
 GC_get_rational (GC* self)
 {
 	return FreeList_get(self->rational);
+}
+
+void
+GC_put_rational (GC* self, mpq_t* value)
+{
+	FreeList_put(self->rational, value);
 }
