@@ -4,9 +4,9 @@ require 'tmpdir'
 
 CC     = ENV['CC'] || 'clang'
 AR     = ENV['AR'] || 'ar'
-CFLAGS = "-std=c11 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc #{ENV['CFLAGS']}"
+CFLAGS = "-std=c11 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
 
-SOURCES      = FileList['source/**/*.c']
+SOURCES      = FileList['source/**/*.c', 'vendor/siphash/siphash.c']
 OBJECTS      = SOURCES.ext('o')
 DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a', 'vendor/jemalloc/lib/libjemalloc.a']
 
@@ -56,6 +56,8 @@ namespace :build do
 		end
 	end
 
+	task :siphash => 'submodules:siphash'
+
 	file 'libbeard.a' => DEPENDENCIES + OBJECTS do
 		Dir.mktmpdir {|path|
 			DEPENDENCIES.each {|name|
@@ -98,7 +100,6 @@ namespace :build do
 	file 'vendor/jemalloc/lib/libjemalloc.a' do
 		Rake::Task['build:jemalloc'].invoke
 	end
-
 end
 
 task :test => 'test:run'
@@ -131,6 +132,7 @@ namespace :submodules do
 	task :onigmo   => 'vendor/onigmo/configure.in'
 	task :judy     => 'vendor/judy/configure'
 	task :jemalloc => 'vendor/jemalloc/configure.ac'
+	task :siphash  => 'vendor/siphash/siphash.h'
 	task :tinytest => 'vendor/tinytest/tinytest.c'
 
 	file 'vendor/gmp/configure' do
@@ -146,6 +148,10 @@ namespace :submodules do
 	end
 
 	file 'vendor/jemalloc/configure.ac' do
+		Rake::Task['submodules:fetch'].invoke
+	end
+
+	file 'vendor/siphash/siphash.h' do
 		Rake::Task['submodules:fetch'].invoke
 	end
 
