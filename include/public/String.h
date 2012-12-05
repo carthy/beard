@@ -64,12 +64,14 @@ String* String_set_cstr (String* self, const char* str);
 
 String* String_set_cstr_with_encoding (String* self, const char* str, Encoding encoding);
 
-String* String_set_buffer (String* self, const void* buffer, size_t length);
+String* String_set_buffer (String* self, const void* buffer, uint64_t length);
 
-String* String_set_buffer_with_encoding (String* self, const void* buffer, size_t length, Encoding encoding);
+String* String_set_buffer_with_encoding (String* self, const void* buffer, uint64_t length, Encoding encoding);
 
-size_t String_length (String* self);
+uint64_t String_length (String* self);
 
-size_t String_bytes (String* self);
+uint64_t String_bytes (String* self);
+
+uint64_t String_hash (String* self);
 
 Encoding String_get_encoding (String* self);

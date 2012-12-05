@@ -92,7 +92,7 @@ String_set_cstr_with_encoding (String* self, const char* str, Encoding encoding)
 }
 
 String*
-String_set_buffer (String* self, const void* buffer, size_t length)
+String_set_buffer (String* self, const void* buffer, uint64_t length)
 {
 	assert(self);
 
@@ -111,7 +111,7 @@ String_set_buffer (String* self, const void* buffer, size_t length)
 }
 
 String*
-String_set_buffer_with_encoding (String* self, const void* buffer, size_t length, Encoding encoding)
+String_set_buffer_with_encoding (String* self, const void* buffer, uint64_t length, Encoding encoding)
 {
 	assert(self);
 
@@ -129,13 +129,13 @@ String_set_buffer_with_encoding (String* self, const void* buffer, size_t length
 	return self;
 }
 
-size_t
+uint64_t
 String_length (String* self)
 {
 	return self->length;
 }
 
-size_t
+uint64_t
 String_bytes (String* self)
 {
 	return self->bytes;
