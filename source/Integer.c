@@ -33,7 +33,7 @@ Integer_new (GC* gc)
 	return self;
 }
 
-#define DEF(A, B, C, D) \
+#define DEF(A, B, C) \
 	Integer* \
 	Integer_set_##A (Integer* self, B number) \
 	{ \
@@ -42,20 +42,20 @@ Integer_new (GC* gc)
 		} \
 		\
 		self->type    = INTEGER_TYPE_##C; \
-		self->value.D = number; \
+		self->value.A = number; \
 		\
 		return self; \
 	}
 
-DEF(s8,  int8_t, BYTE, s8);
-DEF(s16, int16_t, SHORT, s16);
-DEF(s32, int32_t, INT, s32);
-DEF(s64, int64_t, LONG, s64);
+DEF(s8,  int8_t, BYTE);
+DEF(s16, int16_t, SHORT);
+DEF(s32, int32_t, INT);
+DEF(s64, int64_t, LONG);
 
-DEF(u8,  uint8_t, UBYTE, u8);
-DEF(u16, uint16_t, USHORT, u16);
-DEF(u32, uint32_t, UINT, u32);
-DEF(u64, uint64_t, ULONG, u64);
+DEF(u8,  uint8_t, UBYTE);
+DEF(u16, uint16_t, USHORT);
+DEF(u32, uint32_t, UINT);
+DEF(u64, uint64_t, ULONG);
 
 #undef DEF
 
@@ -147,6 +147,15 @@ Integer_plus (Integer* self, Value* other)
 		}
 	}
 
+	#define FOR(A, B, C) case INTEGER_TYPE_##C: { \
+		B value = self->value.A; \
+		\
+		ADD(value, number); \
+		\
+		result->type    = INTEGER_TYPE_##C; \
+		result->value.A = value; \
+	} break
+
 	switch (self->type) {
 		#define ADD(name, other) \
 			if (IS_NATIVE(other)) { \
@@ -161,44 +170,10 @@ Integer_plus (Integer* self, Value* other)
 				name += mpz_get_si(*Integer_get_gmp(other)); \
 			}
 
-		case INTEGER_TYPE_BYTE: {
-			int8_t value = self->value.s8;
-
-			ADD(value, number);
-
-			result->type     = INTEGER_TYPE_BYTE;
-			result->value.s8 = value;
-		} break;
-
-		case INTEGER_TYPE_SHORT: {
-			int16_t value = self->value.s16;
-
-			ADD(value, number);
-
-			result->type      = INTEGER_TYPE_SHORT;
-			result->value.s16 = value;
-
-		} break;
-
-		case INTEGER_TYPE_INT: {
-			int32_t value = self->value.s32;
-
-			ADD(value, number);
-
-			result->type      = INTEGER_TYPE_INT;
-			result->value.s32 = value;
-
-		} break;
-
-		case INTEGER_TYPE_LONG: {
-			int64_t value = self->value.s64;
-
-			ADD(value, number);
-
-			result->type      = INTEGER_TYPE_LONG;
-			result->value.s64 = value;
-
-		} break;
+		FOR(s8, int8_t, BYTE);
+		FOR(s16, int16_t, SHORT);
+		FOR(s32, int32_t, INT);
+		FOR(s64, int64_t, LONG);
 
 		#undef ADD
 
@@ -215,51 +190,18 @@ Integer_plus (Integer* self, Value* other)
 				name += mpz_get_ui(*Integer_get_gmp(other)); \
 			}
 
-		case INTEGER_TYPE_UBYTE: {
-			uint8_t value = self->value.u8;
-
-			ADD(value, number);
-
-			result->type     = INTEGER_TYPE_UBYTE;
-			result->value.u8 = value;
-
-		} break;
-
-		case INTEGER_TYPE_USHORT: {
-			uint16_t value = self->value.u16;
-
-			ADD(value, number);
-
-			result->type      = INTEGER_TYPE_USHORT;
-			result->value.u16 = value;
-
-		} break;
-
-		case INTEGER_TYPE_UINT: {
-			uint32_t value = self->value.u32;
-
-			ADD(value, number);
-
-			result->type      = INTEGER_TYPE_UINT;
-			result->value.u32 = value;
-
-		} break;
-
-		case INTEGER_TYPE_ULONG: {
-			uint64_t value = self->value.u64;
-
-			ADD(value, number);
-
-			result->type      = INTEGER_TYPE_ULONG;
-			result->value.u64 = value;
-
-		} break;
+		FOR(u8, uint8_t, UBYTE);
+		FOR(u16, uint16_t, USHORT);
+		FOR(u32, uint32_t, UINT);
+		FOR(u64, uint64_t, ULONG);
 
 		#undef ADD
 
-		case INTEGER_TYPE_GMP:
+		default:
 			assert(false);
 	}
+
+	#undef FOR
 
 	return (Value*) result;
 }
