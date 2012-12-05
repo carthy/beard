@@ -20,9 +20,18 @@
 #define BEARD_STRING_H
 
 #include <public/String.h>
+#include <oniguruma.h>
 
 struct String {
+	Value descriptor;
 
+	size_t length;
+	size_t bytes;
+
+	Encoding encoding;
+	UChar*   buffer;
 };
+
+inline OnigEncoding String_get_onig_enc (String* self);
 
 #endif

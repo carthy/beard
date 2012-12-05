@@ -17,3 +17,59 @@
  */
 
 typedef struct String String;
+
+typedef enum Encoding {
+	ENCODING_NONE,
+	ENCODING_ASCII,
+	ENCODING_ISO_8859_1,
+	ENCODING_ISO_8859_2,
+	ENCODING_ISO_8859_3,
+	ENCODING_ISO_8859_4,
+	ENCODING_ISO_8859_5,
+	ENCODING_ISO_8859_6,
+	ENCODING_ISO_8859_7,
+	ENCODING_ISO_8859_8,
+	ENCODING_ISO_8859_9,
+	ENCODING_ISO_8859_10,
+	ENCODING_ISO_8859_11,
+	ENCODING_ISO_8859_13,
+	ENCODING_ISO_8859_14,
+	ENCODING_ISO_8859_15,
+	ENCODING_ISO_8859_16,
+	ENCODING_UTF8,
+	ENCODING_UTF16_BE,
+	ENCODING_UTF16_LE,
+	ENCODING_UTF32_BE,
+	ENCODING_UTF32_LE,
+	ENCODING_EUC_JP,
+	ENCODING_EUC_TW,
+	ENCODING_EUC_KR,
+	ENCODING_EUC_CN,
+	ENCODING_SJIS,
+	ENCODING_CP932,
+	ENCODING_KOI8,
+	ENCODING_KOI8_R,
+	ENCODING_CP1251,
+	ENCODING_BIG5,
+	ENCODING_GB18030
+} Encoding;
+
+String* String_new (GC* gc);
+
+String* String_new_with_encoding (GC* gc, Encoding encoding);
+
+void String_destroy (String* self);
+
+String* String_set_cstr (String* self, const char* str);
+
+String* String_set_cstr_with_encoding (String* self, const char* str, Encoding encoding);
+
+String* String_set_buffer (String* self, const void* buffer, size_t length);
+
+String* String_set_buffer_with_encoding (String* self, const void* buffer, size_t length, Encoding encoding);
+
+size_t String_length (String* self);
+
+size_t String_bytes (String* self);
+
+Encoding String_get_encoding (String* self);
