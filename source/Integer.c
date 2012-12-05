@@ -33,12 +33,12 @@ Integer_new (GC* gc)
 	return self;
 }
 
-#define def(A, B, C, D) \
+#define DEF(A, B, C, D) \
 	Integer* \
 	Integer_set_##A (Integer* self, B number) \
 	{ \
-		if (self->type == INTEGER_TYPE_GMP && self->value.gmp) { \
-			GC_put_integer(self->descriptor.gc, self->value.gmp); \
+		if (!IS_NATIVE(self) && Integer_get_gmp(self)) { \
+			GC_put_integer(self->descriptor.gc, Integer_get_gmp(self)); \
 		} \
 		\
 		self->type    = INTEGER_TYPE_##C; \
@@ -47,24 +47,24 @@ Integer_new (GC* gc)
 		return self; \
 	}
 
-def(s8,  int8_t, BYTE, s8);
-def(s16, int16_t, SHORT, s16);
-def(s32, int32_t, INT, s32);
-def(s64, int64_t, LONG, s64);
+DEF(s8,  int8_t, BYTE, s8);
+DEF(s16, int16_t, SHORT, s16);
+DEF(s32, int32_t, INT, s32);
+DEF(s64, int64_t, LONG, s64);
 
-def(u8,  uint8_t, UBYTE, u8);
-def(u16, uint16_t, USHORT, u16);
-def(u32, uint32_t, UINT, u32);
-def(u64, uint64_t, ULONG, u64);
+DEF(u8,  uint8_t, UBYTE, u8);
+DEF(u16, uint16_t, USHORT, u16);
+DEF(u32, uint32_t, UINT, u32);
+DEF(u64, uint64_t, ULONG, u64);
 
-#undef def
+#undef DEF
 
 Integer*
 Integer_set_string (Integer* self, const char* string)
 {
 	assert(self);
 
-	if (self->type == INTEGER_TYPE_GMP && !self->value.gmp) {
+	if (IS_NATIVE(self) || !Integer_get_gmp(self)) {
 		self->value.gmp = GC_get_integer(self->descriptor.gc);
 	}
 
@@ -78,7 +78,7 @@ Integer_set_string (Integer* self, const char* string)
 Integer*
 Integer_set_string_with_base (Integer* self, const char* string, int base)
 {
-	if (self->type == INTEGER_TYPE_GMP && !self->value.gmp) {
+	if (IS_NATIVE(self) || !Integer_get_gmp(self)) {
 		self->value.gmp = GC_get_integer(self->descriptor.gc);
 	}
 
@@ -92,7 +92,7 @@ Integer_set_string_with_base (Integer* self, const char* string, int base)
 void
 Integer_destroy (Integer* self)
 {
-	if (self->type == INTEGER_TYPE_GMP && self->value.gmp) {
+	if (!IS_NATIVE(self) && Integer_get_gmp(self)) {
 		GC_put_integer(self->descriptor.gc, self->value.gmp);
 	}
 }
@@ -116,65 +116,110 @@ Integer_plus (Integer* self, Value* other)
 bool
 Integer_is_odd (Integer* self)
 {
-	switch (self->type) {
-		case INTEGER_TYPE_BYTE:
-			return self->value.s8 % 2 != 0;
-
-		case INTEGER_TYPE_SHORT:
-			return self->value.s16 % 2 != 0;
-
-		case INTEGER_TYPE_INT:
-			return self->value.s32 % 2 != 0;
-
-		case INTEGER_TYPE_LONG:
-			return self->value.s64 % 2 != 0;
-
-		case INTEGER_TYPE_UBYTE:
-			return self->value.u8 % 2 != 0;
-
-		case INTEGER_TYPE_USHORT:
-			return self->value.u16 % 2 != 0;
-
-		case INTEGER_TYPE_UINT:
-			return self->value.u32 % 2 != 0;
-
-		case INTEGER_TYPE_ULONG:
-			return self->value.u64 % 2 != 0;
-
-		case INTEGER_TYPE_GMP:
-			return mpz_odd_p(*(self->value.gmp));
+	if (IS_NATIVE(self)) {
+		if (IS_SIGNED(self)) {
+			return (Integer_get_native_signed(self) & 1) != 0;
+		}
+		else {
+			return (Integer_get_native_unsigned(self) & 1) != 0;
+		}
+	}
+	else {
+		return mpz_odd_p(*(self->value.gmp));
 	}
 }
 
 bool
 Integer_is_even (Integer* self)
 {
+	if (IS_NATIVE(self)) {
+		if (IS_SIGNED(self)) {
+			return (Integer_get_native_signed(self) & 1) == 0;
+		}
+		else {
+			return (Integer_get_native_unsigned(self) & 1) == 0;
+		}
+	}
+	else {
+		return mpz_even_p(*(self->value.gmp));
+	}
+}
+
+int64_t
+Integer_get_native_signed (Integer* self)
+{
 	switch (self->type) {
 		case INTEGER_TYPE_BYTE:
-			return self->value.s8 % 2 == 0;
+			return self->value.s8;
 
 		case INTEGER_TYPE_SHORT:
-			return self->value.s16 % 2 == 0;
+			return self->value.s16;
 
 		case INTEGER_TYPE_INT:
-			return self->value.s32 % 2 == 0;
+			return self->value.s32;
 
 		case INTEGER_TYPE_LONG:
-			return self->value.s64 % 2 == 0;
+			return self->value.s64;
 
+		default:
+			assert(false);
+	}
+}
+
+uint64_t
+Integer_get_native_unsigned (Integer* self)
+{
+	switch (self->type) {
 		case INTEGER_TYPE_UBYTE:
-			return self->value.u8 % 2 == 0;
+			return self->value.u8;
 
 		case INTEGER_TYPE_USHORT:
-			return self->value.u16 % 2 == 0;
+			return self->value.u16;
 
 		case INTEGER_TYPE_UINT:
-			return self->value.u32 % 2 == 0;
+			return self->value.u32;
 
 		case INTEGER_TYPE_ULONG:
-			return self->value.u64 % 2 == 0;
+			return self->value.u64;
+
+		default:
+			assert(false);
+	}
+}
+
+mpz_t*
+Integer_get_gmp (Integer* self)
+{
+	switch (self->type) {
+		case INTEGER_TYPE_GMP:
+			return self->value.gmp;
+
+		default:
+			assert(false);
+	}
+}
+
+int
+Integer_get_bits (Integer* self)
+{
+	switch (self->type) {
+		case INTEGER_TYPE_BYTE:
+		case INTEGER_TYPE_UBYTE:
+			return 8;
+
+		case INTEGER_TYPE_SHORT:
+		case INTEGER_TYPE_USHORT:
+			return 16;
+
+		case INTEGER_TYPE_INT:
+		case INTEGER_TYPE_UINT:
+			return 32;
+
+		case INTEGER_TYPE_LONG:
+		case INTEGER_TYPE_ULONG:
+			return 64;
 
 		case INTEGER_TYPE_GMP:
-			return mpz_even_p(*(self->value.gmp));
+			return mpz_sizeinbase(*Integer_get_gmp(self), 2);
 	}
 }

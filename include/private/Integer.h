@@ -60,4 +60,16 @@ struct Integer {
 	IntegerValue value;
 };
 
+#define IS_NATIVE(i)   (i->type != INTEGER_TYPE_GMP)
+#define IS_SIGNED(i)   (i->type >= INTEGER_TYPE_BYTE && i->type <= INTEGER_TYPE_LONG)
+#define IS_UNSIGNED(i) (i->type >= INTEGER_TYPE_UBYTE && i->type <= INTEGER_TYPE_ULONG)
+
+inline int64_t Integer_get_native_signed (Integer* self);
+
+inline uint64_t Integer_get_native_unsigned (Integer* self);
+
+inline mpz_t* Integer_get_gmp (Integer* self);
+
+inline int Integer_get_bits (Integer* self);
+
 #endif
