@@ -21,24 +21,21 @@
 void
 test_integer_new (void* data)
 {
-	GC*      gc  = GC_new();
-	Integer* num = Integer_new(gc);
+	Integer* num = Integer_new(runtime);
 
 	tt_assert(num);
-	tt_assert(num->type == INTEGER_TYPE_LONG);
-	tt_assert(num->value.s64 == 0);
+	tt_assert(num->type == INTEGER_TYPE_GMP);
+	tt_assert(num->value.gmp == NULL);
 
 end:
 	Integer_destroy(num);
-	GC_destroy(gc);
 }
 
 void
 test_integer_plus (void* data)
 {
-	GC*      gc   = GC_new();
-	Integer* num  = Integer_set(Integer_new(gc), (uint8_t) 250);
-	Integer* num2 = Integer_set(Integer_new(gc), "10");
+	Integer* num  = Integer_set(Integer_new(runtime), (uint8_t) 250);
+	Integer* num2 = Integer_set(Integer_new(runtime), "10");
 
 	Integer* result = (Integer*) Integer_plus(num, (Value*) num2);
 
@@ -49,16 +46,13 @@ test_integer_plus (void* data)
 end:
 	Integer_destroy(num);
 	Integer_destroy(num2);
-
-	GC_destroy(gc);
 }
 
 void
 test_integer_is_odd (void* data)
 {
-	GC*      gc   = GC_new();
-	Integer* num  = Integer_set(Integer_new(gc), 32L);
-	Integer* num2 = Integer_set(Integer_new(gc), 31L);
+	Integer* num  = Integer_set(Integer_new(runtime), 32L);
+	Integer* num2 = Integer_set(Integer_new(runtime), 31L);
 
 	tt_assert(!Integer_is_odd(num));
 	tt_assert(Integer_is_odd(num2));
@@ -66,16 +60,13 @@ test_integer_is_odd (void* data)
 end:
 	Integer_destroy(num);
 	Integer_destroy(num2);
-
-	GC_destroy(gc);
 }
 
 void
 test_integer_is_even (void* data)
 {
-	GC*      gc   = GC_new();
-	Integer* num  = Integer_set(Integer_new(gc), 32L);
-	Integer* num2 = Integer_set(Integer_new(gc), 31L);
+	Integer* num  = Integer_set(Integer_new(runtime), 32L);
+	Integer* num2 = Integer_set(Integer_new(runtime), 31L);
 
 	tt_assert(Integer_is_even(num));
 	tt_assert(!Integer_is_even(num2));
@@ -83,8 +74,6 @@ test_integer_is_even (void* data)
 end:
 	Integer_destroy(num);
 	Integer_destroy(num2);
-
-	GC_destroy(gc);
 }
 
 struct testcase_t integer_tests[] = {

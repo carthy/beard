@@ -16,34 +16,38 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/GC.h>
+#include <private/Runtime.h>
 #include <private/Floating.h>
-#include <public/Integer.h>
-#include <public/Rational.h>
+#include <private/Integer.h>
+#include <private/Rational.h>
 #include <private/common.h>
 
 Floating*
-Floating_new (GC* gc)
+Floating_new (Runtime* rt)
 {
-	Floating* self = (Floating*) GC_allocate(gc, VALUE_TYPE_FLOATING);
+	Floating* self = (Floating*) GC_ALLOCATE(rt, VALUE_TYPE_FLOATING);
 
-	self->value = GC_get_floating(self->descriptor.gc);
+	self->value = GC_NEW_FLOATING(rt);
+
+	return Floating_set_double(self, 0);
+}
+
+Floating*
+Floating_new_with_precision (Runtime* rt, unsigned long precision)
+{
+	Floating* self = Floating_new(rt);
+
+	Floating_set_precision(self, precision);
 
 	return self;
 }
 
-Floating*
-Floating_new_with_precision (GC* gc, unsigned long precision)
-{
-	return Floating_set_precision(Floating_new(gc), precision);
-}
-
-Floating*
+unsigned long
 Floating_set_precision (Floating* self, unsigned long precision)
 {
 	mpf_set_prec(*self->value, precision);
 
-	return self;
+	return precision;
 }
 
 unsigned long
@@ -80,6 +84,12 @@ Floating_set_string_with_base (Floating* self, const char* string, int base)
 	mpf_set_str(*(self->value), string, base);
 
 	return self;
+}
+
+void
+Floating_destroy (Floating* self)
+{
+	GC_SAVE_FLOATING(RUNTIME_FOR(self), self->value);
 }
 
 Floating*

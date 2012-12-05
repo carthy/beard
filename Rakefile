@@ -76,7 +76,7 @@ namespace :build do
 	file 'beard.h' => FileList['include/public/*.h'] do
 		header = ''
 
-		%w[Value GC Integer String].each {|name|
+		%w[Value Runtime Integer String].each {|name|
 			header << File.read("include/public/#{name}.h")
 		}
 

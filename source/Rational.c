@@ -16,18 +16,20 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/GC.h>
+#include <private/Runtime.h>
 #include <private/Rational.h>
-#include <public/Integer.h>
-#include <public/Floating.h>
+#include <private/Integer.h>
+#include <private/Floating.h>
 #include <private/common.h>
 
 Rational*
-Rational_new (GC* gc)
+Rational_new (Runtime* rt)
 {
-	Rational* self = (Rational*) GC_allocate(gc, VALUE_TYPE_RATIONAL);
+	assert(rt);
 
-	self->value = GC_get_rational(self->descriptor.gc);
+	Rational* self = (Rational*) GC_ALLOCATE(rt, VALUE_TYPE_RATIONAL);
+
+	self->value = GC_NEW_RATIONAL(rt);
 
 	return self;
 }

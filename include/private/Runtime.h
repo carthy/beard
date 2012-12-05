@@ -16,40 +16,40 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BEARD_GC_H
-#define BEARD_GC_H
+#ifndef BEARD_RUNTIME_H
+#define BEARD_RUNTIME_H
 
-#include <private/Value.h>
-#include <private/FreeList.h>
+#include <public/Runtime.h>
+#include <private/GC.h>
 
-#include <gmp.h>
+struct Runtime {
+	GC* garbage_collector;
 
-typedef struct GC {
-	Runtime* runtime;
+	uint8_t sip_key[16];
+};
 
-	FreeList* integer;
-	FreeList* floating;
-	FreeList* rational;
-} GC;
+#define RUNTIME_FOR(value) \
+	(((Value*) (value))->runtime)
 
-GC* GC_new (Runtime* rt);
+#define GC_ALLOCATE(rt, type) \
+	GC_allocate(rt->garbage_collector, type)
 
-void GC_destroy (GC* self);
+#define GC_NEW_INTEGER(rt) \
+	GC_get_integer(rt->garbage_collector)
 
-Value* GC_allocate (GC* self, ValueType type);
+#define GC_SAVE_INTEGER(rt, value) \
+	GC_put_integer(rt->garbage_collector, value)
 
-void GC_run (GC* self);
+#define GC_NEW_FLOATING(rt) \
+	GC_get_floating(rt->garbage_collector)
 
-mpz_t* GC_get_integer (GC* self);
+#define GC_SAVE_FLOATING(rt, value) \
+	GC_put_floating(rt->garbage_collector, value)
 
-void GC_put_integer (GC* self, mpz_t* value);
+#define GC_NEW_RATIONAL(rt) \
+	GC_get_rational(rt->garbage_collector)
 
-mpf_t* GC_get_floating (GC* self);
-
-void GC_put_floating (GC* self, mpf_t* value);
-
-mpq_t* GC_get_rational (GC* self);
-
-void GC_put_rational (GC* self, mpq_t* value);
+#define GC_SAVE_RATIONAL(rt, value) \
+	GC_put_rational(rt->garbage_collector, value)
 
 #endif

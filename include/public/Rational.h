@@ -18,7 +18,7 @@
 
 typedef struct Rational Rational;
 
-Rational* Rational_new (GC* gc);
+Rational* Rational_new (Runtime* rt);
 
 void Rational_destroy (Rational* self);
 

@@ -16,20 +16,17 @@
  * along with libtor. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/GC.h>
+#include <private/Runtime.h>
 
 void
 test_gc_get_integer (void* data)
 {
-	GC*    gc  = GC_new();
-	mpz_t* num = GC_get_integer(gc);
+	mpz_t* num = GC_NEW_INTEGER(runtime);
 
 	mpz_set_ui(*num, 19);
 	mpz_add_ui(*num, *num, 23);
 
 	tt_assert(mpz_cmp_ui(*num, 42) == 0);
-
-	GC_destroy(gc);
 
 end:;
 }
@@ -37,9 +34,8 @@ end:;
 void
 test_gc_get_floating (void* data)
 {
-	GC*    gc   = GC_new();
-	mpf_t* num  = GC_get_floating(gc);
-	mpf_t* num2 = GC_get_floating(gc);
+	mpf_t* num  = GC_NEW_FLOATING(runtime);
+	mpf_t* num2 = GC_NEW_FLOATING(runtime);
 
 	mpf_set_d(*num, 2.3);
 	mpf_set_d(*num, 4.2);
@@ -47,25 +43,20 @@ test_gc_get_floating (void* data)
 
 	tt_assert(mpf_cmp_d(*num, 4.2) == 0);
 
-	GC_destroy(gc);
-
 end:;
 }
 
 void
 test_gc_get_rational (void* data)
 {
-	GC*    gc   = GC_new();
-	mpq_t* num  = GC_get_rational(gc);
-	mpq_t* num2 = GC_get_rational(gc);
+	mpq_t* num  = GC_NEW_RATIONAL(runtime);
+	mpq_t* num2 = GC_NEW_RATIONAL(runtime);
 
 	mpq_set_ui(*num, 2, 3);
 	mpq_set_ui(*num2, 2, 3);
 	mpq_add(*num, *num, *num2);
 
 	tt_assert(mpq_cmp_ui(*num, 4, 3) == 0);
-
-	GC_destroy(gc);
 
 end:;
 }

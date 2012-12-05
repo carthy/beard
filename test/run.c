@@ -25,7 +25,10 @@
 #include <errno.h>
 #include <time.h>
 
+#include <private/Runtime.h>
 #include <private/common.h>
+
+static Runtime* runtime;
 
 #include "value.c"
 #include "free_list.c"
@@ -46,5 +49,12 @@ struct testgroup_t groups[] = {
 int
 main (int argc, const char* argv[])
 {
-	return tinytest_main(argc, argv, groups);
+	int result = 0;
+
+	runtime = Runtime_new();
+	result  = tinytest_main(argc, argv, groups);
+
+	Runtime_destroy(runtime);
+
+	return result;
 }

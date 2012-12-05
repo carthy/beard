@@ -18,7 +18,7 @@
 
 typedef struct Integer Integer;
 
-Integer* Integer_new (GC* gc);
+Integer* Integer_new (Runtime* rt);
 
 #define Integer_set(self, X) _Generic((X), \
 	int8_t:  Integer_set_s8, \

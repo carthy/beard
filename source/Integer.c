@@ -16,19 +16,19 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/GC.h>
+#include <private/Runtime.h>
 #include <private/Integer.h>
 #include <public/Floating.h>
 #include <public/Rational.h>
 #include <private/common.h>
 
 Integer*
-Integer_new (GC* gc)
+Integer_new (Runtime* rt)
 {
-	Integer* self = (Integer*) GC_allocate(gc, VALUE_TYPE_INTEGER);
+	Integer* self = (Integer*) GC_ALLOCATE(rt, VALUE_TYPE_INTEGER);
 
-	self->type      = INTEGER_TYPE_LONG;
-	self->value.s64 = 0;
+	self->type      = INTEGER_TYPE_GMP;
+	self->value.gmp = NULL;
 
 	return self;
 }
@@ -38,7 +38,7 @@ Integer_new (GC* gc)
 	Integer_set_##A (Integer* self, B number) \
 	{ \
 		if (!IS_NATIVE(self) && Integer_get_gmp(self)) { \
-			GC_put_integer(self->descriptor.gc, Integer_get_gmp(self)); \
+			GC_SAVE_INTEGER(RUNTIME_FOR(self), Integer_get_gmp(self)); \
 		} \
 		\
 		self->type    = INTEGER_TYPE_##C; \
@@ -65,7 +65,7 @@ Integer_set_string (Integer* self, const char* string)
 	assert(self);
 
 	if (IS_NATIVE(self) || !Integer_get_gmp(self)) {
-		self->value.gmp = GC_get_integer(self->descriptor.gc);
+		self->value.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
 	}
 
 	self->type = INTEGER_TYPE_GMP;
@@ -79,7 +79,7 @@ Integer*
 Integer_set_string_with_base (Integer* self, const char* string, int base)
 {
 	if (IS_NATIVE(self) || !Integer_get_gmp(self)) {
-		self->value.gmp = GC_get_integer(self->descriptor.gc);
+		self->value.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
 	}
 
 	self->type = INTEGER_TYPE_GMP;
@@ -93,7 +93,7 @@ void
 Integer_destroy (Integer* self)
 {
 	if (!IS_NATIVE(self) && Integer_get_gmp(self)) {
-		GC_put_integer(self->descriptor.gc, self->value.gmp);
+		GC_SAVE_INTEGER(RUNTIME_FOR(self), Integer_get_gmp(self));
 	}
 }
 
@@ -111,10 +111,10 @@ Integer_plus (Integer* self, Value* other)
 	}
 
 	Integer* number = (Integer*) other;
-	Integer* result = (Integer*) Integer_new(self->descriptor.gc);
+	Integer* result = (Integer*) Integer_new(RUNTIME_FOR(self));
 
 	if (!IS_NATIVE(self)) {
-		mpz_t* value = GC_get_integer(self->descriptor.gc);
+		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
 		if (!IS_NATIVE(number)) {
 			mpz_add(*value, *Integer_get_gmp(self), *Integer_get_gmp(number));

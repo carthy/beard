@@ -16,7 +16,7 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/GC.h>
+#include <private/Runtime.h>
 #include <private/common.h>
 
 #include <private/Integer.h>
@@ -77,9 +77,13 @@ _mpq_destructor (void* value)
 }
 
 GC*
-GC_new (void)
+GC_new (Runtime* rt)
 {
+	assert(rt);
+
 	GC* self = malloc(sizeof(GC));
+
+	self->runtime = rt;
 
 	self->integer  = FreeList_new(_mpz_constructor, _mpz_destructor);
 	self->floating = FreeList_new(_mpf_constructor, _mpf_destructor);
@@ -144,8 +148,9 @@ GC_allocate (GC* self, ValueType type)
 			break;
 	}
 
-	value->type = type;
-	value->gc   = self;
+	value->type    = type;
+	value->meta    = NIL;
+	value->runtime = self->runtime;
 
 	return value;
 }

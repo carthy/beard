@@ -20,12 +20,14 @@
 #define BEARD_VALUE_H
 
 #include <public/Value.h>
-
-struct GC;
+#include <public/Runtime.h>
+#include <public/Map.h>
 
 struct Value {
-	ValueType  type;
-	struct GC* gc;
+	ValueType type;
+	Map*      meta;
+
+	struct Runtime* runtime;
 };
 
 #define IS_NIL(v)      (((Value*) v) == (Value*) 0)

@@ -18,11 +18,11 @@
 
 typedef struct Floating Floating;
 
-Floating* Floating_new (GC* gc);
+Floating* Floating_new (Runtime* rt);
 
-Floating* Floating_new_with_precision (GC* gc, unsigned long precision);
+Floating* Floating_new_with_precision (Runtime* rt, unsigned long precision);
 
-Floating* Floating_set_precision (Floating* self, unsigned long precision);
+unsigned long Floating_set_precision (Floating* self, unsigned long precision);
 
 unsigned long Floating_get_precision (Floating* self);
 

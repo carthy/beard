@@ -16,16 +16,16 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/GC.h>
+#include <private/Runtime.h>
 #include <private/String.h>
 #include <private/common.h>
 
 String*
-String_new (GC* gc)
+String_new (Runtime* rt)
 {
-	assert(gc);
+	assert(rt);
 
-	String* self = (String*) GC_allocate(gc, VALUE_TYPE_STRING);
+	String* self = (String*) GC_ALLOCATE(rt, VALUE_TYPE_STRING);
 
 	self->length   = 0;
 	self->bytes    = 0;
@@ -36,11 +36,11 @@ String_new (GC* gc)
 }
 
 String*
-String_new_with_encoding (GC* gc, Encoding encoding)
+String_new_with_encoding (Runtime* rt, Encoding encoding)
 {
-	assert(gc);
+	assert(rt);
 
-	String* self = String_new(gc);
+	String* self = String_new(rt);
 
 	self->encoding = encoding;
 

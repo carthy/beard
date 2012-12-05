@@ -54,9 +54,9 @@ typedef enum Encoding {
 	ENCODING_GB18030
 } Encoding;
 
-String* String_new (GC* gc);
+String* String_new (Runtime* rt);
 
-String* String_new_with_encoding (GC* gc, Encoding encoding);
+String* String_new_with_encoding (Runtime* rt, Encoding encoding);
 
 void String_destroy (String* self);
 

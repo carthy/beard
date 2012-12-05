@@ -16,10 +16,23 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-typedef struct GC GC;
+#include <private/Runtime.h>
+#include <private/common.h>
 
-GC* GC_new (void);
+Runtime*
+Runtime_new (void)
+{
+	Runtime* self = malloc(sizeof(Runtime));
 
-void GC_destroy (GC* self);
+	self->garbage_collector = GC_new(self);
 
-Value* GC_allocate (GC* self, ValueType type);
+	return self;
+}
+
+void
+Runtime_destroy (Runtime* self)
+{
+	assert(self);
+
+	GC_destroy(self->garbage_collector);
+}

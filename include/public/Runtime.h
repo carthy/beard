@@ -16,18 +16,8 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BEARD_COMMON_H
-#define BEARD_COMMON_H
+typedef struct Runtime Runtime;
 
-#include <stdlib.h>
-#include <jemalloc.h>
+Runtime* Runtime_new (void);
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <string.h>
-
-#include <assert.h>
-
-#include <siphash.h>
-
-#endif
+void Runtime_destroy (Runtime* self);

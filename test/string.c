@@ -21,19 +21,18 @@
 void
 test_string_new (void* data)
 {
-	GC* gc      = GC_new();
-	String* str = String_new(gc);
+	String* str = String_new(runtime);
 
-end:
-	GC_destroy(gc);
+	tt_assert(str);
+
+end:;
 }
 
 void
 test_string_set_cstr (void* data)
 {
-	GC* gc       = GC_new();
-	String* str  = String_set_cstr(String_new(gc), "æ");
-	String* str2 = String_set_cstr_with_encoding(String_new(gc), "æ", ENCODING_UTF8);
+	String* str  = String_set_cstr(String_new(runtime), "æ");
+	String* str2 = String_set_cstr_with_encoding(String_new(runtime), "æ", ENCODING_UTF8);
 
 	tt_assert(str->length == 2);
 	tt_assert(str->bytes == 2);
@@ -44,8 +43,6 @@ test_string_set_cstr (void* data)
 end:
 	String_destroy(str);
 	String_destroy(str2);
-
-	GC_destroy(gc);
 }
 
 struct testcase_t string_tests[] = {
