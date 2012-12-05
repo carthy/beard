@@ -55,6 +55,12 @@ Tuple_resize (Tuple* self, int size)
 	return self;
 }
 
+Value**
+Tuple_items (Tuple* self)
+{
+	return self->items;
+}
+
 int
 Tuple_size (Tuple* self)
 {
