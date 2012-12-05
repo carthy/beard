@@ -110,7 +110,158 @@ Integer_plus (Integer* self, Value* other)
 		return (Value*) Rational_plus((Rational*) other, (Value*) self);
 	}
 
-	return NIL;
+	Integer* number = (Integer*) other;
+	Integer* result = (Integer*) Integer_new(self->descriptor.gc);
+
+	if (!IS_NATIVE(self)) {
+		mpz_t* value = GC_get_integer(self->descriptor.gc);
+
+		if (!IS_NATIVE(number)) {
+			mpz_add(*value, *Integer_get_gmp(self), *Integer_get_gmp(number));
+		}
+		else {
+			Integer* a = IS_NATIVE(self) ? number : self;
+			Integer* b = IS_NATIVE(self) ? self  : number;
+
+			if (IS_SIGNED(b)) {
+				mpz_set_si(*value, Integer_get_native_signed(b));
+				mpz_add(*value, *Integer_get_gmp(a), *value);
+			}
+			else {
+				mpz_add_ui(*value, *Integer_get_gmp(a), Integer_get_native_signed(b));
+			}
+		}
+
+		result->type      = INTEGER_TYPE_GMP;
+		result->value.gmp = value;
+
+		return (Value*) result;
+	}
+
+	if (!IS_NATIVE(number)) {
+		if (IS_SIGNED(self)) {
+			assert(mpz_fits_slong_p(*Integer_get_gmp(number)));
+		}
+		else {
+			assert(mpz_fits_ulong_p(*Integer_get_gmp(number)));
+		}
+	}
+
+	switch (self->type) {
+		#define ADD(name, other) \
+			if (IS_NATIVE(other)) { \
+				if (IS_SIGNED(other)) { \
+					name += Integer_get_native_signed(other); \
+				} \
+				else { \
+					name += Integer_get_native_unsigned(other); \
+				} \
+			} \
+			else { \
+				name += mpz_get_si(*Integer_get_gmp(other)); \
+			}
+
+		case INTEGER_TYPE_BYTE: {
+			int8_t value = self->value.s8;
+
+			ADD(value, number);
+
+			result->type     = INTEGER_TYPE_BYTE;
+			result->value.s8 = value;
+		} break;
+
+		case INTEGER_TYPE_SHORT: {
+			int16_t value = self->value.s16;
+
+			ADD(value, number);
+
+			result->type      = INTEGER_TYPE_SHORT;
+			result->value.s16 = value;
+
+		} break;
+
+		case INTEGER_TYPE_INT: {
+			int32_t value = self->value.s32;
+
+			ADD(value, number);
+
+			result->type      = INTEGER_TYPE_INT;
+			result->value.s32 = value;
+
+		} break;
+
+		case INTEGER_TYPE_LONG: {
+			int64_t value = self->value.s64;
+
+			ADD(value, number);
+
+			result->type      = INTEGER_TYPE_LONG;
+			result->value.s64 = value;
+
+		} break;
+
+		#undef ADD
+
+		#define ADD(name, other) \
+			if (IS_NATIVE(other)) { \
+				if (IS_SIGNED(other)) { \
+					name += Integer_get_native_signed(other); \
+				} \
+				else { \
+					name += Integer_get_native_unsigned(other); \
+				} \
+			} \
+			else { \
+				name += mpz_get_ui(*Integer_get_gmp(other)); \
+			}
+
+		case INTEGER_TYPE_UBYTE: {
+			uint8_t value = self->value.u8;
+
+			ADD(value, number);
+
+			result->type     = INTEGER_TYPE_UBYTE;
+			result->value.u8 = value;
+
+		} break;
+
+		case INTEGER_TYPE_USHORT: {
+			uint16_t value = self->value.u16;
+
+			ADD(value, number);
+
+			result->type      = INTEGER_TYPE_USHORT;
+			result->value.u16 = value;
+
+		} break;
+
+		case INTEGER_TYPE_UINT: {
+			uint32_t value = self->value.u32;
+
+			ADD(value, number);
+
+			result->type      = INTEGER_TYPE_UINT;
+			result->value.u32 = value;
+
+		} break;
+
+		case INTEGER_TYPE_ULONG: {
+			uint64_t value = self->value.u64;
+
+			ADD(value, number);
+
+			result->type      = INTEGER_TYPE_ULONG;
+			result->value.u64 = value;
+
+		} break;
+
+		#undef ADD
+
+		case INTEGER_TYPE_GMP:
+			assert(false);
+	}
+
+	return (Value*) result;
 }
 
 bool
