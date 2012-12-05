@@ -73,11 +73,11 @@ namespace :build do
 		}
 	end
 
-	file 'beard.h' do
+	file 'beard.h' => FileList['include/public/*.h'] do
 		header = ''
 
-		FileList['include/public/{Value,GC,Integer}.h'].each {|f|
-			header << File.read(f)
+		%w[Value GC Integer String].each {|name|
+			header << File.read("include/public/#{name}.h")
 		}
 
 		File.open('beard.h', 'w') {|f|
@@ -163,6 +163,8 @@ end
 rule '.o' => '.c' do |t|
 	sh "#{CC} #{CFLAGS} -o #{t.name} -c #{t.source}"
 end
+
+rule '.h'
 
 CLEAN.include(OBJECTS)
 
