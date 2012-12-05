@@ -19,6 +19,41 @@
 #include <private/Integer.h>
 
 void
+test_integer_new (void* data)
+{
+	GC*      gc  = GC_new();
+	Integer* num = Integer_new(gc);
+
+	tt_assert(num);
+	tt_assert(num->type == INTEGER_TYPE_LONG);
+	tt_assert(num->value.s64 == 0);
+
+end:
+	Integer_destroy(num);
+	GC_destroy(gc);
+}
+
+void
+test_integer_plus (void* data)
+{
+	GC*      gc   = GC_new();
+	Integer* num  = Integer_set(Integer_new(gc), (uint8_t) 250);
+	Integer* num2 = Integer_set(Integer_new(gc), "10");
+
+	Integer* result = (Integer*) Integer_plus(num, (Value*) num2);
+
+	tt_assert(IS_INTEGER(result));
+	tt_assert(result->type == INTEGER_TYPE_UBYTE);
+	tt_assert(result->value.u8 == 4);
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+
+	GC_destroy(gc);
+}
+
+void
 test_integer_is_odd (void* data)
 {
 	GC*      gc   = GC_new();
@@ -35,8 +70,28 @@ end:
 	GC_destroy(gc);
 }
 
+void
+test_integer_is_even (void* data)
+{
+	GC*      gc   = GC_new();
+	Integer* num  = Integer_set(Integer_new(gc), 32L);
+	Integer* num2 = Integer_set(Integer_new(gc), 31L);
+
+	tt_assert(Integer_is_even(num));
+	tt_assert(!Integer_is_even(num2));
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+
+	GC_destroy(gc);
+}
+
 struct testcase_t integer_tests[] = {
+	{ "new", test_integer_new },
+	{ "plus", test_integer_plus },
 	{ "is_odd", test_integer_is_odd },
+	{ "is_even", test_integer_is_even },
 
 	END_OF_TESTCASES
 };
