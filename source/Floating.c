@@ -33,6 +33,26 @@ Floating_new (GC* gc)
 }
 
 Floating*
+Floating_new_with_precision (GC* gc, unsigned long precision)
+{
+	return Floating_set_precision(Floating_new(gc), precision);
+}
+
+Floating*
+Floating_set_precision (Floating* self, unsigned long precision)
+{
+	mpf_set_prec(*self->value, precision);
+
+	return self;
+}
+
+unsigned long
+Floating_get_precision (Floating* self)
+{
+	return mpf_get_prec(*self->value);
+}
+
+Floating*
 Floating_set_double (Floating* self, double number)
 {
 	assert(self);
