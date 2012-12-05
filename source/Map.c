@@ -16,16 +16,57 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
+#include <private/Runtime.h>
+#include <private/Map.h>
+#include <private/common.h>
 
-typedef struct Map Map;
+Map* Map_new (Runtime* rt)
+{
+	Map* self = (Map*) GC_ALLOCATE(rt, VALUE_TYPE_MAP);
 
-Map* Map_new (Runtime* rt);
+	self->array = NULL;
 
-void Map_destroy (Map* self);
+	return self;
+}
 
-Value* Map_put (Map* self, uint64_t key, Value* value);
+void
+Map_destroy (Map* self)
+{
+}
 
-Value* Map_get (Map* self, uint64_t key);
+Value*
+Map_put (Map* self, uint64_t key, Value* value)
+{
+	Word_t  ind = key;
+	Word_t* val = NULL;
+	
+	JLI(val, self->array, ind);
+	assert(val);
 
-uint64_t Map_length (Map* self);
+	*val = (Word_t) value;
+
+	return value;
+}
+
+Value*
+Map_get (Map* self, uint64_t key)
+{
+	Word_t  ind = key;
+	Word_t* val = NULL;
+
+	JLG(val, self->array, ind);
+
+	assert(val);
+
+	return (Value*) *val;
+}
+
+uint64_t
+Map_length (Map* self)
+{
+	Word_t size;
+
+	JLC(size, self->array, 0, -1);
+
+	return size;
+}

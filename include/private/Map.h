@@ -20,9 +20,10 @@
 #define BEARD_MAP_H
 
 #include <public/Map.h>
+#include <Judy.h>
 
 struct Map {
-
+	Pvoid_t array;
 };
 
 #endif
