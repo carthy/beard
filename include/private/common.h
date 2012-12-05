@@ -20,7 +20,7 @@
 #define BEARD_COMMON_H
 
 #include <stdlib.h>
-#include <jemalloc/jemalloc.h>
+#include <jemalloc.h>
 
 #include <stdbool.h>
 #include <stdint.h>
