@@ -20,9 +20,10 @@
 #define BEARD_VECTOR_H
 
 #include <public/Vector.h>
+#include <Judy.h>
 
 struct Vector {
-
+	Pvoid_t array;
 };
 
 #endif
