@@ -22,10 +22,10 @@ Vector* Vector_new (Runtime* rt);
 
 void Vector_destroy (Vector* self);
 
-Value* Vector_set (Vector* self, size_t index, Value* value);
+Value* Vector_set (Vector* self, uint64_t index, Value* value);
 
-Value* Vector_get (Vector* self, size_t index);
+Value* Vector_get (Vector* self, uint64_t index);
 
 Vector* Vector_conj (Vector* self, Value* value);
 
-size_t Vector_length (Vector* self);
+uint64_t Vector_length (Vector* self);

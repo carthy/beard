@@ -35,7 +35,7 @@ Vector_destroy (Vector* self)
 }
 
 Value*
-Vector_set (Vector* self, size_t index, Value* value)
+Vector_set (Vector* self, uint64_t index, Value* value)
 {
 	if (Vector_length(self) <= index) {
 		assert(false);
@@ -53,7 +53,7 @@ Vector_set (Vector* self, size_t index, Value* value)
 }
 
 Value*
-Vector_get (Vector* self, size_t index)
+Vector_get (Vector* self, uint64_t index)
 {
 	if (Vector_length(self) <= index) {
 		assert(false);
@@ -83,7 +83,7 @@ Vector_conj (Vector* self, Value* value)
 	return self;
 }
 
-size_t
+uint64_t
 Vector_length (Vector* self)
 {
 	Word_t size;
