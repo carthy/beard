@@ -49,8 +49,15 @@ Tuple*
 Tuple_resize (Tuple* self, int size)
 {
 	assert(self);
+	assert(size != self->size);
 
 	self->items = realloc(self->items, size * sizeof(Value*));
+
+	if (size > self->size) {
+		memset(self->items + self->size, 0, (size - self->size) * sizeof(Value*));
+	}
+
+	self->size = size;
 
 	return self;
 }
