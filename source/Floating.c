@@ -37,7 +37,7 @@ Floating_set_double (Floating* self, double number)
 {
 	assert(self);
 
-	mpz_set_d((mpz_ptr) *(self->value), number);
+	mpf_set_d(*(self->value), number);
 
 	return self;
 }
@@ -47,7 +47,7 @@ Floating_set_string (Floating* self, const char* string)
 {
 	assert(self);
 
-	mpz_set_str((mpz_ptr) *(self->value), string, 0);
+	mpf_set_str(*(self->value), string, 0);
 
 	return self;
 }
@@ -57,7 +57,7 @@ Floating_set_string_with_base (Floating* self, const char* string, int base)
 {
 	assert(self);
 
-	mpz_set_str((mpz_ptr) *(self->value), string, base);
+	mpf_set_str(*(self->value), string, base);
 
 	return self;
 }
