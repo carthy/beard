@@ -147,7 +147,7 @@ Integer_plus (Integer* self, Value* other)
 		}
 	}
 
-	#define FOR(A, B, C) case INTEGER_TYPE_##C: { \
+	#define CASE(A, B, C) case INTEGER_TYPE_##C: { \
 		B value = self->value.A; \
 		\
 		ADD(value, number); \
@@ -170,10 +170,10 @@ Integer_plus (Integer* self, Value* other)
 				name += mpz_get_si(*Integer_get_gmp(other)); \
 			}
 
-		FOR(s8, int8_t, BYTE);
-		FOR(s16, int16_t, SHORT);
-		FOR(s32, int32_t, INT);
-		FOR(s64, int64_t, LONG);
+		CASE(s8, int8_t, BYTE);
+		CASE(s16, int16_t, SHORT);
+		CASE(s32, int32_t, INT);
+		CASE(s64, int64_t, LONG);
 
 		#undef ADD
 
@@ -190,10 +190,10 @@ Integer_plus (Integer* self, Value* other)
 				name += mpz_get_ui(*Integer_get_gmp(other)); \
 			}
 
-		FOR(u8, uint8_t, UBYTE);
-		FOR(u16, uint16_t, USHORT);
-		FOR(u32, uint32_t, UINT);
-		FOR(u64, uint64_t, ULONG);
+		CASE(u8, uint8_t, UBYTE);
+		CASE(u16, uint16_t, USHORT);
+		CASE(u32, uint32_t, UINT);
+		CASE(u64, uint64_t, ULONG);
 
 		#undef ADD
 
@@ -201,7 +201,7 @@ Integer_plus (Integer* self, Value* other)
 			assert(false);
 	}
 
-	#undef FOR
+	#undef CASE
 
 	return (Value*) result;
 }
