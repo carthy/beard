@@ -26,7 +26,7 @@ typedef void (*FreeListDestructor) (void*);
 
 typedef struct FreeList {
 	Pvoid_t array;
-	size_t  limit;
+	int     limit;
 
 	FreeListConstructor constructor;
 	FreeListDestructor  destructor;
@@ -34,11 +34,11 @@ typedef struct FreeList {
 
 FreeList* FreeList_new (FreeListConstructor constructor, FreeListDestructor destructor);
 
-FreeList* FreeList_new_with_limit (size_t limit, FreeListConstructor constructor, FreeListDestructor destructor);
+FreeList* FreeList_new_with_limit (int limit, FreeListConstructor constructor, FreeListDestructor destructor);
 
-void FreeList_set_limit (FreeList* self, size_t limit);
+void FreeList_set_limit (FreeList* self, int limit);
 
-size_t FreeList_get_limit (FreeList* self);
+int FreeList_get_limit (FreeList* self);
 
 void FreeList_destroy (FreeList* self);
 

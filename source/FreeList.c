@@ -26,7 +26,7 @@ FreeList_new (FreeListConstructor constructor, FreeListDestructor destructor)
 }
 
 FreeList*
-FreeList_new_with_limit (size_t limit, FreeListConstructor constructor, FreeListDestructor destructor)
+FreeList_new_with_limit (int limit, FreeListConstructor constructor, FreeListDestructor destructor)
 {
 	FreeList* self = malloc(sizeof(FreeList));
 
@@ -39,14 +39,14 @@ FreeList_new_with_limit (size_t limit, FreeListConstructor constructor, FreeList
 }
 
 void
-FreeList_set_limit (FreeList* self, size_t limit)
+FreeList_set_limit (FreeList* self, int limit)
 {
 	assert(self);
 
 	self->limit = limit;
 }
 
-size_t
+int
 FreeList_get_limit (FreeList* self)
 {
 	assert(self);
