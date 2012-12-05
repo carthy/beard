@@ -74,6 +74,12 @@ is_string (Value* self)
 }
 
 bool
+is_tuple (Value* self)
+{
+	return IS_TUPLE(self);
+}
+
+bool
 is_list (Value* self)
 {
 	return IS_LIST(self);

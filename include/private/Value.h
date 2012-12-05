@@ -39,6 +39,7 @@ struct Value {
 #define IS_RATIONAL(v) (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_RATIONAL))
 #define IS_REGEXP(v)   (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_REGEXP))
 #define IS_STRING(v)   (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_STRING))
+#define IS_TUPLE(v)    (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_TUPLE))
 #define IS_LIST(v)     (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_LIST))
 #define IS_VECTOR(v)   (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_VECTOR))
 #define IS_MAP(v)      (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_MAP))
