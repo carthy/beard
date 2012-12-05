@@ -36,6 +36,7 @@ static Runtime* runtime;
 #include "integer.c"
 #include "string.c"
 #include "vector.c"
+#include "map.c"
 
 struct testgroup_t groups[] = {
 	{ "value/", value_tests },
@@ -44,6 +45,7 @@ struct testgroup_t groups[] = {
 	{ "integer/", integer_tests },
 	{ "string/", string_tests },
 	{ "vector/", vector_tests },
+	{ "map/", map_tests },
 
 	END_OF_GROUPS
 };
