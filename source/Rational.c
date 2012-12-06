@@ -34,6 +34,12 @@ Rational_new (Runtime* rt)
 	return self;
 }
 
+void
+Rational_destroy (Rational* self)
+{
+	GC_SAVE_RATIONAL(RUNTIME_FOR(self), self->value);
+}
+
 Rational*
 Rational_plus (Rational* self, Value* other)
 {
