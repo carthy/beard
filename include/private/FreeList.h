@@ -36,7 +36,7 @@ FreeList* FreeList_new (FreeListConstructor constructor, FreeListDestructor dest
 
 FreeList* FreeList_new_with_limit (int limit, FreeListConstructor constructor, FreeListDestructor destructor);
 
-void FreeList_set_limit (FreeList* self, int limit);
+int FreeList_set_limit (FreeList* self, int limit);
 
 int FreeList_get_limit (FreeList* self);
 

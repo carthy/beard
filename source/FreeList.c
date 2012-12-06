@@ -38,12 +38,14 @@ FreeList_new_with_limit (int limit, FreeListConstructor constructor, FreeListDes
 	return self;
 }
 
-void
+int
 FreeList_set_limit (FreeList* self, int limit)
 {
 	assert(self);
 
 	self->limit = limit;
+
+	return limit;
 }
 
 int
