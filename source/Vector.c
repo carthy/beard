@@ -32,6 +32,9 @@ Vector* Vector_new (Runtime* rt)
 void
 Vector_destroy (Vector* self)
 {
+	Word_t freed;
+
+	JLFA(freed, self->array);
 }
 
 Value*
