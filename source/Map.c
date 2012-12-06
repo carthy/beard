@@ -32,6 +32,9 @@ Map* Map_new (Runtime* rt)
 void
 Map_destroy (Map* self)
 {
+	Word_t freed;
+
+	JLFA(freed, self->array);
 }
 
 Value*
