@@ -25,25 +25,27 @@ task :build, :mode do |t, args|
 end
 
 namespace :build do
+	@CFLAGS = '-O3 -funroll-loops -g0 -march=native -mtune=native'
+
 	task :beard => ['libbeard.a', 'beard.h']
 
 	task :gmp => 'submodules:gmp' do
 		Dir.chdir('vendor/gmp') do
-			sh "./configure --enable-static --disable-shared CC=#{CC}"
+			sh "./configure --enable-static --disable-shared CC=#{CC} CFLAGS='#@CFLAGS'"
 			sh 'make'
 		end
 	end
 
 	task :onigmo => 'submodules:onigmo' do
 		Dir.chdir('vendor/onigmo') do
-			sh "./configure --enable-static --disable-shared CC=#{CC}"
+			sh "./configure --enable-static --disable-shared CC=#{CC} CFLAGS='#@CFLAGS'"
 			sh 'make'
 		end
 	end
 
 	task :judy => 'submodules:judy' do
 		Dir.chdir('vendor/judy') do
-			sh "./configure --enable-static --disable-shared CC=#{CC}"
+			sh "./configure --enable-static --disable-shared CC=#{CC} CFLAGS='#@CFLAGS'"
 			sh 'make'
 		end
 	end
@@ -51,7 +53,7 @@ namespace :build do
 	task :jemalloc => 'submodules:jemalloc' do
 		Dir.chdir('vendor/jemalloc') do
 			sh './autogen.sh'
-			sh "./configure --enable-static --disable-shared --enable-lazy-lock CC=#{CC}"
+			sh "./configure --enable-static --disable-shared --enable-lazy-lock CC=#{CC} CFLAGS='#@CFLAGS'"
 			sh 'make'
 		end
 	end
@@ -118,7 +120,7 @@ namespace :test do
 	}
 
 	file 'test/run' => ['libbeard.a', 'beard.h', *files] do
-		sh "#{CC} #{CFLAGS} -Ivendor/tinytest -o test/run test/run.c vendor/tinytest/tinytest.c -pthread -L. -lbeard"
+		sh "#{CC} #{CFLAGS} -Ivendor/tinytest -o test/run test/run.c vendor/tinytest/tinytest.c -pthread -ldl -L. -lbeard"
 	end
 end
 
