@@ -17,4 +17,5 @@
 *.app
 
 beard.h
+beard.bc
 test/run
