@@ -2,13 +2,14 @@ require 'rake'
 require 'rake/clean'
 require 'tmpdir'
 
-CC     = ENV['CC'] || 'clang'
-AR     = ENV['AR'] || 'ar'
+CC     = ENV['CC']     || 'clang'
+AR     = ENV['AR']     || 'ar'
+RANLIB = ENV['RANLIB'] || 'ranlib'
 CFLAGS = "-std=c11 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
 
-SOURCES      = FileList['source/**/*.c', 'vendor/siphash/siphash.c']
+SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
-DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a', 'vendor/jemalloc/lib/libjemalloc.a']
+DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a', 'vendor/jemalloc/lib/libjemalloc.a', 'vendor/siphash/siphash.o']
 
 task :default => :build
 
@@ -25,44 +26,52 @@ task :build, :mode do |t, args|
 end
 
 namespace :build do
-	@CFLAGS = '-O3 -funroll-loops -g0 -march=native -mtune=native'
+	@FLAGS = %Q{CC=#{CC} AR=#{AR} RANLIB=#{RANLIB} CFLAGS="-g0 -O3 -funroll-loops"}
 
 	task :beard => ['libbeard.a', 'beard.h']
 
 	task :gmp => 'submodules:gmp' do
-		Dir.chdir('vendor/gmp') do
-			sh "./configure --enable-static --disable-shared CC=#{CC} CFLAGS='#@CFLAGS'"
+		Dir.chdir 'vendor/gmp' do
+			sh "./configure --enable-static --disable-shared #@FLAGS"
 			sh 'make'
 		end
 	end
 
 	task :onigmo => 'submodules:onigmo' do
-		Dir.chdir('vendor/onigmo') do
-			sh "./configure --enable-static --disable-shared CC=#{CC} CFLAGS='#@CFLAGS'"
+		Dir.chdir 'vendor/onigmo' do
+			sh 'autoconf'
+			sh "./configure --enable-static --disable-shared #@FLAGS"
 			sh 'make'
 		end
 	end
 
 	task :judy => 'submodules:judy' do
-		Dir.chdir('vendor/judy') do
-			sh "./configure --enable-static --disable-shared CC=#{CC} CFLAGS='#@CFLAGS'"
+		Dir.chdir 'vendor/judy' do
+			sh "./configure --enable-static --disable-shared #@FLAGS"
 			sh 'make'
 		end
 	end
 
 	task :jemalloc => 'submodules:jemalloc' do
-		Dir.chdir('vendor/jemalloc') do
+		Dir.chdir 'vendor/jemalloc' do
 			sh './autogen.sh'
-			sh "./configure --enable-static --disable-shared --enable-lazy-lock CC=#{CC} CFLAGS='#@CFLAGS'"
+			sh "./configure --enable-static --disable-shared --enable-lazy-lock #@FLAGS"
 			sh 'make'
 		end
 	end
 
-	task :siphash => 'submodules:siphash'
+	task :siphash => 'submodules:siphash' do
+		Dir.chdir 'vendor/siphash' do
+			sh "#{CC} #{CFLAGS} -o siphash.o -c siphash.c"
+		end
+	end
 
 	file 'libbeard.a' => DEPENDENCIES + OBJECTS do
 		Dir.mktmpdir {|path|
-			DEPENDENCIES.each {|name|
+			objects  = DEPENDENCIES.select { |p| p.end_with? '.o' }
+			archives = DEPENDENCIES.select { |p| p.end_with? '.a' }
+
+			archives.each {|name|
 				real = File.realpath(name)
 
 				FileUtils.mkpath "#{path}/#{File.basename(name)}"
@@ -71,7 +80,7 @@ namespace :build do
 				end
 			}
 
-			sh "#{AR} rcs libbeard.a #{OBJECTS} #{path}/*/*.o"
+			sh "#{AR} rcs libbeard.a #{OBJECTS} #{objects} #{path}/*/**.o"
 		}
 	end
 
@@ -101,6 +110,10 @@ namespace :build do
 
 	file 'vendor/jemalloc/lib/libjemalloc.a' do
 		Rake::Task['build:jemalloc'].invoke
+	end
+
+	file 'vendor/siphash/siphash.o' do
+		Rake::Task['build:siphash'].invoke
 	end
 end
 
@@ -173,11 +186,15 @@ CLEAN.include(OBJECTS)
 task :clobber do
 	FileList['vendor/gmp', 'vendor/onigmo', 'vendor/judy', 'vendor/jemalloc'].each {|dir|
 		if File.directory? dir
-			Dir.chdir(dir) do
+			Dir.chdir dir do
 				sh 'make distclean' rescue nil
 			end
 		end
 	}
+
+	Dir.chdir 'vendor/siphash' do
+		sh 'rm -f siphash.o'
+	end
 end
 
 CLOBBER.include('libbeard.a', 'test/run', DEPENDENCIES)
