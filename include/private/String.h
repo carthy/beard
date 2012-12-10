@@ -20,7 +20,9 @@
 #define BEARD_STRING_H
 
 #include <public/String.h>
+
 #include <oniguruma.h>
+#include <regenc.h>
 
 struct String {
 	Value descriptor;
@@ -28,10 +30,21 @@ struct String {
 	size_t length;
 	size_t bytes;
 
-	Encoding encoding;
-	UChar*   buffer;
+	struct {
+		Encoding type : 8;
+
+		bool checked : 1;
+		bool valid   : 1;
+		bool at7bit  : 1;
+	} encoding;
+
+	UChar* buffer;
 };
 
-inline OnigEncoding String_get_onig_enc (String* self);
+inline OnigEncoding String_get_onigenc (String* self);
+
+bool String_encoding_is_ascii_compatible (String* self);
+
+bool String_is_ascii_only (String* self);
 
 #endif
