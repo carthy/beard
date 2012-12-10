@@ -60,6 +60,8 @@ struct Integer {
 	IntegerValue value;
 };
 
+void Integer_destroy (Integer* self);
+
 #define IS_NATIVE(i)   (i->type != INTEGER_TYPE_GMP)
 #define IS_SIGNED(i)   (i->type >= INTEGER_TYPE_BYTE && i->type <= INTEGER_TYPE_LONG)
 #define IS_UNSIGNED(i) (i->type >= INTEGER_TYPE_UBYTE && i->type <= INTEGER_TYPE_ULONG)

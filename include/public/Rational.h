@@ -20,6 +20,4 @@ typedef struct Rational Rational;
 
 Rational* Rational_new (Runtime* rt);
 
-void Rational_destroy (Rational* self);
-
 Rational* Rational_plus (Rational* self, Value* other);

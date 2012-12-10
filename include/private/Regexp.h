@@ -25,4 +25,6 @@ struct Regexp {
 
 };
 
+void Regexp_destroy (Regexp* self);
+
 #endif

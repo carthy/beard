@@ -22,8 +22,6 @@ Tuple* Tuple_new (Runtime* rt);
 
 Tuple* Tuple_new_with_size (Runtime* rt, int size);
 
-void Tuple_destroy (Tuple* self);
-
 Tuple* Tuple_resize (Tuple* self, int size);
 
 Value** Tuple_items (Tuple* self);

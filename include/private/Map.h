@@ -26,4 +26,6 @@ struct Map {
 	Pvoid_t array;
 };
 
+void Map_destroy (Map* self);
+
 #endif

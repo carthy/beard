@@ -58,8 +58,6 @@ String* String_new (Runtime* rt);
 
 String* String_new_with_encoding (Runtime* rt, Encoding encoding);
 
-void String_destroy (String* self);
-
 String* String_set_cstr (String* self, const char* str);
 
 String* String_set_cstr_with_encoding (String* self, const char* str, Encoding encoding);

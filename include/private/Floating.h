@@ -27,4 +27,6 @@ struct Floating {
 	mpf_t* value;
 };
 
+void Floating_destroy (Floating* self);
+
 #endif

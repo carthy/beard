@@ -26,4 +26,6 @@ struct Vector {
 	Pvoid_t array;
 };
 
+void Vector_destroy (Vector* self);
+
 #endif

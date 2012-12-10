@@ -20,8 +20,6 @@ typedef struct Vector Vector;
 
 Vector* Vector_new (Runtime* rt);
 
-void Vector_destroy (Vector* self);
-
 Value* Vector_set (Vector* self, uint64_t index, Value* value);
 
 Value* Vector_get (Vector* self, uint64_t index);

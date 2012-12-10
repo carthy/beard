@@ -27,4 +27,6 @@ struct Rational {
 	mpq_t* value;
 };
 
+void Rational_destroy (Rational* self);
+
 #endif

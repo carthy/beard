@@ -22,8 +22,6 @@ typedef struct Map Map;
 
 Map* Map_new (Runtime* rt);
 
-void Map_destroy (Map* self);
-
 Value* Map_put (Map* self, uint64_t key, Value* value);
 
 Value* Map_get (Map* self, uint64_t key);

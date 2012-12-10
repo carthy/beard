@@ -38,6 +38,4 @@ Floating* Floating_set_string (Floating* self, const char* number);
 
 Floating* Floating_set_string_with_base (Floating* self, const char* number, int base);
 
-void Floating_destroy (Floating* self);
-
 Floating* Floating_plus (Floating* self, Value* other);

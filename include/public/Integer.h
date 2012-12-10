@@ -47,8 +47,6 @@ Integer* Integer_set_u64 (Integer* self, uint64_t number);
 Integer* Integer_set_string (Integer* self, const char* string);
 Integer* Integer_set_string_with_base (Integer* self, const char* string, int base);
 
-void Integer_destroy (Integer* self);
-
 Value* Integer_plus (Integer* self, Value* other);
 
 bool Integer_is_odd (Integer* self);

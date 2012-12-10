@@ -42,6 +42,8 @@ struct String {
 	UChar* buffer;
 };
 
+void String_destroy (String* self);
+
 inline OnigEncoding String_get_onigenc (String* self);
 
 bool String_encoding_is_ascii_compatible (String* self);

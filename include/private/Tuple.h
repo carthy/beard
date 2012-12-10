@@ -28,4 +28,6 @@ struct Tuple {
 	Value** items;
 };
 
+void Tuple_destroy (Tuple* self);
+
 #endif

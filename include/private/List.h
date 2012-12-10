@@ -25,4 +25,6 @@ struct List {
 
 };
 
+void List_destroy (List* self);
+
 #endif
