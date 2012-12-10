@@ -27,8 +27,9 @@
 struct String {
 	Value descriptor;
 
-	size_t length;
-	size_t bytes;
+	uint64_t length;
+	uint64_t bytes;
+	uint64_t hash;
 
 	struct {
 		Encoding type : 8;
