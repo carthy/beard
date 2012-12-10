@@ -45,9 +45,28 @@ end:
 	String_destroy(str2);
 }
 
+void
+test_string_hash (void* data)
+{
+	String* str  = String_set_cstr(String_new(runtime), "abc");
+	String* str2 = String_set_cstr_with_encoding(String_new(runtime), "abc", ENCODING_UTF8);
+
+	tt_assert(String_hash(str) == String_hash(str2));
+
+	String_set_cstr(str, "æ");
+	String_set_cstr_with_encoding(str2, "æ", ENCODING_UTF8);
+
+	tt_assert(String_hash(str) != String_hash(str2));
+
+end:
+	String_destroy(str);
+	String_destroy(str2);
+}
+
 struct testcase_t string_tests[] = {
 	{ "new", test_string_new },
 	{ "set_cstr", test_string_set_cstr },
+	{ "hash", test_string_hash },
 
 	END_OF_TESTCASES
 };
