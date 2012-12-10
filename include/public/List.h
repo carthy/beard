@@ -1,4 +1,4 @@
-/* Copyleft (¿) meh. - http://meh.schizofreni.co
+/* Copyleft (ɔ) meh. - http://meh.schizofreni.co
  *
  * This file is part of beard - https://github.com/carthy/beard
  *
