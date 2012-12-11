@@ -24,8 +24,8 @@ test_integer_new (void* data)
 	Integer* num = Integer_new(runtime);
 
 	tt_assert(num);
-	tt_assert(num->type == INTEGER_TYPE_GMP);
-	tt_assert(num->value.gmp == NULL);
+	tt_assert(IS_NATIVE(num));
+	tt_assert(GET_NATIVE(num) == 0);
 
 end:
 	Integer_destroy(num);
@@ -40,8 +40,8 @@ test_integer_plus (void* data)
 	Integer* result = (Integer*) Integer_plus(num, (Value*) num2);
 
 	tt_assert(IS_INTEGER(result));
-	tt_assert(result->type == INTEGER_TYPE_UBYTE);
-	tt_assert(result->value.u8 == 4);
+	tt_assert(IS_NATIVE(result));
+	tt_assert(GET_NATIVE(result) == 260);
 
 end:
 	Integer_destroy(num);
