@@ -94,6 +94,23 @@ Integer_set_string_with_base (Integer* self, const char* string, int base)
 	return self;
 }
 
+Integer*
+Integer_set_gmp (Integer* self, mpz_t* gmp)
+{
+	if (IS_GMP(self) && GET_GMP(self)) {
+		mpz_set(*GET_GMP(self), *gmp);
+
+		GC_SAVE_INTEGER(RUNTIME_FOR(self), gmp);
+	}
+	else {
+		self->as.gmp = gmp;
+	}
+
+	self->type = INTEGER_TYPE_GMP;
+
+	return self;
+}
+
 void
 Integer_destroy (Integer* self)
 {
@@ -133,6 +150,8 @@ Integer_plus (Integer* self, Value* number)
 			else {
 				mpz_sub_ui(*value, *value, GET_NATIVE(other));
 			}
+
+			Integer_set_gmp(result, value);
 		}
 		else {
 			Integer_set_native(result, sum);
@@ -143,8 +162,7 @@ Integer_plus (Integer* self, Value* number)
 
 		mpz_add(*value, *GET_GMP(self), *GET_GMP(other));
 
-		result->type   = INTEGER_TYPE_GMP;
-		result->as.gmp = value;
+		Integer_set_gmp(result, value);
 	}
 	else {
 		Integer* a     = IS_GMP(self) ? self  : other;
@@ -154,8 +172,7 @@ Integer_plus (Integer* self, Value* number)
 		mpz_set_si(*value, GET_NATIVE(b));
 		mpz_add(*value, *GET_GMP(a), *value);
 
-		result->type   = INTEGER_TYPE_GMP;
-		result->as.gmp = value;
+		Integer_set_gmp(result, value);
 	}
 
 	return (Value*) result;

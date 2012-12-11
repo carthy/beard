@@ -42,6 +42,8 @@ struct Integer {
 	IntegerValue as;
 };
 
+Integer* Integer_set_gmp (Integer* self, mpz_t* gmp);
+
 void Integer_destroy (Integer* self);
 
 #define IS_NATIVE(i) ((i)->type == INTEGER_TYPE_NATIVE)
