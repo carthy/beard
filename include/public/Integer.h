@@ -21,15 +21,10 @@ typedef struct Integer Integer;
 Integer* Integer_new (Runtime* rt);
 
 #define Integer_set(self, X) _Generic((X), \
-	int8_t:  Integer_set_native, \
-	int16_t: Integer_set_native, \
-	int32_t: Integer_set_native, \
-	int64_t: Integer_set_native, \
-\
-	uint8_t:  Integer_set_native, \
-	uint16_t: Integer_set_native, \
-	uint32_t: Integer_set_native, \
-	uint64_t: Integer_set_native, \
+	char:  Integer_set_native, \
+	short: Integer_set_native, \
+	int:   Integer_set_native, \
+	long:  Integer_set_native, \
 \
 	default: Integer_set_string \
 )(self, X)
