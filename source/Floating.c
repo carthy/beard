@@ -97,3 +97,9 @@ Floating_plus (Floating* self, Value* other)
 {
 	return NIL;
 }
+
+Floating*
+Floating_minus (Floating* self, Value* other)
+{
+	return NIL;
+}

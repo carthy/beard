@@ -178,6 +178,65 @@ Integer_plus (Integer* self, Value* number)
 	return (Value*) result;
 }
 
+Value*
+Integer_minus (Integer* self, Value* number)
+{
+	assert(IS_INTEGER(number) || IS_FLOATING(number) || IS_RATIONAL(number));
+
+	if (IS_FLOATING(number)) {
+		return (Value*) Floating_minus((Floating*) number, (Value*) self);
+	}
+
+	if (IS_RATIONAL(number)) {
+		return (Value*) Rational_minus((Rational*) number, (Value*) self);
+	}
+
+	Integer* other  = (Integer*) number;
+	Integer* result = (Integer*) Integer_new(RUNTIME_FOR(self));
+
+	if (IS_NATIVE(self) && IS_NATIVE(other)) {
+		long sub = GET_NATIVE(self) - GET_NATIVE(other);
+
+		// overflow happened
+		if ((GET_NATIVE(other) >= 0 && sub > GET_NATIVE(self)) || (GET_NATIVE(other) < 0 && sub < GET_NATIVE(self))) {
+			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+			mpz_set_si(*value, GET_NATIVE(self));
+
+			if (GET_NATIVE(other) >= 0) {
+				mpz_sub_ui(*value, *value, GET_NATIVE(other));
+			}
+			else {
+				mpz_add_ui(*value, *value, GET_NATIVE(other));
+			}
+
+			Integer_set_gmp(result, value);
+		}
+		else {
+			Integer_set_native(result, sub);
+		}
+	}
+	else if (IS_GMP(self) && IS_GMP(other)) {
+		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+		mpz_sub(*value, *GET_GMP(self), *GET_GMP(other));
+
+		Integer_set_gmp(result, value);
+	}
+	else {
+		Integer* a     = IS_GMP(self) ? self  : other;
+		Integer* b     = IS_GMP(self) ? other : self;
+		mpz_t*   value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+		mpz_set_si(*value, GET_NATIVE(b));
+		mpz_sub(*value, *GET_GMP(a), *value);
+
+		Integer_set_gmp(result, value);
+	}
+
+	return (Value*) result;
+}
+
 bool
 Integer_is_odd (Integer* self)
 {

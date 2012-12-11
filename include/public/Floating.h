@@ -39,3 +39,5 @@ Floating* Floating_set_string (Floating* self, const char* number);
 Floating* Floating_set_string_with_base (Floating* self, const char* number, int base);
 
 Floating* Floating_plus (Floating* self, Value* other);
+
+Floating* Floating_minus (Floating* self, Value* other);

@@ -45,3 +45,9 @@ Rational_plus (Rational* self, Value* other)
 {
 	return NIL;
 }
+
+Rational*
+Rational_minus (Rational* self, Value* other)
+{
+	return NIL;
+}
