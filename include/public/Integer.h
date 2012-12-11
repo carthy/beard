@@ -39,6 +39,7 @@ Integer* Integer_set_string (Integer* self, const char* string);
 Integer* Integer_set_string_with_base (Integer* self, const char* string, int base);
 
 Value* Integer_plus (Integer* self, Value* other);
+Value* Integer_minus (Integer* self, Value* other);
 
 bool Integer_is_odd (Integer* self);
 bool Integer_is_even (Integer* self);
