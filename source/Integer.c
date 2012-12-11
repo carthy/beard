@@ -193,10 +193,8 @@ Integer_minus (Integer* self, Value* number)
 	Integer* result = (Integer*) Integer_new(RUNTIME_FOR(self));
 
 	if (IS_NATIVE(self) && IS_NATIVE(other)) {
-		long sub = GET_NATIVE(self) - GET_NATIVE(other);
-
-		// overflow happened
-		if ((GET_NATIVE(other) >= 0 && sub > GET_NATIVE(self)) || (GET_NATIVE(other) < 0 && sub < GET_NATIVE(self))) {
+		if ((GET_NATIVE(self) >= 0 && GET_NATIVE(self) >= 0 && (LONG_MAX - GET_NATIVE(self)) < GET_NATIVE(other)) ||
+				(GET_NATIVE(self) < 0 && GET_NATIVE(self) < 0 && (GET_NATIVE(self) < (LONG_MIN - GET_NATIVE(other))))) {
 			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
 			mpz_set_si(*value, GET_NATIVE(self));
@@ -211,7 +209,7 @@ Integer_minus (Integer* self, Value* number)
 			Integer_set_gmp(result, value);
 		}
 		else {
-			Integer_set_native(result, sub);
+			Integer_set_native(result, GET_NATIVE(self) - GET_NATIVE(other));
 		}
 	}
 	else if (IS_GMP(self) && IS_GMP(other)) {
