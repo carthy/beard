@@ -27,6 +27,7 @@
 #include <string.h>
 
 #include <assert.h>
+#include <errno.h>
 
 #include <siphash.h>
 

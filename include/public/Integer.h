@@ -21,29 +21,20 @@ typedef struct Integer Integer;
 Integer* Integer_new (Runtime* rt);
 
 #define Integer_set(self, X) _Generic((X), \
-	int8_t:  Integer_set_s8, \
-	int16_t: Integer_set_s16, \
-	int32_t: Integer_set_s32, \
-	int64_t: Integer_set_s64, \
+	int8_t:  Integer_set_native, \
+	int16_t: Integer_set_native, \
+	int32_t: Integer_set_native, \
+	int64_t: Integer_set_native, \
 \
-	uint8_t:  Integer_set_u8, \
-	uint16_t: Integer_set_u16, \
-	uint32_t: Integer_set_u32, \
-	uint64_t: Integer_set_u64, \
+	uint8_t:  Integer_set_native, \
+	uint16_t: Integer_set_native, \
+	uint32_t: Integer_set_native, \
+	uint64_t: Integer_set_native, \
 \
 	default: Integer_set_string \
 )(self, X)
 
-Integer* Integer_set_s8  (Integer* self, int8_t number);
-Integer* Integer_set_s16 (Integer* self, int16_t number);
-Integer* Integer_set_s32 (Integer* self, int32_t number);
-Integer* Integer_set_s64 (Integer* self, int64_t number);
-
-Integer* Integer_set_u8  (Integer* self, uint8_t number);
-Integer* Integer_set_u16 (Integer* self, uint16_t number);
-Integer* Integer_set_u32 (Integer* self, uint32_t number);
-Integer* Integer_set_u64 (Integer* self, uint64_t number);
-
+Integer* Integer_set_native (Integer* self, long number);
 Integer* Integer_set_string (Integer* self, const char* string);
 Integer* Integer_set_string_with_base (Integer* self, const char* string, int base);
 

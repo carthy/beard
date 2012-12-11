@@ -27,50 +27,46 @@ Integer_new (Runtime* rt)
 {
 	Integer* self = (Integer*) GC_ALLOCATE(rt, VALUE_TYPE_INTEGER);
 
-	self->type      = INTEGER_TYPE_GMP;
-	self->value.gmp = NULL;
+	self->type      = INTEGER_TYPE_NATIVE;
+	self->as.native = 0;
 
 	return self;
 }
 
-#define DEF(A, B, C) \
-	Integer* \
-	Integer_set_##A (Integer* self, B number) \
-	{ \
-		if (!IS_NATIVE(self) && Integer_get_gmp(self)) { \
-			GC_SAVE_INTEGER(RUNTIME_FOR(self), Integer_get_gmp(self)); \
-		} \
-		\
-		self->type    = INTEGER_TYPE_##C; \
-		self->value.A = number; \
-		\
-		return self; \
+Integer*
+Integer_set_native (Integer* self, long value)
+{
+	assert(self);
+
+	if (IS_GMP(self) && GET_GMP(self)) {
+		GC_SAVE_INTEGER(RUNTIME_FOR(self), GET_GMP(self));
 	}
 
-DEF(s8,  int8_t, BYTE);
-DEF(s16, int16_t, SHORT);
-DEF(s32, int32_t, INT);
-DEF(s64, int64_t, LONG);
+	self->type      = INTEGER_TYPE_NATIVE;
+	self->as.native = value;
 
-DEF(u8,  uint8_t, UBYTE);
-DEF(u16, uint16_t, USHORT);
-DEF(u32, uint32_t, UINT);
-DEF(u64, uint64_t, ULONG);
-
-#undef DEF
+	return self;
+}
 
 Integer*
 Integer_set_string (Integer* self, const char* string)
 {
 	assert(self);
 
-	if (IS_NATIVE(self) || !Integer_get_gmp(self)) {
-		self->value.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+	long value = strtol(string, NULL, 10);
+
+	if ((value == LONG_MAX || value == LONG_MIN) && errno == ERANGE) {
+		if (IS_NATIVE(self)) {
+			self->as.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+		}
+
+		self->type = INTEGER_TYPE_GMP;
+		mpz_set_str(*GET_GMP(self), string, 0);
 	}
-
-	self->type = INTEGER_TYPE_GMP;
-
-	mpz_set_str(*(self->value.gmp), string, 0);
+	else {
+		self->type      = INTEGER_TYPE_NATIVE;
+		self->as.native = value;
+	}
 
 	return self;
 }
@@ -78,13 +74,22 @@ Integer_set_string (Integer* self, const char* string)
 Integer*
 Integer_set_string_with_base (Integer* self, const char* string, int base)
 {
-	if (IS_NATIVE(self) || !Integer_get_gmp(self)) {
-		self->value.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+	assert(self);
+
+	long value = strtol(string, NULL, base);
+
+	if ((value == LONG_MAX || value == LONG_MIN) && errno == ERANGE) {
+		if (IS_NATIVE(self)) {
+			self->as.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+		}
+
+		self->type = INTEGER_TYPE_GMP;
+		mpz_set_str(*GET_GMP(self), string, base);
 	}
-
-	self->type = INTEGER_TYPE_GMP;
-
-	mpz_set_str(*(self->value.gmp), string, base);
+	else {
+		self->type      = INTEGER_TYPE_NATIVE;
+		self->as.native = value;
+	}
 
 	return self;
 }
@@ -92,116 +97,66 @@ Integer_set_string_with_base (Integer* self, const char* string, int base)
 void
 Integer_destroy (Integer* self)
 {
-	if (!IS_NATIVE(self) && Integer_get_gmp(self)) {
-		GC_SAVE_INTEGER(RUNTIME_FOR(self), Integer_get_gmp(self));
+	if (IS_GMP(self) && GET_GMP(self)) {
+		GC_SAVE_INTEGER(RUNTIME_FOR(self), GET_GMP(self));
 	}
 }
 
 Value*
-Integer_plus (Integer* self, Value* other)
+Integer_plus (Integer* self, Value* number)
 {
-	assert(IS_INTEGER(other) || IS_FLOATING(other) || IS_RATIONAL(other));
+	assert(IS_INTEGER(number) || IS_FLOATING(number) || IS_RATIONAL(number));
 
-	if (IS_FLOATING(other)) {
-		return (Value*) Floating_plus((Floating*) other, (Value*) self);
+	if (IS_FLOATING(number)) {
+		return (Value*) Floating_plus((Floating*) number, (Value*) self);
 	}
 
-	if (IS_RATIONAL(other)) {
-		return (Value*) Rational_plus((Rational*) other, (Value*) self);
+	if (IS_RATIONAL(number)) {
+		return (Value*) Rational_plus((Rational*) number, (Value*) self);
 	}
 
-	Integer* number = (Integer*) other;
+	Integer* other  = (Integer*) number;
 	Integer* result = (Integer*) Integer_new(RUNTIME_FOR(self));
 
-	if (!IS_NATIVE(self)) {
-		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+	if (IS_NATIVE(self) && IS_NATIVE(other)) {
+		long sum = GET_NATIVE(self) + GET_NATIVE(other);
 
-		if (!IS_NATIVE(number)) {
-			mpz_add(*value, *Integer_get_gmp(self), *Integer_get_gmp(number));
-		}
-		else {
-			Integer* a = IS_NATIVE(self) ? number : self;
-			Integer* b = IS_NATIVE(self) ? self  : number;
+		// overflow happened
+		if ((GET_NATIVE(self) >= 0 && sum < GET_NATIVE(other)) || (GET_NATIVE(self) < 0 && sum > GET_NATIVE(other))) {
+			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-			if (IS_SIGNED(b)) {
-				mpz_set_si(*value, Integer_get_native_signed(b));
-				mpz_add(*value, *Integer_get_gmp(a), *value);
+			mpz_set_si(*value, GET_NATIVE(self));
+
+			if (GET_NATIVE(other) >= 0) {
+				mpz_add_ui(*value, *value, GET_NATIVE(other));
 			}
 			else {
-				mpz_add_ui(*value, *Integer_get_gmp(a), Integer_get_native_signed(b));
+				mpz_sub_ui(*value, *value, GET_NATIVE(other));
 			}
-		}
-
-		result->type      = INTEGER_TYPE_GMP;
-		result->value.gmp = value;
-
-		return (Value*) result;
-	}
-
-	if (!IS_NATIVE(number)) {
-		if (IS_SIGNED(self)) {
-			assert(mpz_fits_slong_p(*Integer_get_gmp(number)));
 		}
 		else {
-			assert(mpz_fits_ulong_p(*Integer_get_gmp(number)));
+			Integer_set_native(result, sum);
 		}
 	}
+	else if (IS_GMP(self) && IS_GMP(other)) {
+		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-	#define CASE(A, B, C) case INTEGER_TYPE_##C: { \
-		B value = self->value.A; \
-		\
-		ADD(value, number); \
-		\
-		result->type    = INTEGER_TYPE_##C; \
-		result->value.A = value; \
-	} break
+		mpz_add(*value, *GET_GMP(self), *GET_GMP(other));
 
-	switch (self->type) {
-		#define ADD(name, other) \
-			if (IS_NATIVE(other)) { \
-				if (IS_SIGNED(other)) { \
-					name += Integer_get_native_signed(other); \
-				} \
-				else { \
-					name += Integer_get_native_unsigned(other); \
-				} \
-			} \
-			else { \
-				name += mpz_get_si(*Integer_get_gmp(other)); \
-			}
-
-		CASE(s8, int8_t, BYTE);
-		CASE(s16, int16_t, SHORT);
-		CASE(s32, int32_t, INT);
-		CASE(s64, int64_t, LONG);
-
-		#undef ADD
-
-		#define ADD(name, other) \
-			if (IS_NATIVE(other)) { \
-				if (IS_SIGNED(other)) { \
-					name += Integer_get_native_signed(other); \
-				} \
-				else { \
-					name += Integer_get_native_unsigned(other); \
-				} \
-			} \
-			else { \
-				name += mpz_get_ui(*Integer_get_gmp(other)); \
-			}
-
-		CASE(u8, uint8_t, UBYTE);
-		CASE(u16, uint16_t, USHORT);
-		CASE(u32, uint32_t, UINT);
-		CASE(u64, uint64_t, ULONG);
-
-		#undef ADD
-
-		default:
-			assert(false);
+		result->type   = INTEGER_TYPE_GMP;
+		result->as.gmp = value;
 	}
+	else {
+		Integer* a     = IS_GMP(self) ? self  : other;
+		Integer* b     = IS_GMP(self) ? other : self;
+		mpz_t*   value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-	#undef CASE
+		mpz_set_si(*value, GET_NATIVE(b));
+		mpz_add(*value, *GET_GMP(a), *value);
+
+		result->type   = INTEGER_TYPE_GMP;
+		result->as.gmp = value;
+	}
 
 	return (Value*) result;
 }
@@ -210,15 +165,10 @@ bool
 Integer_is_odd (Integer* self)
 {
 	if (IS_NATIVE(self)) {
-		if (IS_SIGNED(self)) {
-			return (Integer_get_native_signed(self) & 1) != 0;
-		}
-		else {
-			return (Integer_get_native_unsigned(self) & 1) != 0;
-		}
+		return (GET_NATIVE(self) & 1) != 0;
 	}
 	else {
-		return mpz_odd_p(*(self->value.gmp));
+		return mpz_odd_p(*GET_GMP(self));
 	}
 }
 
@@ -226,69 +176,10 @@ bool
 Integer_is_even (Integer* self)
 {
 	if (IS_NATIVE(self)) {
-		if (IS_SIGNED(self)) {
-			return (Integer_get_native_signed(self) & 1) == 0;
-		}
-		else {
-			return (Integer_get_native_unsigned(self) & 1) == 0;
-		}
+		return (GET_NATIVE(self) & 1) == 0;
 	}
 	else {
-		return mpz_even_p(*(self->value.gmp));
-	}
-}
-
-int64_t
-Integer_get_native_signed (Integer* self)
-{
-	switch (self->type) {
-		case INTEGER_TYPE_BYTE:
-			return self->value.s8;
-
-		case INTEGER_TYPE_SHORT:
-			return self->value.s16;
-
-		case INTEGER_TYPE_INT:
-			return self->value.s32;
-
-		case INTEGER_TYPE_LONG:
-			return self->value.s64;
-
-		default:
-			assert(false);
-	}
-}
-
-uint64_t
-Integer_get_native_unsigned (Integer* self)
-{
-	switch (self->type) {
-		case INTEGER_TYPE_UBYTE:
-			return self->value.u8;
-
-		case INTEGER_TYPE_USHORT:
-			return self->value.u16;
-
-		case INTEGER_TYPE_UINT:
-			return self->value.u32;
-
-		case INTEGER_TYPE_ULONG:
-			return self->value.u64;
-
-		default:
-			assert(false);
-	}
-}
-
-mpz_t*
-Integer_get_gmp (Integer* self)
-{
-	switch (self->type) {
-		case INTEGER_TYPE_GMP:
-			return self->value.gmp;
-
-		default:
-			assert(false);
+		return mpz_even_p(*GET_GMP(self));
 	}
 }
 
@@ -296,23 +187,10 @@ int
 Integer_get_bits (Integer* self)
 {
 	switch (self->type) {
-		case INTEGER_TYPE_BYTE:
-		case INTEGER_TYPE_UBYTE:
-			return 8;
-
-		case INTEGER_TYPE_SHORT:
-		case INTEGER_TYPE_USHORT:
-			return 16;
-
-		case INTEGER_TYPE_INT:
-		case INTEGER_TYPE_UINT:
-			return 32;
-
-		case INTEGER_TYPE_LONG:
-		case INTEGER_TYPE_ULONG:
-			return 64;
+		case INTEGER_TYPE_NATIVE:
+			return sizeof(long);
 
 		case INTEGER_TYPE_GMP:
-			return mpz_sizeinbase(*Integer_get_gmp(self), 2);
+			return mpz_sizeinbase(*GET_GMP(self), 2);
 	}
 }

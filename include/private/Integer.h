@@ -26,30 +26,12 @@
 #include <gmp.h>
 
 typedef enum IntegerType {
-	INTEGER_TYPE_BYTE,
-	INTEGER_TYPE_SHORT,
-	INTEGER_TYPE_INT,
-	INTEGER_TYPE_LONG,
-
-	INTEGER_TYPE_UBYTE,
-	INTEGER_TYPE_USHORT,
-	INTEGER_TYPE_UINT,
-	INTEGER_TYPE_ULONG,
-
+	INTEGER_TYPE_NATIVE,
 	INTEGER_TYPE_GMP
 } IntegerType;
 
 typedef union IntegerValue {
-	int8_t  s8;
-	int16_t s16;
-	int32_t s32;
-	int64_t s64;
-
-	uint8_t  u8;
-	uint16_t u16;
-	uint32_t u32;
-	uint64_t u64;
-
+	long   native;
 	mpz_t* gmp;
 } IntegerValue;
 
@@ -57,20 +39,16 @@ struct Integer {
 	Value descriptor;
 
 	IntegerType  type;
-	IntegerValue value;
+	IntegerValue as;
 };
 
 void Integer_destroy (Integer* self);
 
-#define IS_NATIVE(i)   (i->type != INTEGER_TYPE_GMP)
-#define IS_SIGNED(i)   (i->type >= INTEGER_TYPE_BYTE && i->type <= INTEGER_TYPE_LONG)
-#define IS_UNSIGNED(i) (i->type >= INTEGER_TYPE_UBYTE && i->type <= INTEGER_TYPE_ULONG)
+#define IS_NATIVE(i) ((i)->type == INTEGER_TYPE_NATIVE)
+#define IS_GMP(i)    ((i)->type == INTEGER_TYPE_GMP)
 
-inline int64_t Integer_get_native_signed (Integer* self);
-
-inline uint64_t Integer_get_native_unsigned (Integer* self);
-
-inline mpz_t* Integer_get_gmp (Integer* self);
+#define GET_GMP(i)    ((i)->as.gmp)
+#define GET_NATIVE(i) ((i)->as.native)
 
 inline int Integer_get_bits (Integer* self);
 
