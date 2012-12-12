@@ -93,13 +93,13 @@ Floating_destroy (Floating* self)
 }
 
 Floating*
-Floating_plus (Floating* self, Value* other)
+Floating_add (Floating* self, Value* other)
 {
 	return NIL;
 }
 
 Floating*
-Floating_minus (Floating* self, Value* other)
+Floating_sub (Floating* self, Value* other)
 {
 	return NIL;
 }

@@ -120,7 +120,7 @@ Integer_destroy (Integer* self)
 }
 
 Integer*
-Integer_negate (Integer* self)
+Integer_neg (Integer* self)
 {
 	assert(self);
 
@@ -141,7 +141,7 @@ Integer_negate (Integer* self)
 }
 
 Integer*
-Integer_absolute (Integer* self)
+Integer_abs (Integer* self)
 {
 	assert(self);
 
@@ -172,16 +172,16 @@ Integer_absolute (Integer* self)
 }
 
 Value*
-Integer_plus (Integer* self, Value* number)
+Integer_add (Integer* self, Value* number)
 {
 	assert(IS_INTEGER(number) || IS_FLOATING(number) || IS_RATIONAL(number));
 
 	if (IS_FLOATING(number)) {
-		return (Value*) Floating_plus((Floating*) number, (Value*) self);
+		return (Value*) Floating_add((Floating*) number, (Value*) self);
 	}
 
 	if (IS_RATIONAL(number)) {
-		return (Value*) Rational_plus((Rational*) number, (Value*) self);
+		return (Value*) Rational_add((Rational*) number, (Value*) self);
 	}
 
 	Integer* other  = (Integer*) number;
@@ -229,16 +229,16 @@ Integer_plus (Integer* self, Value* number)
 }
 
 Value*
-Integer_minus (Integer* self, Value* number)
+Integer_sub (Integer* self, Value* number)
 {
 	assert(IS_INTEGER(number) || IS_FLOATING(number) || IS_RATIONAL(number));
 
 	if (IS_FLOATING(number)) {
-		return (Value*) Floating_minus((Floating*) number, (Value*) self);
+		return (Value*) Floating_sub((Floating*) number, (Value*) self);
 	}
 
 	if (IS_RATIONAL(number)) {
-		return (Value*) Rational_minus((Rational*) number, (Value*) self);
+		return (Value*) Rational_sub((Rational*) number, (Value*) self);
 	}
 
 	Integer* other  = (Integer*) number;

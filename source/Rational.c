@@ -41,7 +41,13 @@ Rational_destroy (Rational* self)
 }
 
 Rational*
-Rational_plus (Rational* self, Value* other)
+Rational_add (Rational* self, Value* other)
+{
+	return NIL;
+}
+
+Rational*
+Rational_sub (Rational* self, Value* other)
 {
 	return NIL;
 }

@@ -30,14 +30,19 @@ Integer* Integer_new (Runtime* rt);
 )(self, X)
 
 Integer* Integer_set_native (Integer* self, long number);
+
 Integer* Integer_set_string (Integer* self, const char* string);
+
 Integer* Integer_set_string_with_base (Integer* self, const char* string, int base);
 
-Integer* Integer_negate (Integer* self);
-Integer* Integer_absolute (Integer* self);
+Integer* Integer_neg (Integer* self);
 
-Value* Integer_plus (Integer* self, Value* other);
-Value* Integer_minus (Integer* self, Value* other);
+Integer* Integer_abs (Integer* self);
+
+Value* Integer_add (Integer* self, Value* other);
+
+Value* Integer_sub (Integer* self, Value* other);
 
 bool Integer_is_odd (Integer* self);
+
 bool Integer_is_even (Integer* self);
