@@ -52,6 +52,40 @@ void Integer_destroy (Integer* self);
 #define GET_GMP(i)    ((i)->as.gmp)
 #define GET_NATIVE(i) ((i)->as.native)
 
+#define LONG_BIT (sizeof(long) * CHAR_BIT)
+
+#define ADD_OVERFLOW(s1, s2) ( \
+	(((s2) > 0) && ((s1) > (LONG_MAX - (s2)))) || \
+	(((s2) < 0) && ((s1) < (LONG_MIN - (s2)))) \
+)
+
+#define SUB_OVERFLOW(s1, s2) ( \
+	(((s2) > 0) && ((s1) < (LONG_MIN) + (s2))) || \
+	(((s2) < 0) && ((s1) > (LONG_MAX + (s2)))) \
+)
+
+#define MUL_OVERFLOW(s1, s2) ( \
+	((s1) > 0) ? \
+		(((s2) > 0) ? \
+		 ((s1) > (LONG_MAX / (s2))) : \
+		 ((s2) < (LONG_MIN / (s1)))) : \
+		(((s2) > 0) ? \
+		 ((s1) < (LONG_MIN / (s2))) : \
+		 (((s1) != 0) && ((s2) < (LONG_MAX / (s1))))) \
+)
+
+#define DIV_OVERFLOW(s1, s2) \
+	(((s1) == LONG_MIN) && ((s2) == -1))
+
+#define NEG_OVERFLOW(s1) \
+	((s1) == LONG_MIN)
+
+#define SHL_OVERFLOW(s1, s2) ( \
+	((s1) < 0) || ((s2) < 0) || \
+	((s2) >= LONG_BIT) || \
+	((s1) > (LONG_MAX >> (s2))) \
+)
+
 inline int Integer_get_bits (Integer* self);
 
 #endif
