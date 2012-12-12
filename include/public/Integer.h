@@ -33,7 +33,7 @@ Integer* Integer_set_native (Integer* self, long number);
 Integer* Integer_set_string (Integer* self, const char* string);
 Integer* Integer_set_string_with_base (Integer* self, const char* string, int base);
 
-Integer* Integer_negative (Integer* self);
+Integer* Integer_negate (Integer* self);
 
 Value* Integer_plus (Integer* self, Value* other);
 Value* Integer_minus (Integer* self, Value* other);

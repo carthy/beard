@@ -120,7 +120,7 @@ Integer_destroy (Integer* self)
 }
 
 Integer*
-Integer_negative (Integer* self)
+Integer_negate (Integer* self)
 {
 	assert(self);
 
