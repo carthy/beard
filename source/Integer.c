@@ -140,6 +140,37 @@ Integer_negate (Integer* self)
 	return result;
 }
 
+Integer*
+Integer_absolute (Integer* self)
+{
+	assert(self);
+
+	Integer* result = Integer_new(RUNTIME_FOR(self));
+
+	if (IS_NATIVE(self)) {
+		if (GET_NATIVE(self) == LONG_MIN) {
+			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+			mpz_set_si(*value, GET_NATIVE(self));
+			mpz_abs(*value, *value);
+
+			Integer_set_gmp(result, value);
+		}
+		else {
+			Integer_set_native(result, abs(GET_NATIVE(self)));
+		}
+	}
+	else {
+		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+		mpz_abs(*value, *GET_GMP(self));
+
+		Integer_set_gmp(result, value);
+	}
+
+	return result;
+}
+
 Value*
 Integer_plus (Integer* self, Value* number)
 {
