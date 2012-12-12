@@ -34,6 +34,38 @@ Rational_new (Runtime* rt)
 	return self;
 }
 
+Rational*
+Rational_set_native (Rational* self, long nominator, long denominator)
+{
+	assert(self);
+
+	mpq_set_si(*self->value, nominator, denominator);
+
+	return self;
+}
+
+Rational*
+Rational_set_string (Rational* self, const char* string)
+{
+	assert(self);
+	assert(string);
+
+	mpq_set_str(*self->value, string, 0);
+
+	return self;
+}
+
+Rational*
+Rational_set_string_with_base (Rational* self, const char* string, int base)
+{
+	assert(self);
+	assert(string);
+
+	mpq_set_str(*self->value, string, base);
+
+	return self;
+}
+
 void
 Rational_destroy (Rational* self)
 {

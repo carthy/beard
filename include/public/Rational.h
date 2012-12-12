@@ -20,6 +20,12 @@ typedef struct Rational Rational;
 
 Rational* Rational_new (Runtime* rt);
 
+Rational* Rational_set_native (Rational* self, long nominator, long denominator);
+
+Rational* Rational_set_string (Rational* self, const char* string);
+
+Rational* Rational_set_string_with_base (Rational* self, const char* string, int base);
+
 Rational* Rational_add (Rational* self, Value* other);
 
 Rational* Rational_sub (Rational* self, Value* other);
