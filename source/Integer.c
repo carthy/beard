@@ -119,6 +119,27 @@ Integer_destroy (Integer* self)
 	}
 }
 
+Integer*
+Integer_negative (Integer* self)
+{
+	assert(self);
+
+	Integer* result = Integer_new(RUNTIME_FOR(self));
+
+	if (IS_NATIVE(self)) {
+		Integer_set_native(result, -GET_NATIVE(self));
+	}
+	else {
+		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+		mpz_neg(*value, *GET_GMP(self));
+
+		Integer_set_gmp(result, value);
+	}
+
+	return result;
+}
+
 Value*
 Integer_plus (Integer* self, Value* number)
 {
