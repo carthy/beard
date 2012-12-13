@@ -32,12 +32,12 @@ end:
 }
 
 void
-test_integer_plus (void* data)
+test_integer_add (void* data)
 {
-	Integer* num  = Integer_set(Integer_new(runtime), (uint8_t) 250);
+	Integer* num  = Integer_set(Integer_new(runtime), 250L);
 	Integer* num2 = Integer_set(Integer_new(runtime), "10");
 
-	Integer* result = (Integer*) Integer_plus(num, (Value*) num2);
+	Integer* result = (Integer*) Integer_add(num, (Value*) num2);
 
 	tt_assert(IS_INTEGER(result));
 	tt_assert(IS_NATIVE(result));
@@ -78,7 +78,7 @@ end:
 
 struct testcase_t integer_tests[] = {
 	{ "new", test_integer_new },
-	{ "plus", test_integer_plus },
+	{ "add", test_integer_add },
 	{ "is_odd", test_integer_is_odd },
 	{ "is_even", test_integer_is_even },
 
