@@ -127,7 +127,17 @@ Integer_neg (Integer* self)
 	Integer* result = Integer_new(RUNTIME_FOR(self));
 
 	if (IS_NATIVE(self)) {
-		Integer_set_native(result, -GET_NATIVE(self));
+		if (NEG_OVERFLOW(GET_NATIVE(self))) {
+			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+			mpz_set_si(*value, GET_NATIVE(self));
+			mpz_neg(*value, *value);
+
+			Integer_set_gmp(result, value);
+		}
+		else {
+			Integer_set_native(result, -GET_NATIVE(self));
+		}
 	}
 	else {
 		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
