@@ -76,9 +76,23 @@ end:
 	Integer_destroy(num2);
 }
 
+void
+test_integer_neg (void* data)
+{
+	Integer* num = Integer_set(Integer_new(runtime), LONG_MIN);
+	Integer* num2 = Integer_neg(num);
+
+	tt_assert(IS_GMP(num2));
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+}
+
 struct testcase_t integer_tests[] = {
 	{ "new", test_integer_new },
 	{ "add", test_integer_add },
+	{ "neg", test_integer_neg },
 	{ "is_odd", test_integer_is_odd },
 	{ "is_even", test_integer_is_even },
 
