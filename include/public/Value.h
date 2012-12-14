@@ -36,9 +36,9 @@ typedef enum ValueType {
 	VALUE_TYPE_FUNCTION
 } ValueType;
 
-#define NIL   ((void*) 0)
-#define TRUE  ((void*) 1)
-#define FALSE ((void*) 2)
+#define NIL   ((Value*) 0)
+#define TRUE  ((Value*) 1)
+#define FALSE ((Value*) 2)
 
 bool is_nil      (Value* self);
 bool is_false    (Value* self);
