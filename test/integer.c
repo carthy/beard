@@ -62,6 +62,24 @@ end:
 }
 
 void
+test_integer_sub (void* data)
+{
+	Integer* num  = Integer_set(Integer_new(runtime), LONG_MAX);
+	Integer* num2 = Integer_set(Integer_new(runtime), -2);
+	Integer* num3 = (Integer*) Integer_sub(num, (Value*) num2); Integer_set(num2, 2);
+	Integer* num4 = (Integer*) Integer_add(num, (Value*) num2);
+
+	tt_assert(IS_GMP(num3));
+	tt_assert(Integer_eq(num3, (Value*) num4));
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+	Integer_destroy(num3);
+	Integer_destroy(num4);
+}
+
+void
 test_integer_is_odd (void* data)
 {
 	Integer* num  = Integer_set(Integer_new(runtime), 32L);
@@ -106,6 +124,7 @@ struct testcase_t integer_tests[] = {
 	{ "new", test_integer_new },
 	{  "eq", test_integer_eq  },
 	{ "add", test_integer_add },
+	{ "sub", test_integer_sub },
 	{ "neg", test_integer_neg },
 	{ "is_odd", test_integer_is_odd },
 	{ "is_even", test_integer_is_even },
