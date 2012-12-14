@@ -21,11 +21,9 @@
 
 #include <public/Value.h>
 #include <public/Runtime.h>
-#include <public/Map.h>
 
 struct Value {
 	ValueType type;
-	Map*      meta;
 
 	struct Runtime* runtime;
 };

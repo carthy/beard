@@ -154,7 +154,6 @@ GC_allocate (GC* self, ValueType type)
 	}
 
 	value->type    = type;
-	value->meta    = NIL;
 	value->runtime = self->runtime;
 
 	return value;
