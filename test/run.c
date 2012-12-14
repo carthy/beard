@@ -34,6 +34,7 @@ static Runtime* runtime;
 #include "free_list.c"
 #include "gc.c"
 #include "integer.c"
+#include "floating.c"
 #include "string.c"
 #include "tuple.c"
 #include "vector.c"
@@ -44,6 +45,7 @@ struct testgroup_t groups[] = {
 	{ "free_list/", free_list_tests },
 	{ "gc/", gc_tests },
 	{ "integer/", integer_tests },
+	{ "floating/", floating_tests },
 	{ "string/", string_tests },
 	{ "tuple/", tuple_tests },
 	{ "vector/", vector_tests },
