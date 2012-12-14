@@ -240,7 +240,7 @@ Integer_add (Integer* self, Value* number)
 				mpz_add_ui(*value, *value, INTEGER_GET_NATIVE(other));
 			}
 			else {
-				mpz_sub_ui(*value, *value, INTEGER_GET_NATIVE(other));
+				mpz_sub_ui(*value, *value, -INTEGER_GET_NATIVE(other));
 			}
 
 			Integer_set_gmp(result, value);
