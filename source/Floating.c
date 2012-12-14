@@ -162,6 +162,12 @@ Floating_destroy (Floating* self)
 	}
 }
 
+bool
+Floating_eq (Floating* self, Value* other)
+{
+	return NIL;
+}
+
 Floating*
 Floating_add (Floating* self, Value* other)
 {
