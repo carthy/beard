@@ -103,6 +103,18 @@ is_function (Value* self)
 	return IS_FUNCTION(self);
 }
 
+bool
+is_falsy (Value* self)
+{
+	return IS_FALSY(self);
+}
+
+bool
+is_truthy (Value* self)
+{
+	return IS_TRUTHY(self);
+}
+
 ValueType
 type_of (Value* self)
 {

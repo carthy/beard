@@ -55,4 +55,7 @@ bool is_vector   (Value* self);
 bool is_map      (Value* self);
 bool is_function (Value* self);
 
+bool is_falsy (Value* self);
+bool is_truthy (Value* self);
+
 ValueType type_of (Value* self);

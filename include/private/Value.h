@@ -29,9 +29,9 @@ struct Value {
 };
 
 #define IS_NIL(v)      (((Value*) v) == (Value*) 0)
-#define IS_FALSE(v)    (((Value*) v) == (Value*) 2 || IS_NIL(v))
-#define IS_TRUE(v)     (!IS_FALSE(v))
-#define IS_BOOLEAN(v)  (((Value*) v) == (Value*) 1 || ((Value*) v) == (Value*) 2)
+#define IS_TRUE(v)     (((Value*) v) == (Value*) 1)
+#define IS_FALSE(v)    (((Value*) v) == (Value*) 2)
+#define IS_BOOLEAN(v)  (IS_TRUE(v) || IS_FALSE(v))
 #define IS_INTEGER(v)  (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_INTEGER))
 #define IS_FLOATING(v) (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_FLOATING))
 #define IS_RATIONAL(v) (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_RATIONAL))
@@ -42,5 +42,8 @@ struct Value {
 #define IS_VECTOR(v)   (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_VECTOR))
 #define IS_MAP(v)      (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_MAP))
 #define IS_FUNCTION(v) (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_FUNCTION))
+
+#define IS_FALSY(v)  (IS_NIL(v) || IS_FALSE(v))
+#define IS_TRUTHY(v) (!IS_FALSY(v))
 
 #endif
