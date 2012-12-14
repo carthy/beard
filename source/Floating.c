@@ -174,6 +174,12 @@ Floating_lt (Floating* self, Value* other)
 	return NIL;
 }
 
+bool
+Floating_gt (Floating* self, Value* other)
+{
+	return NIL;
+}
+
 Floating*
 Floating_add (Floating* self, Value* other)
 {

@@ -50,6 +50,8 @@ bool Floating_eq (Floating* self, Value* other);
 
 bool Floating_lt (Floating* self, Value* other);
 
+bool Floating_gt (Floating* self, Value* other);
+
 Floating* Floating_add (Floating* self, Value* other);
 
 Floating* Floating_sub (Floating* self, Value* other);
