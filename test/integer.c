@@ -58,6 +58,19 @@ end:
 }
 
 void
+test_integer_gt (void* data)
+{
+	Integer* num1 = Integer_set(Integer_new(runtime), LONG_MAX);
+	Integer* num2 = Integer_set(Integer_new(runtime), 0L);
+
+	tt_assert(Integer_gt(num1, (Value*) num2));
+
+end:
+	Integer_destroy(num1);
+	Integer_destroy(num2);
+}
+
+void
 test_integer_add (void* data)
 {
 	Integer* num  = Integer_set(Integer_new(runtime), 250L);
@@ -137,6 +150,7 @@ struct testcase_t integer_tests[] = {
 	{ "new", test_integer_new },
 	{  "eq", test_integer_eq  },
 	{  "lt", test_integer_lt  },
+	{  "gt", test_integer_gt  },
 	{ "add", test_integer_add },
 	{ "sub", test_integer_sub },
 	{ "neg", test_integer_neg },
