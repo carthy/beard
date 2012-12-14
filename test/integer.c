@@ -24,8 +24,8 @@ test_integer_new (void* data)
 	Integer* num = Integer_new(runtime);
 
 	tt_assert(num);
-	tt_assert(IS_NATIVE(num));
-	tt_assert(GET_NATIVE(num) == 0);
+	tt_assert(INTEGER_IS_NATIVE(num));
+	tt_assert(INTEGER_GET_NATIVE(num) == 0);
 
 end:
 	Integer_destroy(num);
@@ -40,8 +40,8 @@ test_integer_add (void* data)
 	Integer* result = (Integer*) Integer_add(num, (Value*) num2);
 
 	tt_assert(IS_INTEGER(result));
-	tt_assert(IS_NATIVE(result));
-	tt_assert(GET_NATIVE(result) == 260);
+	tt_assert(INTEGER_IS_NATIVE(result));
+	tt_assert(INTEGER_GET_NATIVE(result) == 260);
 
 end:
 	Integer_destroy(num);
@@ -82,7 +82,7 @@ test_integer_neg (void* data)
 	Integer* num = Integer_set(Integer_new(runtime), LONG_MIN);
 	Integer* num2 = Integer_neg(num);
 
-	tt_assert(IS_GMP(num2));
+	tt_assert(INTEGER_IS_GMP(num2));
 
 end:
 	Integer_destroy(num);
