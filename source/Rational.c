@@ -72,6 +72,12 @@ Rational_destroy (Rational* self)
 	GC_SAVE_RATIONAL(RUNTIME_FOR(self), self->value);
 }
 
+bool
+Rational_eq (Rational* self, Value* other)
+{
+	return NIL;
+}
+
 Rational*
 Rational_add (Rational* self, Value* other)
 {
