@@ -214,6 +214,39 @@ Integer_eq (Integer* self, Value* number)
 	}
 }
 
+bool
+Integer_lt (Integer* self, Value* number)
+{
+	assert(IS_INTEGER(number) || IS_FLOATING(number) || IS_RATIONAL(number));
+
+	if (IS_FLOATING(number)) {
+		return Floating_lt((Floating*) number, (Value*) self);
+	}
+
+	if (IS_RATIONAL(number)) {
+		return Rational_lt((Rational*) number, (Value*) self);
+	}
+
+	Integer* other = (Integer*) number;
+
+	if (IS_NATIVE(self)) {
+		if (IS_NATIVE(other)) {
+			return GET_NATIVE(self) < GET_NATIVE(other);
+		}
+		else {
+			return mpz_cmp_si(*GET_GMP(other), GET_NATIVE(self)) < 0;
+		}
+	}
+	else {
+		if (IS_NATIVE(other)) {
+			return mpz_cmp_si(*GET_GMP(self), GET_NATIVE(other)) < 0;
+		}
+		else {
+			return mpz_cmp(*GET_GMP(self), *GET_GMP(other)) < 0;
+		}
+	}
+}
+
 Value*
 Integer_add (Integer* self, Value* number)
 {

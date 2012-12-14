@@ -44,6 +44,8 @@ Integer* Integer_abs (Integer* self);
 
 bool Integer_eq (Integer* self, Value* other);
 
+bool Integer_lt (Integer* self, Value* other);
+
 Value* Integer_add (Integer* self, Value* other);
 
 Value* Integer_sub (Integer* self, Value* other);
