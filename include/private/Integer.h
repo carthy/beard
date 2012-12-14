@@ -46,11 +46,11 @@ Integer* Integer_set_gmp (Integer* self, mpz_t* gmp);
 
 void Integer_destroy (Integer* self);
 
-#define IS_NATIVE(i) ((i)->type == INTEGER_TYPE_NATIVE)
-#define IS_GMP(i)    ((i)->type == INTEGER_TYPE_GMP)
+#define INTEGER_IS_NATIVE(i) ((i)->type == INTEGER_TYPE_NATIVE)
+#define INTEGER_IS_GMP(i)    ((i)->type == INTEGER_TYPE_GMP)
 
-#define GET_GMP(i)    ((i)->as.gmp)
-#define GET_NATIVE(i) ((i)->as.native)
+#define INTEGER_GET_GMP(i)    ((i)->as.gmp)
+#define INTEGER_GET_NATIVE(i) ((i)->as.native)
 
 #define LONG_BIT (sizeof(long) * CHAR_BIT)
 

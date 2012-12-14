@@ -38,8 +38,8 @@ Integer_set_native (Integer* self, long value)
 {
 	assert(self);
 
-	if (IS_GMP(self) && GET_GMP(self)) {
-		GC_SAVE_INTEGER(RUNTIME_FOR(self), GET_GMP(self));
+	if (INTEGER_IS_GMP(self) && INTEGER_GET_GMP(self)) {
+		GC_SAVE_INTEGER(RUNTIME_FOR(self), INTEGER_GET_GMP(self));
 	}
 
 	self->type      = INTEGER_TYPE_NATIVE;
@@ -56,12 +56,12 @@ Integer_set_string (Integer* self, const char* string)
 	long value = strtol(string, NULL, 10);
 
 	if ((value == LONG_MAX || value == LONG_MIN) && errno == ERANGE) {
-		if (IS_NATIVE(self)) {
+		if (INTEGER_IS_NATIVE(self)) {
 			self->as.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
 		}
 
 		self->type = INTEGER_TYPE_GMP;
-		mpz_set_str(*GET_GMP(self), string, 0);
+		mpz_set_str(*INTEGER_GET_GMP(self), string, 0);
 	}
 	else {
 		self->type      = INTEGER_TYPE_NATIVE;
@@ -79,12 +79,12 @@ Integer_set_string_with_base (Integer* self, const char* string, int base)
 	long value = strtol(string, NULL, base);
 
 	if ((value == LONG_MAX || value == LONG_MIN) && errno == ERANGE) {
-		if (IS_NATIVE(self)) {
+		if (INTEGER_IS_NATIVE(self)) {
 			self->as.gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
 		}
 
 		self->type = INTEGER_TYPE_GMP;
-		mpz_set_str(*GET_GMP(self), string, base);
+		mpz_set_str(*INTEGER_GET_GMP(self), string, base);
 	}
 	else {
 		self->type      = INTEGER_TYPE_NATIVE;
@@ -97,8 +97,8 @@ Integer_set_string_with_base (Integer* self, const char* string, int base)
 Integer*
 Integer_set_gmp (Integer* self, mpz_t* gmp)
 {
-	if (IS_GMP(self) && GET_GMP(self)) {
-		mpz_set(*GET_GMP(self), *gmp);
+	if (INTEGER_IS_GMP(self) && INTEGER_GET_GMP(self)) {
+		mpz_set(*INTEGER_GET_GMP(self), *gmp);
 
 		GC_SAVE_INTEGER(RUNTIME_FOR(self), gmp);
 	}
@@ -114,8 +114,8 @@ Integer_set_gmp (Integer* self, mpz_t* gmp)
 void
 Integer_destroy (Integer* self)
 {
-	if (IS_GMP(self) && GET_GMP(self)) {
-		GC_SAVE_INTEGER(RUNTIME_FOR(self), GET_GMP(self));
+	if (INTEGER_IS_GMP(self) && INTEGER_GET_GMP(self)) {
+		GC_SAVE_INTEGER(RUNTIME_FOR(self), INTEGER_GET_GMP(self));
 	}
 }
 
@@ -126,23 +126,23 @@ Integer_neg (Integer* self)
 
 	Integer* result = Integer_new(RUNTIME_FOR(self));
 
-	if (IS_NATIVE(self)) {
-		if (NEG_OVERFLOW(GET_NATIVE(self))) {
+	if (INTEGER_IS_NATIVE(self)) {
+		if (NEG_OVERFLOW(INTEGER_GET_NATIVE(self))) {
 			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-			mpz_set_si(*value, GET_NATIVE(self));
+			mpz_set_si(*value, INTEGER_GET_NATIVE(self));
 			mpz_neg(*value, *value);
 
 			Integer_set_gmp(result, value);
 		}
 		else {
-			Integer_set_native(result, -GET_NATIVE(self));
+			Integer_set_native(result, -INTEGER_GET_NATIVE(self));
 		}
 	}
 	else {
 		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-		mpz_neg(*value, *GET_GMP(self));
+		mpz_neg(*value, *INTEGER_GET_GMP(self));
 
 		Integer_set_gmp(result, value);
 	}
@@ -157,23 +157,23 @@ Integer_abs (Integer* self)
 
 	Integer* result = Integer_new(RUNTIME_FOR(self));
 
-	if (IS_NATIVE(self)) {
-		if (GET_NATIVE(self) == LONG_MIN) {
+	if (INTEGER_IS_NATIVE(self)) {
+		if (INTEGER_GET_NATIVE(self) == LONG_MIN) {
 			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-			mpz_set_si(*value, GET_NATIVE(self));
+			mpz_set_si(*value, INTEGER_GET_NATIVE(self));
 			mpz_abs(*value, *value);
 
 			Integer_set_gmp(result, value);
 		}
 		else {
-			Integer_set_native(result, abs(GET_NATIVE(self)));
+			Integer_set_native(result, abs(INTEGER_GET_NATIVE(self)));
 		}
 	}
 	else {
 		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-		mpz_abs(*value, *GET_GMP(self));
+		mpz_abs(*value, *INTEGER_GET_GMP(self));
 
 		Integer_set_gmp(result, value);
 	}
@@ -197,40 +197,39 @@ Integer_add (Integer* self, Value* number)
 	Integer* other  = (Integer*) number;
 	Integer* result = (Integer*) Integer_new(RUNTIME_FOR(self));
 
-	if (IS_NATIVE(self) && IS_NATIVE(other)) {
-		if ((GET_NATIVE(self) >= 0 && GET_NATIVE(self) >= 0 && (LONG_MAX - GET_NATIVE(self)) < GET_NATIVE(other)) ||
-				(GET_NATIVE(self) < 0 && GET_NATIVE(self) < 0 && (GET_NATIVE(self) < (LONG_MIN - GET_NATIVE(other))))) {
+	if (INTEGER_IS_NATIVE(self) && INTEGER_IS_NATIVE(other)) {
+		if (ADD_OVERFLOW(INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other))) {
 			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-			mpz_set_si(*value, GET_NATIVE(self));
+			mpz_set_si(*value, INTEGER_GET_NATIVE(self));
 
-			if (GET_NATIVE(other) >= 0) {
-				mpz_add_ui(*value, *value, GET_NATIVE(other));
+			if (INTEGER_GET_NATIVE(other) >= 0) {
+				mpz_add_ui(*value, *value, INTEGER_GET_NATIVE(other));
 			}
 			else {
-				mpz_sub_ui(*value, *value, GET_NATIVE(other));
+				mpz_sub_ui(*value, *value, INTEGER_GET_NATIVE(other));
 			}
 
 			Integer_set_gmp(result, value);
 		}
 		else {
-			Integer_set_native(result, GET_NATIVE(self) + GET_NATIVE(other));
+			Integer_set_native(result, INTEGER_GET_NATIVE(self) + INTEGER_GET_NATIVE(other));
 		}
 	}
-	else if (IS_GMP(self) && IS_GMP(other)) {
+	else if (INTEGER_IS_GMP(self) && INTEGER_IS_GMP(other)) {
 		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-		mpz_add(*value, *GET_GMP(self), *GET_GMP(other));
+		mpz_add(*value, *INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other));
 
 		Integer_set_gmp(result, value);
 	}
 	else {
-		Integer* a     = IS_GMP(self) ? self  : other;
-		Integer* b     = IS_GMP(self) ? other : self;
+		Integer* a     = INTEGER_IS_GMP(self) ? self  : other;
+		Integer* b     = INTEGER_IS_GMP(self) ? other : self;
 		mpz_t*   value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-		mpz_set_si(*value, GET_NATIVE(b));
-		mpz_add(*value, *GET_GMP(a), *value);
+		mpz_set_si(*value, INTEGER_GET_NATIVE(b));
+		mpz_add(*value, *INTEGER_GET_GMP(a), *value);
 
 		Integer_set_gmp(result, value);
 	}
@@ -254,40 +253,39 @@ Integer_sub (Integer* self, Value* number)
 	Integer* other  = (Integer*) number;
 	Integer* result = (Integer*) Integer_new(RUNTIME_FOR(self));
 
-	if (IS_NATIVE(self) && IS_NATIVE(other)) {
-		if ((GET_NATIVE(self) >= 0 && GET_NATIVE(self) >= 0 && (LONG_MAX - GET_NATIVE(self)) < GET_NATIVE(other)) ||
-				(GET_NATIVE(self) < 0 && GET_NATIVE(self) < 0 && (GET_NATIVE(self) < (LONG_MIN - GET_NATIVE(other))))) {
+	if (INTEGER_IS_NATIVE(self) && INTEGER_IS_NATIVE(other)) {
+		if (SUB_OVERFLOW(INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other))) {
 			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-			mpz_set_si(*value, GET_NATIVE(self));
+			mpz_set_si(*value, INTEGER_GET_NATIVE(self));
 
-			if (GET_NATIVE(other) >= 0) {
-				mpz_sub_ui(*value, *value, GET_NATIVE(other));
+			if (INTEGER_GET_NATIVE(other) >= 0) {
+				mpz_sub_ui(*value, *value, INTEGER_GET_NATIVE(other));
 			}
 			else {
-				mpz_add_ui(*value, *value, GET_NATIVE(other));
+				mpz_add_ui(*value, *value, INTEGER_GET_NATIVE(other));
 			}
 
 			Integer_set_gmp(result, value);
 		}
 		else {
-			Integer_set_native(result, GET_NATIVE(self) - GET_NATIVE(other));
+			Integer_set_native(result, INTEGER_GET_NATIVE(self) - INTEGER_GET_NATIVE(other));
 		}
 	}
-	else if (IS_GMP(self) && IS_GMP(other)) {
+	else if (INTEGER_IS_GMP(self) && INTEGER_IS_GMP(other)) {
 		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-		mpz_sub(*value, *GET_GMP(self), *GET_GMP(other));
+		mpz_sub(*value, *INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other));
 
 		Integer_set_gmp(result, value);
 	}
 	else {
-		Integer* a     = IS_GMP(self) ? self  : other;
-		Integer* b     = IS_GMP(self) ? other : self;
+		Integer* a     = INTEGER_IS_GMP(self) ? self  : other;
+		Integer* b     = INTEGER_IS_GMP(self) ? other : self;
 		mpz_t*   value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 
-		mpz_set_si(*value, GET_NATIVE(b));
-		mpz_sub(*value, *GET_GMP(a), *value);
+		mpz_set_si(*value, INTEGER_GET_NATIVE(b));
+		mpz_sub(*value, *INTEGER_GET_GMP(a), *value);
 
 		Integer_set_gmp(result, value);
 	}
@@ -298,22 +296,22 @@ Integer_sub (Integer* self, Value* number)
 bool
 Integer_is_odd (Integer* self)
 {
-	if (IS_NATIVE(self)) {
-		return (GET_NATIVE(self) & 1) != 0;
+	if (INTEGER_IS_NATIVE(self)) {
+		return (INTEGER_GET_NATIVE(self) & 1) != 0;
 	}
 	else {
-		return mpz_odd_p(*GET_GMP(self));
+		return mpz_odd_p(*INTEGER_GET_GMP(self));
 	}
 }
 
 bool
 Integer_is_even (Integer* self)
 {
-	if (IS_NATIVE(self)) {
-		return (GET_NATIVE(self) & 1) == 0;
+	if (INTEGER_IS_NATIVE(self)) {
+		return (INTEGER_GET_NATIVE(self) & 1) == 0;
 	}
 	else {
-		return mpz_even_p(*GET_GMP(self));
+		return mpz_even_p(*INTEGER_GET_GMP(self));
 	}
 }
 
@@ -325,6 +323,6 @@ Integer_get_bits (Integer* self)
 			return sizeof(long);
 
 		case INTEGER_TYPE_GMP:
-			return mpz_sizeinbase(*GET_GMP(self), 2);
+			return mpz_sizeinbase(*INTEGER_GET_GMP(self), 2);
 	}
 }
