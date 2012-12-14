@@ -31,7 +31,7 @@ end:;
 void
 test_value_is_false (void* data)
 {
-	tt_assert(is_false(NIL));
+	tt_assert(!is_false(NIL));
 	tt_assert(is_false(FALSE));
 	tt_assert(!is_false(TRUE));
 
@@ -44,6 +44,26 @@ test_value_is_true (void* data)
 	tt_assert(is_true(TRUE));
 	tt_assert(!is_true(FALSE));
 	tt_assert(!is_true(NIL));
+
+end:;
+}
+
+void
+test_value_is_falsy (void* data)
+{
+	tt_assert(!is_falsy(TRUE));
+	tt_assert(is_falsy(FALSE));
+	tt_assert(is_falsy(NIL));
+
+end:;
+}
+
+void
+test_value_is_truthy (void* data)
+{
+	tt_assert(is_truthy(TRUE));
+	tt_assert(!is_truthy(FALSE));
+	tt_assert(!is_truthy(NIL));
 
 end:;
 }
@@ -62,6 +82,8 @@ struct testcase_t value_tests[] = {
 	{ "is_nil", test_value_is_nil },
 	{ "is_false", test_value_is_false },
 	{ "is_true", test_value_is_true },
+	{ "is_falsy", test_value_is_falsy },
+	{ "is_truthy", test_value_is_truthy },
 	{ "type_of", test_value_type_of },
 
 	END_OF_TESTCASES
