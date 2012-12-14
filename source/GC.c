@@ -28,6 +28,7 @@
 #include <private/List.h>
 #include <private/Vector.h>
 #include <private/Map.h>
+#include <private/Function.h>
 
 static void*
 _mpz_constructor (void)
@@ -150,6 +151,10 @@ GC_allocate (GC* self, ValueType type)
 
 		case VALUE_TYPE_MAP:
 			value = malloc(sizeof(Map));
+			break;
+
+		case VALUE_TYPE_FUNCTION:
+			value = malloc(sizeof(Function));
 			break;
 	}
 

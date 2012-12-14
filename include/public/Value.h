@@ -31,7 +31,9 @@ typedef enum ValueType {
 	VALUE_TYPE_TUPLE,
 	VALUE_TYPE_LIST,
 	VALUE_TYPE_VECTOR,
-	VALUE_TYPE_MAP
+	VALUE_TYPE_MAP,
+
+	VALUE_TYPE_FUNCTION
 } ValueType;
 
 #define NIL   ((void*) 0)
@@ -51,5 +53,6 @@ bool is_tuple    (Value* self);
 bool is_list     (Value* self);
 bool is_vector   (Value* self);
 bool is_map      (Value* self);
+bool is_function (Value* self);
 
 ValueType type_of (Value* self);

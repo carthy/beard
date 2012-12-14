@@ -41,5 +41,6 @@ struct Value {
 #define IS_LIST(v)     (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_LIST))
 #define IS_VECTOR(v)   (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_VECTOR))
 #define IS_MAP(v)      (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_MAP))
+#define IS_FUNCTION(v) (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_FUNCTION))
 
 #endif

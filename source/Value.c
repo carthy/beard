@@ -97,6 +97,12 @@ is_map (Value* self)
 	return IS_MAP(self);
 }
 
+bool
+is_function (Value* self)
+{
+	return IS_FUNCTION(self);
+}
+
 ValueType
 type_of (Value* self)
 {
