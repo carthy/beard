@@ -196,20 +196,20 @@ Integer_eq (Integer* self, Value* number)
 
 	Integer* other = (Integer*) number;
 
-	if (IS_NATIVE(self)) {
-		if (IS_NATIVE(other)) {
-			return GET_NATIVE(self) == GET_NATIVE(other);
+	if (INTEGER_IS_NATIVE(self)) {
+		if (INTEGER_IS_NATIVE(other)) {
+			return INTEGER_GET_NATIVE(self) == INTEGER_GET_NATIVE(other);
 		}
 		else {
-			return mpz_cmp_si(*GET_GMP(other), GET_NATIVE(self)) == 0;
+			return mpz_cmp_si(*INTEGER_GET_GMP(other), INTEGER_GET_NATIVE(self)) == 0;
 		}
 	}
 	else {
-		if (IS_NATIVE(other)) {
-			return mpz_cmp_si(*GET_GMP(self), GET_NATIVE(other)) == 0;
+		if (INTEGER_IS_NATIVE(other)) {
+			return mpz_cmp_si(*INTEGER_GET_GMP(self), INTEGER_GET_NATIVE(other)) == 0;
 		}
 		else {
-			return mpz_cmp(*GET_GMP(self), *GET_GMP(other)) == 0;
+			return mpz_cmp(*INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other)) == 0;
 		}
 	}
 }
@@ -229,20 +229,20 @@ Integer_lt (Integer* self, Value* number)
 
 	Integer* other = (Integer*) number;
 
-	if (IS_NATIVE(self)) {
-		if (IS_NATIVE(other)) {
-			return GET_NATIVE(self) < GET_NATIVE(other);
+	if (INTEGER_IS_NATIVE(self)) {
+		if (INTEGER_IS_NATIVE(other)) {
+			return INTEGER_GET_NATIVE(self) < INTEGER_GET_NATIVE(other);
 		}
 		else {
-			return mpz_cmp_si(*GET_GMP(other), GET_NATIVE(self)) < 0;
+			return mpz_cmp_si(*INTEGER_GET_GMP(other), INTEGER_GET_NATIVE(self)) < 0;
 		}
 	}
 	else {
-		if (IS_NATIVE(other)) {
-			return mpz_cmp_si(*GET_GMP(self), GET_NATIVE(other)) < 0;
+		if (INTEGER_IS_NATIVE(other)) {
+			return mpz_cmp_si(*INTEGER_GET_GMP(self), INTEGER_GET_NATIVE(other)) < 0;
 		}
 		else {
-			return mpz_cmp(*GET_GMP(self), *GET_GMP(other)) < 0;
+			return mpz_cmp(*INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other)) < 0;
 		}
 	}
 }
@@ -262,20 +262,20 @@ Integer_gt (Integer* self, Value* number)
 
 	Integer* other = (Integer*) number;
 
-	if (IS_NATIVE(self)) {
-		if (IS_NATIVE(other)) {
-			return GET_NATIVE(self) > GET_NATIVE(other);
+	if (INTEGER_IS_NATIVE(self)) {
+		if (INTEGER_IS_NATIVE(other)) {
+			return INTEGER_GET_NATIVE(self) > INTEGER_GET_NATIVE(other);
 		}
 		else {
-			return mpz_cmp_si(*GET_GMP(other), GET_NATIVE(self)) > 0;
+			return mpz_cmp_si(*INTEGER_GET_GMP(other), INTEGER_GET_NATIVE(self)) > 0;
 		}
 	}
 	else {
-		if (IS_NATIVE(other)) {
-			return mpz_cmp_si(*GET_GMP(self), GET_NATIVE(other)) > 0;
+		if (INTEGER_IS_NATIVE(other)) {
+			return mpz_cmp_si(*INTEGER_GET_GMP(self), INTEGER_GET_NATIVE(other)) > 0;
 		}
 		else {
-			return mpz_cmp(*GET_GMP(self), *GET_GMP(other)) > 0;
+			return mpz_cmp(*INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other)) > 0;
 		}
 	}
 }
