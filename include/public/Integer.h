@@ -26,6 +26,9 @@ Integer* Integer_new (Runtime* rt);
 	int:   Integer_set_native, \
 	long:  Integer_set_native, \
 \
+	unsigned char:  Integer_set_native, \
+	unsigned short: Integer_set_native, \
+\
 	default: Integer_set_string \
 )(self, X)
 
