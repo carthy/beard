@@ -84,6 +84,12 @@ Rational_lt (Rational* self, Value* other)
 	return NIL;
 }
 
+bool
+Rational_gt (Rational* self, Value* other)
+{
+	return NIL;
+}
+
 Rational*
 Rational_add (Rational* self, Value* other)
 {

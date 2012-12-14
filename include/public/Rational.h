@@ -30,6 +30,8 @@ bool Rational_eq (Rational* self, Value* other);
 
 bool Rational_lt (Rational* self, Value* other);
 
+bool Rational_gt (Rational* self, Value* other);
+
 Rational* Rational_add (Rational* self, Value* other);
 
 Rational* Rational_sub (Rational* self, Value* other);
