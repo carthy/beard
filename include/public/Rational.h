@@ -28,6 +28,8 @@ Rational* Rational_set_string_with_base (Rational* self, const char* string, int
 
 bool Rational_eq (Rational* self, Value* other);
 
+bool Rational_lt (Rational* self, Value* other);
+
 Rational* Rational_add (Rational* self, Value* other);
 
 Rational* Rational_sub (Rational* self, Value* other);
