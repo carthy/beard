@@ -95,7 +95,7 @@ test_integer_sub (void* data)
 	Integer* num3 = (Integer*) Integer_sub(num, (Value*) num2); Integer_set(num2, 2);
 	Integer* num4 = (Integer*) Integer_add(num, (Value*) num2);
 
-	tt_assert(IS_GMP(num3));
+	tt_assert(INTEGER_IS_GMP(num3));
 	tt_assert(Integer_eq(num3, (Value*) num4));
 
 end:
