@@ -182,6 +182,12 @@ Rational_mul (Rational* self, Value* other)
 }
 
 Rational*
+Rational_div (Rational* self, Value* other)
+{
+	return NIL;
+}
+
+Rational*
 Rational_minus (Rational* self, Value* other)
 {
 	return NIL;

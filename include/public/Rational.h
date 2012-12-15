@@ -69,3 +69,5 @@ Rational* Rational_add (Rational* self, Value* other);
 Rational* Rational_sub (Rational* self, Value* other);
 
 Rational* Rational_mul (Rational* self, Value* other);
+
+Rational* Rational_div (Rational* self, Value* other);
