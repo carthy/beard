@@ -17,6 +17,7 @@
  */
 
 #include <private/Integer.h>
+#include <private/Rational.h>
 
 void
 test_integer_new (void* data)
@@ -125,6 +126,26 @@ end:
 }
 
 void
+test_integer_div(void* data)
+{
+	Integer*  num  = Integer_set(Integer_new(runtime), 1);
+	Integer*  num2 = Integer_set(Integer_new(runtime), 2);
+	Rational* num3 = (Rational*) Integer_div(num, (Value*) num2);
+	Rational* num4 = Rational_set(Rational_new(runtime), 1L, 2L);
+
+	tt_assert(IS_RATIONAL(num3));
+	tt_assert(IS_RATIONAL(num4));
+
+	/*tt_assert(Rational_eq(num1, (Value*) num2))*/
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+	Rational_destroy(num3);
+	Rational_destroy(num4);
+}
+
+void
 test_integer_is_odd (void* data)
 {
 	Integer* num  = Integer_set(Integer_new(runtime), 32L);
@@ -173,6 +194,7 @@ struct testcase_t integer_tests[] = {
 	{ "add", test_integer_add },
 	{ "sub", test_integer_sub },
 	{ "mul", test_integer_mul },
+	{ "div", test_integer_mul },
 	{ "neg", test_integer_neg },
 	{ "is_odd", test_integer_is_odd },
 	{ "is_even", test_integer_is_even },
