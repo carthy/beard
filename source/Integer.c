@@ -441,6 +441,101 @@ Integer_mul (Integer* self, Value* number)
 	return (Value*) result;
 }
 
+Value*
+Integer_div (Integer* self, Value* number)
+{
+	assert(IS_INTEGER(number) || IS_FLOATING(number) || IS_RATIONAL(number));
+
+	if (IS_FLOATING(number)) {
+		return (Value*) Floating_div((Floating*) number, (Value*) self);
+	}
+
+	if (IS_RATIONAL(number)) {
+		return (Value*) Rational_div((Rational*) number, (Value*) self);
+	}
+
+	Integer* other = (Integer*) number;
+	Value*   result;
+
+	if (INTEGER_IS_NATIVE(self)) {
+		if (INTEGER_IS_NATIVE(other)) {
+			if (DIV_OVERFLOW(INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other))) {
+				mpz_t* tmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+				mpz_set_si(*tmp, INTEGER_GET_NATIVE(self));
+
+				if (mpz_divisible_ui_p(*tmp, abs(INTEGER_GET_NATIVE(other)))) {
+					mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+					mpz_set_si(*value, INTEGER_GET_NATIVE(other));
+					mpz_divexact(*value, *tmp, *value);
+
+					result = (Value*) Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
+				}
+				else {
+					Rational* res = Rational_new(RUNTIME_FOR(self));
+
+					result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)),
+						INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other));
+				}
+
+				GC_SAVE_INTEGER(RUNTIME_FOR(self), tmp);
+			}
+			else {
+				if (INTEGER_GET_NATIVE(self) % abs(INTEGER_GET_NATIVE(other)) == 0) {
+					result = (Value*) Integer_set_native(Integer_new(RUNTIME_FOR(self)),
+						INTEGER_GET_NATIVE(self) / INTEGER_GET_NATIVE(other));
+				}
+				else {
+					result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)),
+						INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other));
+				}
+			}
+		}
+		else {
+			mpz_t* tmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+			mpz_set_si(*tmp, INTEGER_GET_NATIVE(self));
+
+			if (mpz_divisible_p(*tmp, *INTEGER_GET_GMP(other))) {
+				mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+				mpz_divexact(*value, *tmp, *INTEGER_GET_GMP(other));
+
+				Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
+			}
+			else {
+				result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)), self, other);
+			}
+
+			GC_SAVE_INTEGER(RUNTIME_FOR(self), tmp);
+		}
+	}
+	else {
+		if (INTEGER_IS_NATIVE(other)) {
+			if (mpz_divisible_ui_p(*INTEGER_GET_GMP(self), abs(INTEGER_GET_NATIVE(other)))) {
+				mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+				mpz_set_si(*value, INTEGER_GET_NATIVE(other));
+				mpz_divexact(*value, *INTEGER_GET_GMP(self), *value);
+
+				result = (Value*) Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
+			}
+			else {
+				result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)), self, other);
+			}
+		}
+		else {
+			if (mpz_divisible_p(*INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other))) {
+				mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+				mpz_divexact(*value, *INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other));
+
+				result = (Value*) Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
+			}
+			else {
+				result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)), self, other);
+			}
+		}
+	}
+
+	return result;
+}
+
 bool
 Integer_is_odd (Integer* self)
 {
