@@ -38,8 +38,14 @@ Rational*
 Rational_set_native (Rational* self, long nominator, long denominator)
 {
 	assert(self);
+	assert(denominator != 0);
 
-	mpq_set_si(*self->value, nominator, denominator);
+	if (denominator < 0) {
+		mpq_set_si(*self->value, -nominator, -denominator);
+	}
+	else {
+		mpq_set_si(*self->value, nominator, denominator);
+	}
 
 	return self;
 }
