@@ -52,6 +52,8 @@ Value* Integer_add (Integer* self, Value* other);
 
 Value* Integer_sub (Integer* self, Value* other);
 
+Value* Integer_mul (Integer* self, Value* other);
+
 bool Integer_is_odd (Integer* self);
 
 bool Integer_is_even (Integer* self);

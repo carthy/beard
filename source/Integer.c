@@ -392,6 +392,55 @@ Integer_sub (Integer* self, Value* number)
 	return (Value*) result;
 }
 
+Value*
+Integer_mul (Integer* self, Value* number)
+{
+	assert(IS_INTEGER(number) || IS_FLOATING(number) || IS_RATIONAL(number));
+
+	if (IS_FLOATING(number)) {
+		return (Value*) Floating_mul((Floating*) number, (Value*) self);
+	}
+
+	if (IS_RATIONAL(number)) {
+		return (Value*) Rational_mul((Rational*) number, (Value*) self);
+	}
+
+	Integer* other  = (Integer*) number;
+	Integer* result = (Integer*) Integer_new(RUNTIME_FOR(self));
+
+	if (INTEGER_IS_NATIVE(self)) {
+		if (INTEGER_IS_NATIVE(other)) {
+			if (MUL_OVERFLOW(INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other))) {
+				mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+				mpz_set_si(*value, INTEGER_GET_NATIVE(self));
+				mpz_mul_si(*value, *value, INTEGER_GET_NATIVE(other));
+
+				Integer_set_gmp(result, value);
+			}
+			else {
+				Integer_set_native(result, INTEGER_GET_NATIVE(self) * INTEGER_GET_NATIVE(other));
+			}
+		}
+		else {
+			mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+			mpz_mul_si(*value, *INTEGER_GET_GMP(other), INTEGER_GET_NATIVE(self));
+
+			Integer_set_gmp(result, value);
+		}
+	}
+	else {
+		mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+		mpz_mul(*value, *INTEGER_GET_GMP(self), *INTEGER_GET_GMP(other));
+
+		Integer_set_gmp(result, value);
+	}
+
+	return (Value*) result;
+}
+
 bool
 Integer_is_odd (Integer* self)
 {
