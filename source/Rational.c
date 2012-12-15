@@ -16,11 +16,15 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <private/common.h>
+
 #include <private/Runtime.h>
 #include <private/Integer.h>
 #include <private/Floating.h>
+
+#define NO_MAGIC
 #include <private/Rational.h>
-#include <private/common.h>
+#undef NO_MAGIC
 
 Rational*
 Rational_new (Runtime* rt)
@@ -51,16 +55,63 @@ Rational_set_native (Rational* self, long nominator, long denominator)
 }
 
 Rational*
-Rational_set_integer (Rational* self, Integer* value)
+Rational_set_integer (Rational* self, Integer* nominator, Integer* denominator)
 {
 	assert(self);
-	assert(value);
+	assert(nominator);
+	assert(denominator);
 
-	if (INTEGER_IS_GMP(value)) {
-		mpq_set_z(*self->value, *INTEGER_GET_GMP(value));
+	if (IS_NIL(denominator)) {
+		if (INTEGER_IS_GMP(nominator)) {
+			mpq_set_z(*self->value, *INTEGER_GET_GMP(nominator));
+		}
+		else {
+			mpq_set_si(*self->value, INTEGER_GET_NATIVE(nominator), 1);
+		}
+
+		return self;
+	}
+
+	if (INTEGER_IS_NATIVE(nominator)) {
+		if (INTEGER_IS_NATIVE(denominator)) {
+			assert(INTEGER_GET_NATIVE(denominator) != 0);
+
+			if (INTEGER_GET_NATIVE(denominator) < 0) {
+				mpq_set_si(*self->value, -INTEGER_GET_NATIVE(nominator), -INTEGER_GET_NATIVE(denominator));
+			}
+			else {
+				mpq_set_si(*self->value, INTEGER_GET_NATIVE(nominator), INTEGER_GET_NATIVE(denominator));
+			}
+		}
+		else {
+			mpq_t* tmp = GC_NEW_RATIONAL(RUNTIME_FOR(self));
+
+			mpq_set_si(*self->value, INTEGER_GET_NATIVE(nominator), 1);
+			mpq_set_z(*tmp, *INTEGER_GET_GMP(denominator));
+			mpq_div(*self->value, *self->value, *tmp);
+
+			GC_SAVE_RATIONAL(RUNTIME_FOR(self), tmp);
+		}
 	}
 	else {
-		mpq_set_si(*self->value, INTEGER_GET_NATIVE(value), 1);
+		if (INTEGER_IS_NATIVE(denominator)) {
+			mpq_t* tmp = GC_NEW_RATIONAL(RUNTIME_FOR(self));
+
+			mpq_set_si(*self->value, INTEGER_GET_NATIVE(denominator), 1);
+			mpq_set_z(*tmp, *INTEGER_GET_GMP(nominator));
+			mpq_div(*self->value, *tmp, *self->value);
+
+			GC_SAVE_RATIONAL(RUNTIME_FOR(self), tmp);
+		}
+		else {
+			mpq_t* tmp = GC_NEW_RATIONAL(RUNTIME_FOR(self));
+
+			mpq_set_z(*self->value, *INTEGER_GET_GMP(nominator));
+			mpq_set_z(*tmp, *INTEGER_GET_GMP(denominator));
+			mpq_div(*self->value, *self->value, *tmp);
+
+			GC_SAVE_RATIONAL(RUNTIME_FOR(self), tmp);
+		}
 	}
 
 	return self;

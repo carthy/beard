@@ -31,4 +31,6 @@
 
 #include <siphash.h>
 
+#include <public/magic.h>
+
 #endif

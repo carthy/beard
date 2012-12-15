@@ -20,13 +20,43 @@ typedef struct Rational Rational;
 
 Rational* Rational_new (Runtime* rt);
 
+#define Rational_set(...) Rational_set_(ARGS_LENGTH(__VA_ARGS__)) (__VA_ARGS__)
+#define Rational_set_(nargs)  Rational_set__(nargs)
+#define Rational_set__(nargs) Rational_set##nargs
+
+#define Rational_set2(self, X) _Generic((X), \
+	long:     Rational_set_native,  \
+	Integer*: Rational_set_integer, \
+\
+	default: Rational_set_string \
+)(self, X)
+
+#define Rational_set3(self, X, Y)  _Generic((X), \
+	long:     Rational_set_native, \
+	Integer*: Rational_set_integer \
+)(self, X, Y)
+
 Rational* Rational_set_native (Rational* self, long nominator, long denominator);
 
-Rational* Rational_set_integer (Rational* self, Integer* value);
+Rational* Rational_set_integer (Rational* self, Integer* nominator, Integer* denominator);
 
 Rational* Rational_set_string (Rational* self, const char* string);
 
 Rational* Rational_set_string_with_base (Rational* self, const char* string, int base);
+
+#ifndef NO_MAGIC
+
+#define Rational_set_native(...) \
+	((ARGS_LENGTH(__VA_ARGS__) == 2) ? \
+		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), 1) : \
+		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), ARGS_THIRD(__VA_ARGS__)))
+
+#define Rational_set_integer(...) \
+	((ARGS_LENGTH(__VA_ARGS__) == 2) ? \
+		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), NIL) : \
+		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), ARGS_THIRD(__VA_ARGS__)))
+
+#endif
 
 bool Rational_eq (Rational* self, Value* other);
 
