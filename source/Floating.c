@@ -25,7 +25,7 @@
 Floating*
 Floating_new (Runtime* rt)
 {
-	Floating* self = (Floating*) GC_ALLOCATE(rt, VALUE_TYPE_FLOATING);
+	Floating* self = (Floating*) GC_ALLOCATE(rt, FLOATING);
 
 	self->value = NAN;
 

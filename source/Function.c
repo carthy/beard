@@ -23,7 +23,7 @@
 Function*
 Function_new (Runtime* rt)
 {
-	Function* self = (Function*) GC_ALLOCATE(rt, VALUE_TYPE_FUNCTION);
+	Function* self = (Function*) GC_ALLOCATE(rt, FUNCTION);
 
 	self->array = NULL;
 

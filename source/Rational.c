@@ -27,7 +27,7 @@ Rational_new (Runtime* rt)
 {
 	assert(rt);
 
-	Rational* self = (Rational*) GC_ALLOCATE(rt, VALUE_TYPE_RATIONAL);
+	Rational* self = (Rational*) GC_ALLOCATE(rt, RATIONAL);
 
 	self->value = GC_NEW_RATIONAL(rt);
 

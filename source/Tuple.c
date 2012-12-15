@@ -22,7 +22,7 @@
 
 Tuple* Tuple_new (Runtime* rt)
 {
-	Tuple* self = (Tuple*) GC_ALLOCATE(rt, VALUE_TYPE_TUPLE);
+	Tuple* self = (Tuple*) GC_ALLOCATE(rt, TUPLE);
 
 	self->size  = 0;
 	self->items = NULL;

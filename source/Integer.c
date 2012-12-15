@@ -25,7 +25,7 @@
 Integer*
 Integer_new (Runtime* rt)
 {
-	Integer* self = (Integer*) GC_ALLOCATE(rt, VALUE_TYPE_INTEGER);
+	Integer* self = (Integer*) GC_ALLOCATE(rt, INTEGER);
 
 	self->type      = INTEGER_TYPE_NATIVE;
 	self->as.native = 0;

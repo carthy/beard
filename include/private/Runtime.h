@@ -32,7 +32,7 @@ struct Runtime {
 	(((Value*) (value))->runtime)
 
 #define GC_ALLOCATE(rt, type) \
-	GC_allocate(rt->garbage_collector, type)
+	GC_allocate(rt->garbage_collector, VALUE_TYPE_##type)
 
 #define GC_NEW_INTEGER(rt) \
 	GC_get_integer(rt->garbage_collector)

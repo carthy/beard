@@ -22,7 +22,7 @@
 
 Map* Map_new (Runtime* rt)
 {
-	Map* self = (Map*) GC_ALLOCATE(rt, VALUE_TYPE_MAP);
+	Map* self = (Map*) GC_ALLOCATE(rt, MAP);
 
 	self->array = NULL;
 

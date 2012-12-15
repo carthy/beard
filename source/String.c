@@ -153,7 +153,7 @@ String_new (Runtime* rt)
 {
 	assert(rt);
 
-	String* self = (String*) GC_ALLOCATE(rt, VALUE_TYPE_STRING);
+	String* self = (String*) GC_ALLOCATE(rt, STRING);
 
 	self->length = 0;
 	self->bytes  = 0;

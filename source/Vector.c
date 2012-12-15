@@ -22,7 +22,7 @@
 
 Vector* Vector_new (Runtime* rt)
 {
-	Vector* self = (Vector*) GC_ALLOCATE(rt, VALUE_TYPE_VECTOR);
+	Vector* self = (Vector*) GC_ALLOCATE(rt, VECTOR);
 
 	self->array = NULL;
 
