@@ -106,6 +106,25 @@ end:
 }
 
 void
+test_integer_mul (void* data)
+{
+	Integer* num  = Integer_set(Integer_new(runtime), LONG_MAX);
+	Integer* num2 = Integer_set(Integer_new(runtime), 2);
+	Integer* num3 = (Integer*) Integer_mul(num, (Value*) num2);
+	Integer* num4 = (Integer*) Integer_add(num, (Value*) num);
+
+	tt_assert(INTEGER_IS_GMP(num3));
+	tt_assert(INTEGER_IS_GMP(num4));
+	tt_assert(Integer_eq(num3, (Value*) num4));
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+	Integer_destroy(num3);
+	Integer_destroy(num4);
+}
+
+void
 test_integer_is_odd (void* data)
 {
 	Integer* num  = Integer_set(Integer_new(runtime), 32L);
@@ -153,6 +172,7 @@ struct testcase_t integer_tests[] = {
 	{  "gt", test_integer_gt  },
 	{ "add", test_integer_add },
 	{ "sub", test_integer_sub },
+	{ "mul", test_integer_mul },
 	{ "neg", test_integer_neg },
 	{ "is_odd", test_integer_is_odd },
 	{ "is_even", test_integer_is_even },
