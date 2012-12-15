@@ -198,6 +198,12 @@ Floating_mul (Floating* self, Value* other)
 	return NIL;
 }
 
+Floating*
+Floating_div (Floating* self, Value* other)
+{
+	return NIL;
+}
+
 bool
 Floating_is_nan (Floating* self)
 {
