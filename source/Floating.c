@@ -192,6 +192,12 @@ Floating_sub (Floating* self, Value* other)
 	return NIL;
 }
 
+Floating*
+Floating_mul (Floating* self, Value* other)
+{
+	return NIL;
+}
+
 bool
 Floating_is_nan (Floating* self)
 {

@@ -56,6 +56,8 @@ Floating* Floating_add (Floating* self, Value* other);
 
 Floating* Floating_sub (Floating* self, Value* other);
 
+Floating* Floating_mul (Floating* self, Value* other);
+
 bool Floating_is_nan (Floating* self);
 
 bool Floating_is_infinity (Floating* self);
