@@ -17,9 +17,9 @@
  */
 
 #include <private/Runtime.h>
-#include <private/Rational.h>
 #include <private/Integer.h>
 #include <private/Floating.h>
+#include <private/Rational.h>
 #include <private/common.h>
 
 Rational*
@@ -45,6 +45,22 @@ Rational_set_native (Rational* self, long nominator, long denominator)
 	}
 	else {
 		mpq_set_si(*self->value, nominator, denominator);
+	}
+
+	return self;
+}
+
+Rational*
+Rational_set_integer (Rational* self, Integer* value)
+{
+	assert(self);
+	assert(value);
+
+	if (INTEGER_IS_GMP(value)) {
+		mpq_set_z(*self->value, *INTEGER_GET_GMP(value));
+	}
+	else {
+		mpq_set_si(*self->value, INTEGER_GET_NATIVE(value), 1);
 	}
 
 	return self;

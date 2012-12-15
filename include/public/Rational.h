@@ -22,6 +22,8 @@ Rational* Rational_new (Runtime* rt);
 
 Rational* Rational_set_native (Rational* self, long nominator, long denominator);
 
+Rational* Rational_set_integer (Rational* self, Integer* value);
+
 Rational* Rational_set_string (Rational* self, const char* string);
 
 Rational* Rational_set_string_with_base (Rational* self, const char* string, int base);
