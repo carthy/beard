@@ -18,11 +18,7 @@
 
 typedef struct Tuple Tuple;
 
-Tuple* Tuple_new (Runtime* rt);
-
-Tuple* Tuple_new_with_size (Runtime* rt, int size);
-
-Tuple* Tuple_resize (Tuple* self, int size);
+Tuple* Tuple_new (Runtime* rt, int size);
 
 Value** Tuple_items (Tuple* self);
 

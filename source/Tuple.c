@@ -20,21 +20,16 @@
 #include <private/Tuple.h>
 #include <private/common.h>
 
-Tuple* Tuple_new (Runtime* rt)
+Tuple* Tuple_new (Runtime* rt, int size)
 {
 	Tuple* self = (Tuple*) GC_ALLOCATE(rt, TUPLE);
 
-	self->size  = 0;
-	self->items = NULL;
+	self->size  = size;
+	self->items = malloc(size * sizeof(Value*));
+
+	memset(self->items, 0, size * sizeof(Value*));
 
 	return self;
-}
-
-Tuple* Tuple_new_with_size (Runtime* rt, int size)
-{
-	Tuple* self = Tuple_new(rt);
-
-	return Tuple_resize(self, size);
 }
 
 void
@@ -43,23 +38,6 @@ Tuple_destroy (Tuple* self)
 	if (self->items) {
 		free(self->items);
 	}
-}
-
-Tuple*
-Tuple_resize (Tuple* self, int size)
-{
-	assert(self);
-	assert(size != self->size);
-
-	self->items = realloc(self->items, size * sizeof(Value*));
-
-	if (size > self->size) {
-		memset(self->items + self->size, 0, (size - self->size) * sizeof(Value*));
-	}
-
-	self->size = size;
-
-	return self;
 }
 
 Value**
