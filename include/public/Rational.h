@@ -36,9 +36,9 @@ Rational* Rational_new (Runtime* rt);
 	Integer*: Rational_set_integer \
 )(self, X, Y)
 
-Rational* Rational_set_native (Rational* self, long nominator, long denominator);
+Rational* Rational_set_native (Rational* self, long numerator, long denominator);
 
-Rational* Rational_set_integer (Rational* self, Integer* nominator, Integer* denominator);
+Rational* Rational_set_integer (Rational* self, Integer* numerator, Integer* denominator);
 
 Rational* Rational_set_string (Rational* self, const char* string);
 
