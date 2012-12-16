@@ -163,32 +163,26 @@ Rational_gt (Rational* self, Value* other)
 	return NIL;
 }
 
-Rational*
-Rational_add (Rational* self, Value* other)
+Value*
+Rational_add (Rational* self, Value* number)
 {
 	return NIL;
 }
 
-Rational*
+Value*
 Rational_sub (Rational* self, Value* other)
 {
 	return NIL;
 }
 
-Rational*
+Value*
 Rational_mul (Rational* self, Value* other)
 {
 	return NIL;
 }
 
-Rational*
+Value*
 Rational_div (Rational* self, Value* other)
-{
-	return NIL;
-}
-
-Rational*
-Rational_minus (Rational* self, Value* other)
 {
 	return NIL;
 }
