@@ -21,10 +21,7 @@
 #include <private/Runtime.h>
 #include <private/Integer.h>
 #include <private/Floating.h>
-
-#define NO_MAGIC
 #include <private/Rational.h>
-#undef NO_MAGIC
 
 Rational*
 Rational_new (Runtime* rt)
@@ -39,7 +36,7 @@ Rational_new (Runtime* rt)
 }
 
 Rational*
-Rational_set_native (Rational* self, long numerator, long denominator)
+(Rational_set_native) (Rational* self, long numerator, long denominator)
 {
 	assert(self);
 	assert(denominator != 0);
@@ -55,7 +52,7 @@ Rational_set_native (Rational* self, long numerator, long denominator)
 }
 
 Rational*
-Rational_set_integer (Rational* self, Integer* numerator, Integer* denominator)
+(Rational_set_integer) (Rational* self, Integer* numerator, Integer* denominator)
 {
 	assert(self);
 	assert(numerator);

@@ -31,32 +31,28 @@ Rational* Rational_new (Runtime* rt);
 	default: Rational_set_string \
 )(self, X)
 
-#define Rational_set3(self, X, Y)  _Generic((X), \
+#define Rational_set3(self, X, Y) _Generic((X), \
 	long:     Rational_set_native, \
 	Integer*: Rational_set_integer \
 )(self, X, Y)
 
 Rational* Rational_set_native (Rational* self, long numerator, long denominator);
 
-Rational* Rational_set_integer (Rational* self, Integer* numerator, Integer* denominator);
-
-Rational* Rational_set_string (Rational* self, const char* string);
-
-Rational* Rational_set_string_with_base (Rational* self, const char* string, int base);
-
-#ifndef NO_MAGIC
-
 #define Rational_set_native(...) \
 	((ARGS_LENGTH(__VA_ARGS__) == 2) ? \
 		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), 1) : \
 		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), ARGS_THIRD(__VA_ARGS__)))
+
+Rational* Rational_set_integer (Rational* self, Integer* numerator, Integer* denominator);
 
 #define Rational_set_integer(...) \
 	((ARGS_LENGTH(__VA_ARGS__) == 2) ? \
 		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), NIL) : \
 		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), ARGS_THIRD(__VA_ARGS__)))
 
-#endif
+Rational* Rational_set_string (Rational* self, const char* string);
+
+Rational* Rational_set_string_with_base (Rational* self, const char* string, int base);
 
 Integer* Rational_numerator (Rational* self);
 
