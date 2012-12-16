@@ -19,12 +19,37 @@
 #include <private/Runtime.h>
 #include <private/common.h>
 
+#include <sys/time.h>
+
 Runtime*
 Runtime_new (void)
 {
 	Runtime* self = malloc(sizeof(Runtime));
 
 	self->garbage_collector = GC_new(self);
+
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+
+	gmp_randinit_mt(self->random.fast);
+	gmp_randinit_lc_2exp_size(self->random.slow, 128);
+
+	gmp_randseed_ui(self->random.fast, tv.tv_usec);
+	gmp_randseed_ui(self->random.slow, tv.tv_usec);
+
+	mpz_t rand;
+	mpz_t max;
+
+	mpz_inits(rand, max, NULL);
+	mpz_set_ui(max, UINT8_MAX);
+
+	for (uint8_t i = 0; i < sizeof(self->sip_key); i++) {
+		mpz_urandomm(rand, self->random.slow, max);
+
+		self->sip_key[i] = mpz_get_ui(rand);
+	}
+
+	mpz_clears(rand, max, NULL);
 
 	return self;
 }

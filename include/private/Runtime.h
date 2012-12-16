@@ -25,6 +25,11 @@
 struct Runtime {
 	GC* garbage_collector;
 
+	struct {
+		gmp_randstate_t fast;
+		gmp_randstate_t slow;
+	} random;
+
 	uint8_t sip_key[16];
 };
 
