@@ -145,6 +145,24 @@ Rational_destroy (Rational* self)
 	GC_SAVE_RATIONAL(RUNTIME_FOR(self), self->value);
 }
 
+Integer*
+Rational_numerator (Rational* self)
+{
+	mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+	mpz_set(*value, mpq_numref(*self->value));
+
+	return Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
+}
+
+Integer*
+Rational_denominator (Rational* self)
+{
+	mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
+	mpz_set(*value, mpq_denref(*self->value));
+
+	return Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
+}
+
 bool
 Rational_eq (Rational* self, Value* other)
 {

@@ -58,6 +58,10 @@ Rational* Rational_set_string_with_base (Rational* self, const char* string, int
 
 #endif
 
+Integer* Rational_numerator (Rational* self);
+
+Integer* Rational_denominator (Rational* self);
+
 bool Rational_eq (Rational* self, Value* other);
 
 bool Rational_lt (Rational* self, Value* other);
