@@ -25,7 +25,6 @@
 #include <private/Regexp.h>
 #include <private/String.h>
 #include <private/Tuple.h>
-#include <private/List.h>
 #include <private/Vector.h>
 #include <private/Map.h>
 #include <private/Function.h>
@@ -139,10 +138,6 @@ GC_allocate (GC* self, ValueType type)
 
 		case VALUE_TYPE_TUPLE:
 			value = malloc(sizeof(Tuple));
-			break;
-
-		case VALUE_TYPE_LIST:
-			value = malloc(sizeof(List));
 			break;
 
 		case VALUE_TYPE_VECTOR:

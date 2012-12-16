@@ -80,12 +80,6 @@ is_tuple (Value* self)
 }
 
 bool
-is_list (Value* self)
-{
-	return IS_LIST(self);
-}
-
-bool
 is_vector (Value* self)
 {
 	return IS_VECTOR(self);

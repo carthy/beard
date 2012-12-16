@@ -29,7 +29,6 @@ typedef enum ValueType {
 	VALUE_TYPE_REGEXP,
 	VALUE_TYPE_STRING,
 	VALUE_TYPE_TUPLE,
-	VALUE_TYPE_LIST,
 	VALUE_TYPE_VECTOR,
 	VALUE_TYPE_MAP,
 
@@ -50,7 +49,6 @@ bool is_rational (Value* self);
 bool is_regexp   (Value* self);
 bool is_string   (Value* self);
 bool is_tuple    (Value* self);
-bool is_list     (Value* self);
 bool is_vector   (Value* self);
 bool is_map      (Value* self);
 bool is_function (Value* self);
