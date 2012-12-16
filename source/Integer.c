@@ -471,8 +471,6 @@ Integer_div (Integer* self, Value* number)
 					result = (Value*) Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
 				}
 				else {
-					Rational* res = Rational_new(RUNTIME_FOR(self));
-
 					result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)),
 						INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other));
 				}
