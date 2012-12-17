@@ -457,6 +457,13 @@ Integer_div (Integer* self, Value* number)
 	Integer* other = (Integer*) number;
 	Value*   result;
 
+	if (INTEGER_IS_NATIVE(other)) {
+		assert(INTEGER_GET_NATIVE(other) != 0);
+	}
+	else {
+		assert(mpz_cmp_si(*INTEGER_GET_GMP(other), 0) != 0);
+	}
+
 	if (INTEGER_IS_NATIVE(self)) {
 		if (INTEGER_IS_NATIVE(other)) {
 			if (DIV_OVERFLOW(INTEGER_GET_NATIVE(self), INTEGER_GET_NATIVE(other))) {
