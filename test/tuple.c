@@ -21,19 +21,7 @@
 void
 test_tuple_new (void* data)
 {
-	Tuple* tup = Tuple_new(runtime);
-
-	tt_assert(tup);
-	tt_int_op(Tuple_size(tup), ==, 0);
-
-end:
-	Tuple_destroy(tup);
-}
-
-void
-test_tuple_new_with_size (void* data)
-{
-	Tuple* tup = Tuple_new_with_size(runtime, 2);
+	Tuple* tup = Tuple_new(runtime, 2);
 
 	tt_assert(tup);
 	tt_int_op(Tuple_size(tup), ==, 2);
@@ -42,30 +30,8 @@ end:
 	Tuple_destroy(tup);
 }
 
-void
-test_tuple_resize (void* data)
-{
-	Tuple* tup = Tuple_new(runtime);
-
-	Tuple_resize(tup, 1);
-	tt_assert(Tuple_items(tup)[0] == NIL);
-
-	Tuple_items(tup)[0] = TRUE;
-	Tuple_resize(tup, 2);
-	tt_assert(Tuple_items(tup)[0] == TRUE);
-
-	Tuple_resize(tup, 0);
-	Tuple_resize(tup, 2);
-	tt_assert(Tuple_items(tup)[0] == NIL);
-
-end:
-	Tuple_destroy(tup);
-}
-
 struct testcase_t tuple_tests[] = {
 	{ "new", test_tuple_new },
-	{ "new_with_size", test_tuple_new_with_size },
-	{ "resize", test_tuple_resize },
 
 	END_OF_TESTCASES
 };
