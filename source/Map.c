@@ -85,6 +85,21 @@ Map_get_with_default (Map* self, uint64_t key, Value* value)
 	return val ? (Value*) *val : value;
 }
 
+Value*
+Map_delete (Map* self, uint64_t key)
+{
+	Word_t  ind = key;
+	Word_t  res = 0;
+	Word_t* val = NULL;
+
+	JLG(val, self->array, ind);
+	JLD(res, self->array, ind);
+
+	assert(res == 1);
+
+	return (Value*) *val;
+}
+
 uint64_t
 Map_length (Map* self)
 {
