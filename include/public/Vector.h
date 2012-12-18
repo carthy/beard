@@ -20,10 +20,12 @@ typedef struct Vector Vector;
 
 Vector* Vector_new (Runtime* rt);
 
+Vector* Vector_resize (Vector* self, uint64_t size);
+
 Value* Vector_set (Vector* self, uint64_t index, Value* value);
 
 Value* Vector_get (Vector* self, uint64_t index);
 
-Vector* Vector_conj (Vector* self, Value* value);
+Value** Vector_items (Vector* self);
 
 uint64_t Vector_length (Vector* self);

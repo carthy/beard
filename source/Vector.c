@@ -24,7 +24,8 @@ Vector* Vector_new (Runtime* rt)
 {
 	Vector* self = (Vector*) GC_ALLOCATE(rt, VECTOR);
 
-	self->array = NULL;
+	self->items  = NULL;
+	self->length = 0;
 
 	return self;
 }
@@ -32,25 +33,34 @@ Vector* Vector_new (Runtime* rt)
 void
 Vector_destroy (Vector* self)
 {
-	Word_t freed;
+	if (self->items) {
+		free(self->items);
+	}
+}
 
-	JLFA(freed, self->array);
+Vector*
+Vector_resize (Vector* self, uint64_t length)
+{
+	if (length > self->length) {
+		self->items = realloc(self->items, length * sizeof(Value*));
+
+		memset(self->items + length, 0, (length - self->length) * sizeof(Value*));
+	}
+	else {
+		self->items = realloc(self->items, length * sizeof(Value*));
+	}
+
+	self->length = length;
+
+	return self;
 }
 
 Value*
 Vector_set (Vector* self, uint64_t index, Value* value)
 {
-	if (Vector_length(self) <= index) {
-		assert(false);
-	}
+	assert(index < Vector_length(self));
 
-	Word_t  ind = index;
-	Word_t* val = NULL;
-	
-	JLI(val, self->array, ind);
-	assert(val);
-
-	*val = (Word_t) value;
+	self->items[index] = value;
 
 	return value;
 }
@@ -58,18 +68,17 @@ Vector_set (Vector* self, uint64_t index, Value* value)
 Value*
 Vector_get (Vector* self, uint64_t index)
 {
-	if (Vector_length(self) <= index) {
-		assert(false);
-	}
+	assert(index < Vector_length(self));
 
-	Word_t  ind = index;
-	Word_t* val = NULL;
+	return self->items[index];
+}
 
-	JLG(val, self->array, ind);
+Value**
+Vector_items (Vector* self)
+{
+	assert(self);
 
-	assert(val);
-
-	return (Value*) *val;
+	return self->items;
 }
 
 Vector*
@@ -89,9 +98,7 @@ Vector_conj (Vector* self, Value* value)
 uint64_t
 Vector_length (Vector* self)
 {
-	Word_t size;
+	assert(self);
 
-	JLC(size, self->array, 0, -1);
-
-	return size;
+	return self->length;
 }

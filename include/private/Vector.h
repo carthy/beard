@@ -20,10 +20,10 @@
 #define BEARD_VECTOR_H
 
 #include <public/Vector.h>
-#include <Judy.h>
 
 struct Vector {
-	Pvoid_t array;
+	Value**  items;
+	uint64_t length;
 };
 
 void Vector_destroy (Vector* self);
