@@ -40,6 +40,24 @@ Tuple_destroy (Tuple* self)
 	}
 }
 
+Value*
+Tuple_set (Tuple* self, int index, Value* value)
+{
+	assert(index < Tuple_size(self));
+
+	self->items[index] = value;
+
+	return value;
+}
+
+Value*
+Tuple_get (Vector* self, int index)
+{
+	assert(index < Tuple_size(self));
+
+	return self->items[index];
+}
+
 Value**
 Tuple_items (Tuple* self)
 {

@@ -20,6 +20,10 @@ typedef struct Tuple Tuple;
 
 Tuple* Tuple_new (Runtime* rt, int size);
 
+Value* Tuple_set (Tuple* self, int index, Value* value);
+
+Value* Tuple_get (Tuple* self, int index);
+
 Value** Tuple_items (Tuple* self);
 
 int Tuple_size (Tuple* self);
