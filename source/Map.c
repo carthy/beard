@@ -37,6 +37,17 @@ Map_destroy (Map* self)
 	JLFA(freed, self->array);
 }
 
+bool
+Map_has (Map* self, uint64_t key)
+{
+	Word_t  ind = key;
+	Word_t* val = NULL;
+
+	JLG(val, self->array, ind);
+
+	return val != NULL;
+}
+
 Value*
 Map_put (Map* self, uint64_t key, Value* value)
 {
