@@ -100,6 +100,16 @@ Map_delete (Map* self, uint64_t key)
 	return (Value*) *val;
 }
 
+Value*
+Map_delete_with_default (Map* self, uint64_t key, Value* value)
+{
+	if (!Map_has(self, key)) {
+		return value;
+	}
+
+	return Map_delete(self, key);
+}
+
 uint64_t
 Map_length (Map* self)
 {

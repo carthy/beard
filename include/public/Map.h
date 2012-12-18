@@ -32,4 +32,6 @@ Value* Map_get_with_default (Map* self, uint64_t key, Value* value);
 
 Value* Map_delete (Map* self, uint64_t key);
 
+Value* Map_delete_with_default (Map* self, uint64_t key, Value* value);
+
 uint64_t Map_length (Map* self);
