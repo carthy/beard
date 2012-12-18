@@ -69,10 +69,20 @@ Map_get (Map* self, uint64_t key)
 	Word_t* val = NULL;
 
 	JLG(val, self->array, ind);
-
 	assert(val);
 
 	return (Value*) *val;
+}
+
+Value*
+Map_get_with_default (Map* self, uint64_t key, Value* value)
+{
+	Word_t  ind = key;
+	Word_t* val = NULL;
+
+	JLG(val, self->array, ind);
+
+	return val ? (Value*) *val : value;
 }
 
 uint64_t
