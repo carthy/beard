@@ -194,7 +194,7 @@ struct testcase_t integer_tests[] = {
 	{ "add", test_integer_add },
 	{ "sub", test_integer_sub },
 	{ "mul", test_integer_mul },
-	{ "div", test_integer_mul },
+	{ "div", test_integer_div },
 	{ "neg", test_integer_neg },
 	{ "is_odd", test_integer_is_odd },
 	{ "is_even", test_integer_is_even },
