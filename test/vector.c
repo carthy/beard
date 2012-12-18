@@ -30,23 +30,10 @@ end:
 }
 
 void
-test_vector_conj (void* data)
-{
-	Vector* vec = Vector_new(runtime);
-
-	Vector_conj(vec, NIL);
-
-	tt_int_op(Vector_length(vec), ==, 1);
-
-end:
-	Vector_destroy(vec);
-}
-
-void
 test_vector_set (void* data)
 {
 	Vector* vec = Vector_new(runtime);
-	Vector_conj(vec, NIL);
+	Vector_resize(vec, 1);
 
 	Vector_set(vec, 0, TRUE);
 
@@ -58,7 +45,7 @@ void
 test_vector_get (void* data)
 {
 	Vector* vec = Vector_new(runtime);
-	Vector_conj(vec, NIL);
+	Vector_resize(vec, 1);
 
 	Vector_set(vec, 0, TRUE);
 	tt_assert(is_boolean(Vector_get(vec, 0)));
@@ -69,7 +56,6 @@ end:
 
 struct testcase_t vector_tests[] = {
 	{ "new", test_vector_new },
-	{ "conj", test_vector_conj },
 	{ "set", test_vector_set },
 	{ "get", test_vector_get },
 
