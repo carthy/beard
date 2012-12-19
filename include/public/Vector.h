@@ -26,8 +26,6 @@ Value* Vector_set (Vector* self, uint64_t index, Value* value);
 
 Value* Vector_get (Vector* self, uint64_t index);
 
-Value** Vector_items (Vector* self);
-
 Vector* Vector_insert (Vector* self, Value* value, uint64_t index);
 
 Vector* Vector_insert_first (Vector* self, Value* value);

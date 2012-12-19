@@ -73,14 +73,6 @@ Vector_get (Vector* self, uint64_t index)
 	return self->items[index];
 }
 
-Value**
-Vector_items (Vector* self)
-{
-	assert(self);
-
-	return self->items;
-}
-
 Vector*
 Vector_insert (Vector* self, Value* value, uint64_t index)
 {
