@@ -28,4 +28,10 @@ Value* Vector_get (Vector* self, uint64_t index);
 
 Value** Vector_items (Vector* self);
 
+Vector* Vector_insert (Vector* self, Value* value, uint64_t index);
+
+Vector* Vector_insert_first (Vector* self, Value* value);
+
+Vector* Vector_insert_last (Vector* self, Value* value);
+
 uint64_t Vector_length (Vector* self);

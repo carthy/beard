@@ -82,17 +82,30 @@ Vector_items (Vector* self)
 }
 
 Vector*
-Vector_conj (Vector* self, Value* value)
+Vector_insert (Vector* self, Value* value, uint64_t index)
 {
-	Word_t  ind = Vector_length(self);
-	Word_t* val = NULL;
+	assert(self);
+	assert(index == 0 || index <= self->length);
 
-	JLI(val, self->array, ind);
-	assert(val);
+	self->items = realloc(self->items, (self->length + 1) * sizeof(Value*));
+	memmove(self->items + index + 1, self->items + index, (self->length - index) * sizeof(Value*));
 
-	*val = (Word_t) value;
+	self->length++;
+	self->items[index] = value;
 
 	return self;
+}
+
+Vector*
+Vector_insert_first (Vector* self, Value* value)
+{
+	return Vector_insert(self, value, 0);
+}
+
+Vector*
+Vector_insert_last (Vector* self, Value* value)
+{
+	return Vector_insert(self, value, self->length);
 }
 
 uint64_t
