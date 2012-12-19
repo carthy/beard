@@ -51,7 +51,7 @@ Tuple_set (Tuple* self, int index, Value* value)
 }
 
 Value*
-Tuple_get (Vector* self, int index)
+Tuple_get (Tuple* self, int index)
 {
 	assert(index < Tuple_size(self));
 
