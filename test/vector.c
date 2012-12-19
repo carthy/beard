@@ -55,6 +55,26 @@ end:
 }
 
 void
+test_vector_resize (void* data)
+{
+	Vector* vec = Vector_new(runtime);
+	Vector_resize(vec, 10);
+
+	Vector_set(vec, 2, FALSE);
+	Vector_set(vec, 5, TRUE);
+
+	tt_assert(is_false(Vector_get(vec, 2)));
+	tt_assert(is_true(Vector_get(vec, 5)));
+
+	Vector_resize(vec, 4);
+
+	tt_assert(is_false(Vector_get(vec, 2)));
+
+end:
+	Vector_destroy(vec);
+}
+
+void
 test_vector_insert (void* data)
 {
 	Vector* vec = Vector_new(runtime);
@@ -105,6 +125,7 @@ struct testcase_t vector_tests[] = {
 	{ "new", test_vector_new },
 	{ "set", test_vector_set },
 	{ "get", test_vector_get },
+	{ "resize", test_vector_resize },
 	{ "insert", test_vector_insert },
 	{ "insert_first", test_vector_insert_first },
 	{ "insert_last", test_vector_insert_first },
