@@ -54,10 +54,60 @@ end:
 	Vector_destroy(vec);
 }
 
+void
+test_vector_insert (void* data)
+{
+	Vector* vec = Vector_new(runtime);
+
+	Vector_insert(vec, TRUE, 0);
+	Vector_insert(vec, FALSE, 1);
+	Vector_insert(vec, NIL, 1);
+
+	tt_assert(is_true(Vector_get(vec, 0)));
+	tt_assert(is_nil(Vector_get(vec, 1)));
+	tt_assert(is_false(Vector_get(vec, 2)));
+
+end:
+	Vector_destroy(vec);
+}
+
+void
+test_vector_insert_first (void* data)
+{
+	Vector* vec = Vector_new(runtime);
+
+	Vector_insert_first(vec, TRUE);
+	Vector_insert_first(vec, FALSE);
+
+	tt_assert(is_true(Vector_get(vec, 1)));
+	tt_assert(is_false(Vector_get(vec, 0)));
+
+end:
+	Vector_destroy(vec);
+}
+
+void
+test_vector_insert_last (void* data)
+{
+	Vector* vec = Vector_new(runtime);
+
+	Vector_insert_last(vec, TRUE);
+	Vector_insert_last(vec, FALSE);
+
+	tt_assert(is_true(Vector_get(vec, 0)));
+	tt_assert(is_false(Vector_get(vec, 1)));
+
+end:
+	Vector_destroy(vec);
+}
+
 struct testcase_t vector_tests[] = {
 	{ "new", test_vector_new },
 	{ "set", test_vector_set },
 	{ "get", test_vector_get },
+	{ "insert", test_vector_insert },
+	{ "insert_first", test_vector_insert_first },
+	{ "insert_last", test_vector_insert_first },
 
 	END_OF_TESTCASES
 };
