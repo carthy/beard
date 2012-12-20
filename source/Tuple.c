@@ -20,7 +20,10 @@
 #include <private/Tuple.h>
 #include <private/common.h>
 
-Tuple* Tuple_new (Runtime* rt, int size)
+#include <stdarg.h>
+
+Tuple*
+Tuple_new (Runtime* rt, int size)
 {
 	Tuple* self = (Tuple*) GC_ALLOCATE(rt, TUPLE);
 
@@ -28,6 +31,21 @@ Tuple* Tuple_new (Runtime* rt, int size)
 	self->items = malloc(size * sizeof(Value*));
 
 	memset(self->items, 0, size * sizeof(Value*));
+
+	return self;
+}
+
+Tuple*
+(Tuple_new_with) (Runtime* rt, int size, ...)
+{
+	Tuple* self = Tuple_new(rt, size);
+
+	va_list args;
+	va_start(args, size);
+	for (int i = 0; i < size; i++) {
+		self->items[i] = va_arg(args, Value*);
+	}
+	va_end(args);
 
 	return self;
 }
