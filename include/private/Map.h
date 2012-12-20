@@ -26,6 +26,12 @@ struct Map {
 	Value descriptor;
 
 	Pvoid_t array;
+
+	struct {
+		Vector* tuples;
+		Vector* keys;
+		Vector* values;
+	} cache;
 };
 
 void Map_destroy (Map* self);

@@ -22,11 +22,23 @@
 #include <private/Map.h>
 #include <private/common.h>
 
+static inline Map*
+invalidate_cache (Map* self)
+{
+	self->cache.tuples = NULL;
+	self->cache.keys   = NULL;
+	self->cache.values = NULL;
+
+	return self;
+}
+
 Map* Map_new (Runtime* rt)
 {
 	Map* self = (Map*) GC_ALLOCATE(rt, MAP);
 
 	self->array = NULL;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -67,6 +79,8 @@ Map_put_tuple (Map* self, uint64_t hash, Tuple* pair)
 
 	*val = (Word_t) pair;
 
+	invalidate_cache(self);
+
 	return pair;
 }
 
@@ -106,12 +120,18 @@ Map_delete (Map* self, uint64_t hash)
 
 	assert(res == 1);
 
+	invalidate_cache(self);
+
 	return (Tuple*) *val;
 }
 
 Vector*
 Map_tuples (Map* self)
 {
+	if (self->cache.tuples) {
+		return self->cache.tuples;
+	}
+
 	Vector* result = Vector_new(RUNTIME_FOR(self));
 	Word_t  size   = 0;
 	Word_t  index  = 0;
@@ -127,17 +147,26 @@ Map_tuples (Map* self)
 		JLN(value, self->array, index);
 	}
 
+	self->cache.tuples = result;
+
 	return result;
 }
 
 Vector*
 Map_keys (Map* self)
 {
-	Vector* result = Map_tuples(self);
-
-	for (uint64_t i = 0, length = Vector_length(result); i < length; i++) {
-		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(result, i), 0));
+	if (self->cache.keys) {
+		return self->cache.keys;
 	}
+
+	Vector* tuples = Map_tuples(self);
+	Vector* result = Vector_resize(Vector_new(RUNTIME_FOR(self)), Vector_length(tuples));
+
+	for (uint64_t i = 0, length = Vector_length(tuples); i < length; i++) {
+		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(tuples, i), 0));
+	}
+
+	self->cache.keys = result;
 
 	return result;
 }
@@ -145,11 +174,18 @@ Map_keys (Map* self)
 Vector*
 Map_values (Map* self)
 {
-	Vector* result = Map_tuples(self);
-
-	for (uint64_t i = 0, length = Vector_length(result); i < length; i++) {
-		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(result, i), 1));
+	if (self->cache.values) {
+		return self->cache.values;
 	}
+
+	Vector* tuples = Map_tuples(self);
+	Vector* result = Vector_resize(Vector_new(RUNTIME_FOR(self)), Vector_length(tuples));
+
+	for (uint64_t i = 0, length = Vector_length(tuples); i < length; i++) {
+		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(tuples, i), 1));
+	}
+
+	self->cache.values = result;
 
 	return result;
 }
