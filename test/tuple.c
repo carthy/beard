@@ -30,8 +30,21 @@ end:
 	Tuple_destroy(tup);
 }
 
+void
+test_tuple_new_with (void* data)
+{
+	Tuple* tup = Tuple_new_with(runtime, TRUE, FALSE);
+
+	tt_assert(tup);
+	tt_int_op(Tuple_size(tup), ==, 2);
+
+end:
+	Tuple_destroy(tup);
+}
+
 struct testcase_t tuple_tests[] = {
 	{ "new", test_tuple_new },
+	{ "new_with", test_tuple_new_with },
 
 	END_OF_TESTCASES
 };
