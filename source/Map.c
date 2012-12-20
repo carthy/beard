@@ -17,6 +17,7 @@
  */
 
 #include <private/Runtime.h>
+#include <public/Tuple.h>
 #include <private/Map.h>
 #include <private/common.h>
 
@@ -38,9 +39,9 @@ Map_destroy (Map* self)
 }
 
 bool
-Map_has (Map* self, uint64_t key)
+Map_has (Map* self, uint64_t hash)
 {
-	Word_t  ind = key;
+	Word_t  ind = hash;
 	Word_t* val = NULL;
 
 	JLG(val, self->array, ind);
@@ -48,47 +49,54 @@ Map_has (Map* self, uint64_t key)
 	return val != NULL;
 }
 
-Value*
-Map_put (Map* self, uint64_t key, Value* value)
+Tuple*
+Map_put (Map* self, uint64_t hash, Value* key, Value* value)
 {
-	Word_t  ind = key;
+	return Map_put_tuple(self, hash, Tuple_new_with(RUNTIME_FOR(self), key, value));
+}
+
+Tuple*
+Map_put_tuple (Map* self, uint64_t hash, Tuple* pair)
+{
+	Word_t  ind = hash;
 	Word_t* val = NULL;
 	
 	JLI(val, self->array, ind);
 	assert(val);
 
-	*val = (Word_t) value;
+	*val = (Word_t) pair;
 
-	return value;
+	return pair;
 }
 
 Value*
-Map_get (Map* self, uint64_t key)
+Map_get_value (Map* self, uint64_t hash)
 {
-	Word_t  ind = key;
+	return Tuple_get(Map_get_tuple(self, hash), 1);
+}
+
+Value*
+Map_get_key (Map* self, uint64_t hash)
+{
+	return Tuple_get(Map_get_tuple(self, hash), 0);
+}
+
+Tuple*
+Map_get_tuple (Map* self, uint64_t hash)
+{
+	Word_t  ind = hash;
 	Word_t* val = NULL;
 
 	JLG(val, self->array, ind);
 	assert(val);
 
-	return (Value*) *val;
+	return (Tuple*) *val;
 }
 
-Value*
-Map_get_with_default (Map* self, uint64_t key, Value* value)
+Tuple*
+Map_delete (Map* self, uint64_t hash)
 {
-	Word_t  ind = key;
-	Word_t* val = NULL;
-
-	JLG(val, self->array, ind);
-
-	return val ? (Value*) *val : value;
-}
-
-Value*
-Map_delete (Map* self, uint64_t key)
-{
-	Word_t  ind = key;
+	Word_t  ind = hash;
 	Word_t  res = 0;
 	Word_t* val = NULL;
 
@@ -97,17 +105,7 @@ Map_delete (Map* self, uint64_t key)
 
 	assert(res == 1);
 
-	return (Value*) *val;
-}
-
-Value*
-Map_delete_with_default (Map* self, uint64_t key, Value* value)
-{
-	if (!Map_has(self, key)) {
-		return value;
-	}
-
-	return Map_delete(self, key);
+	return (Tuple*) *val;
 }
 
 uint64_t

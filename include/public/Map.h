@@ -24,14 +24,16 @@ Map* Map_new (Runtime* rt);
 
 bool Map_has (Map* self, uint64_t key);
 
-Value* Map_put (Map* self, uint64_t key, Value* value);
+Tuple* Map_put (Map* self, uint64_t hash, Value* key, Value* value);
 
-Value* Map_get (Map* self, uint64_t key);
+Tuple* Map_put_tuple (Map* self, uint64_t hash, Tuple* pair);
 
-Value* Map_get_with_default (Map* self, uint64_t key, Value* value);
+Value* Map_get_value (Map* self, uint64_t key);
 
-Value* Map_delete (Map* self, uint64_t key);
+Value* Map_get_key (Map* self, uint64_t key);
 
-Value* Map_delete_with_default (Map* self, uint64_t key, Value* value);
+Tuple* Map_get_tuple (Map* self, uint64_t key);
+
+Tuple* Map_delete (Map* self, uint64_t key);
 
 uint64_t Map_length (Map* self);
