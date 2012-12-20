@@ -88,11 +88,86 @@ end:
 	Map_destroy(map);
 }
 
+void
+test_map_tuples (void* data)
+{
+	Map* map = Map_new(runtime);
+
+	Map_put(map, hash_for(NIL), NIL, TRUE);
+	Map_put(map, hash_for(TRUE), TRUE, FALSE);
+	Map_put(map, hash_for(FALSE), FALSE, NIL);
+
+	Vector* tuples = Map_tuples(map);
+
+	for (uint64_t i = 0; i < Vector_length(tuples); i++) {
+		Tuple* pair = Vector_get(tuples, i);
+
+		if (is_nil(Tuple_get(pair, 0))) {
+			tt_assert(is_true(Tuple_get(pair, 1)));
+		}
+		else if (is_true(Tuple_get(pair, 0))) {
+			tt_assert(is_false(Tuple_get(pair, 1)));
+		}
+		else if (is_false(Tuple_get(pair, 0))) {
+			tt_assert(is_nil(Tuple_get(pair, 1)));
+		}
+	}
+
+end:
+	Map_destroy(map);
+}
+
+void
+test_map_keys (void* data)
+{
+	Map* map = Map_new(runtime);
+
+	Map_put(map, hash_for(NIL), NIL, TRUE);
+	Map_put(map, hash_for(TRUE), TRUE, FALSE);
+	Map_put(map, hash_for(FALSE), FALSE, NIL);
+
+	Vector* keys = Map_keys(map);
+
+	for (uint64_t i = 0; i < Vector_length(keys); i++) {
+		Value* key = Vector_get(keys, i);
+
+		tt_assert(is_nil(key) || is_true(key) || is_false(key));
+	}
+
+end:
+	Map_destroy(map);
+}
+
+void
+test_map_values (void* data)
+{
+	Map* map = Map_new(runtime);
+
+	Map_put(map, hash_for(NIL), NIL, TRUE);
+	Map_put(map, hash_for(TRUE), TRUE, FALSE);
+	Map_put(map, hash_for(FALSE), FALSE, NIL);
+
+	Vector* values = Map_values(map);
+
+	for (uint64_t i = 0; i < Vector_length(values); i++) {
+		Value* value = Vector_get(values, i);
+
+		tt_assert(is_nil(value) || is_true(value) || is_false(value));
+	}
+
+end:
+	Map_destroy(map);
+}
+
 struct testcase_t map_tests[] = {
 	{ "new", test_map_new },
 	{ "put", test_map_put },
 	{ "get", test_map_get },
 	{ "delete", test_map_delete },
+
+	{ "tuples", test_map_tuples },
+	{ "keys", test_map_tuples },
+	{ "values", test_map_tuples },
 
 	END_OF_TESTCASES
 };
