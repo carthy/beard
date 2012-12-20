@@ -22,18 +22,18 @@ typedef struct Map Map;
 
 Map* Map_new (Runtime* rt);
 
-bool Map_has (Map* self, uint64_t key);
+bool Map_has (Map* self, uint64_t hash);
 
 Tuple* Map_put (Map* self, uint64_t hash, Value* key, Value* value);
 
 Tuple* Map_put_tuple (Map* self, uint64_t hash, Tuple* pair);
 
-Value* Map_get_value (Map* self, uint64_t key);
+Value* Map_get_value (Map* self, uint64_t hash);
 
-Value* Map_get_key (Map* self, uint64_t key);
+Value* Map_get_key (Map* self, uint64_t hash);
 
-Tuple* Map_get_tuple (Map* self, uint64_t key);
+Tuple* Map_get_tuple (Map* self, uint64_t hash);
 
-Tuple* Map_delete (Map* self, uint64_t key);
+Tuple* Map_delete (Map* self, uint64_t hash);
 
 uint64_t Map_length (Map* self);
