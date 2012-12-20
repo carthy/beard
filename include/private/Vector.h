@@ -22,6 +22,8 @@
 #include <public/Vector.h>
 
 struct Vector {
+	Value descriptor;
+
 	Value**  items;
 	uint64_t length;
 };
