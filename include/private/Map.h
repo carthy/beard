@@ -23,6 +23,8 @@
 #include <Judy.h>
 
 struct Map {
+	Value descriptor;
+
 	Pvoid_t array;
 };
 
