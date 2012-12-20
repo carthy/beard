@@ -16,8 +16,8 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/Value.h>
 #include <private/common.h>
+#include <private/Value.h>
 
 bool
 is_nil (Value* self)
@@ -120,5 +120,19 @@ type_of (Value* self)
 	}
 	else {
 		return self->type;
+	}
+}
+
+uint64_t
+hash_for (Value* value)
+{
+	if (IS_NIL(value) || IS_BOOLEAN(value)) {
+		return (uint64_t) value;
+	}
+	else {
+		switch (value->type) {
+			default:
+				assert(false);
+		}
 	}
 }

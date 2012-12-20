@@ -57,3 +57,7 @@ bool is_falsy (Value* self);
 bool is_truthy (Value* self);
 
 ValueType type_of (Value* self);
+
+#include <stdint.h>
+
+uint64_t hash_for (Value* value);
