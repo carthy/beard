@@ -25,6 +25,8 @@
 #include <Judy.h>
 
 struct Function {
+	Value descriptor;
+
 	Pvoid_t array;
 
 	struct {
