@@ -36,4 +36,10 @@ Tuple* Map_get_tuple (Map* self, uint64_t hash);
 
 Tuple* Map_delete (Map* self, uint64_t hash);
 
+Vector* Map_tuples (Map* self);
+
+Vector* Map_keys (Map* self);
+
+Vector* Map_values (Map* self);
+
 uint64_t Map_length (Map* self);

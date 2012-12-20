@@ -18,6 +18,7 @@
 
 #include <private/Runtime.h>
 #include <public/Tuple.h>
+#include <public/Vector.h>
 #include <private/Map.h>
 #include <private/common.h>
 
@@ -106,6 +107,51 @@ Map_delete (Map* self, uint64_t hash)
 	assert(res == 1);
 
 	return (Tuple*) *val;
+}
+
+Vector*
+Map_tuples (Map* self)
+{
+	Vector* result = Vector_new(RUNTIME_FOR(self));
+	Word_t  size   = 0;
+	Word_t  index  = 0;
+	Word_t* value  = NULL;
+
+	JLC(size, self->array, 0, -1);
+	Vector_resize(result, size);
+
+	JLF(value, self->array, index);
+	for (uint64_t i = 0; value != NULL; i++) {
+		Vector_set(result, i, (Value*) *value);
+
+		JLN(value, self->array, index);
+	}
+
+	return result;
+}
+
+Vector*
+Map_keys (Map* self)
+{
+	Vector* result = Map_tuples(self);
+
+	for (uint64_t i = 0, length = Vector_length(result); i < length; i++) {
+		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(result, i), 0));
+	}
+
+	return result;
+}
+
+Vector*
+Map_values (Map* self)
+{
+	Vector* result = Map_tuples(self);
+
+	for (uint64_t i = 0, length = Vector_length(result); i < length; i++) {
+		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(result, i), 1));
+	}
+
+	return result;
 }
 
 uint64_t
