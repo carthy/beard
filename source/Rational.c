@@ -147,6 +147,17 @@ Rational_set_numerator_gmp (Rational* self, mpz_t* numerator)
 	return self;
 }
 
+Rational*
+Rational_set_denominator_gmp (Rational* self, mpz_t* denominator)
+{
+	assert(self);
+	assert(denominator);
+
+	mpq_set_den(*self->value, *denominator);
+
+	return self;
+}
+
 void
 Rational_destroy (Rational* self)
 {
