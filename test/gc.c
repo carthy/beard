@@ -34,14 +34,14 @@ end:;
 void
 test_gc_get_floating (void* data)
 {
-	mpf_t* num  = GC_NEW_FLOATING(runtime);
-	mpf_t* num2 = GC_NEW_FLOATING(runtime);
+	mpfr_t* num  = GC_NEW_FLOATING(runtime);
+	mpfr_t* num2 = GC_NEW_FLOATING(runtime);
 
-	mpf_set_d(*num, 2.3);
-	mpf_set_d(*num, 4.2);
-	mpf_add(*num, *num, *num2);
+	mpfr_set_d(*num, 2.3, MPFR_RNDN);
+	mpfr_set_d(*num, 4.2, MPFR_RNDN);
+	mpfr_add(*num, *num, *num2, MPFR_RNDN);
 
-	tt_assert(mpf_cmp_d(*num, 4.2) == 0);
+	tt_assert(mpfr_cmp_d(*num, 4.2) == 0);
 
 end:;
 }
