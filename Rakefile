@@ -5,13 +5,14 @@ require 'tmpdir'
 CC     = ENV['CC']     || 'clang'
 AR     = ENV['AR']     || 'ar'
 RANLIB = ENV['RANLIB'] || 'ranlib'
-CFLAGS = "-Wall -Werror-implicit-function-declaration -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
+CFLAGS = "-Wall -Werror-implicit-function-declaration -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/mpc/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
 
 SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
 DEPENDENCIES = FileList[
 	'vendor/gmp/.libs/libgmp.a',
 	'vendor/mpfr/src/.libs/libmpfr.a',
+	'vendor/mpc/src/.libs/libmpc.a',
 	'vendor/onigmo/.libs/libonig.a',
 	'vendor/judy/src/obj/.libs/libJudy.a',
 	'vendor/jemalloc/lib/libjemalloc.a',
@@ -46,6 +47,13 @@ namespace :build do
 
 	task :mpfr => 'submodules:mpfr' do
 		Dir.chdir 'vendor/mpfr' do
+			sh "./configure --enable-static --disable-shared #@FLAGS"
+			sh 'make'
+		end
+	end
+
+	task :mpc => 'submodules:mpc' do
+		Dir.chdir 'vendor/mpc' do
 			sh "./configure --enable-static --disable-shared #@FLAGS"
 			sh 'make'
 		end
@@ -118,6 +126,10 @@ namespace :build do
 		Rake::Task['build:mpfr'].invoke
 	end
 
+	file 'vendor/mpc/src/.libs/libmpc.a' do
+		Rake::Task['build:mpc'].invoke
+	end
+
 	file 'vendor/onigmo/.libs/libonig.a' do
 		Rake::Task['build:onigmo'].invoke
 	end
@@ -163,6 +175,7 @@ namespace :submodules do
 
 	task :gmp      => 'vendor/gmp/configure'
 	task :mpfr     => 'vendor/mpfr/configure'
+	task :mpc     => 'vendor/mpc/configure'
 	task :onigmo   => 'vendor/onigmo/configure.in'
 	task :judy     => 'vendor/judy/configure'
 	task :jemalloc => 'vendor/jemalloc/configure.ac'
@@ -174,6 +187,10 @@ namespace :submodules do
 	end
 
 	file 'vendor/mpfr/configure' do
+		Rake::Task['submodules:fetch'].invoke
+	end
+
+	file 'vendor/mpc/configure' do
 		Rake::Task['submodules:fetch'].invoke
 	end
 
@@ -207,7 +224,7 @@ rule '.h'
 CLEAN.include(OBJECTS)
 
 task :clobber do
-	FileList['vendor/gmp', 'vendor/mpfr', 'vendor/onigmo', 'vendor/judy', 'vendor/jemalloc'].each {|dir|
+	FileList['vendor/gmp', 'vendor/mpfr', 'vendor/mpc', 'vendor/onigmo', 'vendor/judy', 'vendor/jemalloc'].each {|dir|
 		if File.directory? dir
 			Dir.chdir dir do
 				sh 'make distclean' rescue nil

@@ -19,3 +19,6 @@
 [submodule "vendor/mpfr"]
 	path = vendor/mpfr
 	url = git://github.com/carthy/beard.mpfr
+[submodule "vendor/mpc"]
+	path = vendor/mpc
+	url = git://github.com/carthy/beard.mpc
