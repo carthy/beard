@@ -5,11 +5,18 @@ require 'tmpdir'
 CC     = ENV['CC']     || 'clang'
 AR     = ENV['AR']     || 'ar'
 RANLIB = ENV['RANLIB'] || 'ranlib'
-CFLAGS = "-Wall -std=c11 -Iinclude -Ivendor/gmp -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
+CFLAGS = "-Wall -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
 
 SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
-DEPENDENCIES = FileList['vendor/gmp/.libs/libgmp.a', 'vendor/onigmo/.libs/libonig.a', 'vendor/judy/src/obj/.libs/libJudy.a', 'vendor/jemalloc/lib/libjemalloc.a', 'vendor/siphash/siphash.o']
+DEPENDENCIES = FileList[
+	'vendor/gmp/.libs/libgmp.a',
+	'vendor/mpfr/src/.libs/libmpfr.a',
+	'vendor/onigmo/.libs/libonig.a',
+	'vendor/judy/src/obj/.libs/libJudy.a',
+	'vendor/jemalloc/lib/libjemalloc.a',
+	'vendor/siphash/siphash.o'
+]
 
 task :default => :build
 
@@ -32,6 +39,13 @@ namespace :build do
 
 	task :gmp => 'submodules:gmp' do
 		Dir.chdir 'vendor/gmp' do
+			sh "./configure --enable-static --disable-shared #@FLAGS"
+			sh 'make'
+		end
+	end
+
+	task :mpfr => 'submodules:mpfr' do
+		Dir.chdir 'vendor/mpfr' do
 			sh "./configure --enable-static --disable-shared #@FLAGS"
 			sh 'make'
 		end
@@ -100,6 +114,10 @@ namespace :build do
 		Rake::Task['build:gmp'].invoke
 	end
 
+	file 'vendor/mpfr/src/.libs/libmpfr.a' do
+		Rake::Task['build:mpfr'].invoke
+	end
+
 	file 'vendor/onigmo/.libs/libonig.a' do
 		Rake::Task['build:onigmo'].invoke
 	end
@@ -144,6 +162,7 @@ namespace :submodules do
 	end
 
 	task :gmp      => 'vendor/gmp/configure'
+	task :mpfr     => 'vendor/mpfr/configure'
 	task :onigmo   => 'vendor/onigmo/configure.in'
 	task :judy     => 'vendor/judy/configure'
 	task :jemalloc => 'vendor/jemalloc/configure.ac'
@@ -151,6 +170,10 @@ namespace :submodules do
 	task :tinytest => 'vendor/tinytest/tinytest.c'
 
 	file 'vendor/gmp/configure' do
+		Rake::Task['submodules:fetch'].invoke
+	end
+
+	file 'vendor/mpfr/configure' do
 		Rake::Task['submodules:fetch'].invoke
 	end
 
@@ -184,7 +207,7 @@ rule '.h'
 CLEAN.include(OBJECTS)
 
 task :clobber do
-	FileList['vendor/gmp', 'vendor/onigmo', 'vendor/judy', 'vendor/jemalloc'].each {|dir|
+	FileList['vendor/gmp', 'vendor/mpfr', 'vendor/onigmo', 'vendor/judy', 'vendor/jemalloc'].each {|dir|
 		if File.directory? dir
 			Dir.chdir dir do
 				sh 'make distclean' rescue nil

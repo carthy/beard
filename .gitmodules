@@ -16,3 +16,6 @@
 [submodule "vendor/siphash"]
 	path = vendor/siphash
 	url = git://github.com/carthy/beard.siphash
+[submodule "vendor/mpfr"]
+	path = vendor/mpfr
+	url = git://github.com/carthy/beard.mpfr
