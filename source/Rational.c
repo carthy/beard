@@ -174,12 +174,38 @@ Rational_set_numerator_integer (Rational* self, Integer* numerator)
 }
 
 Rational*
+Rational_set_denominator_native (Rational* self, long denominator)
+{
+	assert(self);
+
+	mpz_set_si(mpq_denref(*self->value), denominator);
+
+	return self;
+}
+
+Rational*
 Rational_set_denominator_gmp (Rational* self, mpz_t* denominator)
 {
 	assert(self);
 	assert(denominator);
 
 	mpq_set_den(*self->value, *denominator);
+
+	return self;
+}
+
+Rational*
+Rational_set_denominator_integer (Rational* self, Integer* denominator)
+{
+	assert(self);
+	assert(denominator);
+
+	if (INTEGER_IS_NATIVE(denominator)) {
+		mpz_set_si(mpq_denref(*self->value), INTEGER_GET_NATIVE(denominator));
+	}
+	else {
+		mpq_set_num(*self->value, *INTEGER_GET_GMP(denominator));
+	}
 
 	return self;
 }

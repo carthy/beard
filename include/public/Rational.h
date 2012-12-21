@@ -59,6 +59,15 @@ Rational* Rational_set_numerator_native (Rational* self, long numerator);
 
 Rational* Rational_set_numerator_integer (Rational* self, Integer* numerator);
 
+#define Rational_set_denominator(self, X) _Generic((X), \
+	long:     Rational_set_denominator_native,  \
+	Integer*: Rational_set_denominator_integer  \
+)(self, X)
+
+Rational* Rational_set_denominator_native (Rational* self, long denominator);
+
+Rational* Rational_set_denominator_integer (Rational* self, Integer* denominator);
+
 Rational* Rational_set_string (Rational* self, const char* string);
 
 Rational* Rational_set_string_with_base (Rational* self, const char* string, int base);
