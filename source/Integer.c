@@ -723,7 +723,7 @@ Integer_hash (Integer* self)
 		char*  string = malloc(size);
 
 		mpz_get_str(string, 32, *INTEGER_GET_GMP(self));
-		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size);
+		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size) ^ (VALUE_TYPE_INTEGER << 4);
 
 		free(string);
 	}
