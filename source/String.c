@@ -23,7 +23,7 @@
 static inline String*
 invalidate_cache (String* self)
 {
-	self->cache.hash = 0;
+	CACHE(self)->hash = 0;
 
 	return self;
 }
@@ -299,8 +299,8 @@ String_bytes (String* self)
 uint64_t
 String_hash (String* self)
 {
-	if (self->cache.hash) {
-		return self->cache.hash;
+	if (CACHE(self)->hash) {
+		return CACHE(self)->hash;
 	}
 
 	int encoding = String_get_encoding(self);
@@ -309,9 +309,9 @@ String_hash (String* self)
 		encoding = 0;
 	}
 
-	self->cache.hash = siphash(RUNTIME_FOR(self)->sip_key, self->buffer, self->bytes) ^ encoding;
+	CACHE(self)->hash = siphash(RUNTIME_FOR(self)->sip_key, self->buffer, self->bytes) ^ encoding;
 
-	return self->cache.hash;
+	return CACHE(self)->hash;
 }
 
 Encoding
