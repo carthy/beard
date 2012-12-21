@@ -5,7 +5,7 @@ require 'tmpdir'
 CC     = ENV['CC']     || 'clang'
 AR     = ENV['AR']     || 'ar'
 RANLIB = ENV['RANLIB'] || 'ranlib'
-CFLAGS = "-Wall -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
+CFLAGS = "-Wall -Werror-implicit-function-declaration -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
 
 SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
