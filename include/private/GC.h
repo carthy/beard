@@ -23,6 +23,7 @@
 #include <private/FreeList.h>
 
 #include <gmp.h>
+#include <mpfr.h>
 
 typedef struct GC {
 	Runtime* runtime;
@@ -44,9 +45,9 @@ mpz_t* GC_get_integer (GC* self);
 
 void GC_put_integer (GC* self, mpz_t* value);
 
-mpf_t* GC_get_floating (GC* self);
+mpfr_t* GC_get_floating (GC* self);
 
-void GC_put_floating (GC* self, mpf_t* value);
+void GC_put_floating (GC* self, mpfr_t* value);
 
 mpq_t* GC_get_rational (GC* self);
 

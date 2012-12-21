@@ -46,18 +46,18 @@ _mpz_destructor (void* value)
 }
 
 static void*
-_mpf_constructor (void)
+_mpfr_constructor (void)
 {
-	mpf_t* value = malloc(sizeof(mpf_t));
-	mpf_init(*value);
+	mpfr_t* value = malloc(sizeof(mpfr_t));
+	mpfr_init(*value);
 
 	return value;
 }
 
 static void
-_mpf_destructor (void* value)
+_mpfr_destructor (void* value)
 {
-	mpf_clear(*(mpf_t*) value);
+	mpfr_clear(*(mpfr_t*) value);
 	free(value);
 }
 
@@ -87,7 +87,7 @@ GC_new (Runtime* rt)
 	self->runtime = rt;
 
 	self->integer  = FreeList_new(_mpz_constructor, _mpz_destructor);
-	self->floating = FreeList_new(_mpf_constructor, _mpf_destructor);
+	self->floating = FreeList_new(_mpfr_constructor, _mpfr_destructor);
 	self->rational = FreeList_new(_mpq_constructor, _mpq_destructor);
 
 	return self;
@@ -171,14 +171,14 @@ GC_put_integer (GC* self, mpz_t* value)
 	FreeList_put(self->integer, value);
 }
 
-mpf_t*
+mpfr_t*
 GC_get_floating (GC* self)
 {
 	return FreeList_get(self->floating);
 }
 
 void
-GC_put_floating (GC* self, mpf_t* value)
+GC_put_floating (GC* self, mpfr_t* value)
 {
 	FreeList_put(self->floating, value);
 }

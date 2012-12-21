@@ -21,29 +21,14 @@
 
 #include <public/Floating.h>
 
+#include <mpfr.h>
+
 struct Floating {
 	Value descriptor;
 
-	mpf_t* value;
+	mpfr_t* value;
+
 };
-
-#define NAN ((mpf_t*) 0)
-
-#define POSITIVE_INFINITY ((mpf_t*) 1)
-
-#define NEGATIVE_INFINITY ((mpf_t*) 2)
-
-#define INFINITY POSITIVE_INFINITY
-
-#define FLOATING_IS_NAN(f) ((f)->value == NAN)
-
-#define FLOATING_IS_POSITIVE_INFINITY(f) ((f)->value == POSITIVE_INFINITY)
-
-#define FLOATING_IS_NEGATIVE_INFINITY(f) ((f)->value == NEGATIVE_INFINITY)
-
-#define FLOATING_IS_INFINITY(f) FLOATING_IS_POSITIVE_INFINITY(f)
-
-#define FLOATING_IS_GMP(f) !(FLOATING_IS_NAN(f) || FLOATING_IS_POSITIVE_INFINITY(f) || FLOATING_IS_NEGATIVE_INFINITY(f))
 
 void Floating_destroy (Floating* self);
 

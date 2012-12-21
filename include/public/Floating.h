@@ -24,11 +24,13 @@ Floating* Floating_new_with_precision (Runtime* rt, unsigned long precision);
 
 Floating* Floating_set_nan (Floating* self);
 
-Floating* Floating_set_infinity (Floating* self);
-
 Floating* Floating_set_positive_infinity (Floating* self);
 
 Floating* Floating_set_negative_infinity (Floating* self);
+
+Floating* Floating_set_positive_zero (Floating* self);
+
+Floating* Floating_set_negative_zero (Floating* self);
 
 unsigned long Floating_set_precision (Floating* self, unsigned long precision);
 
@@ -64,6 +66,15 @@ bool Floating_is_nan (Floating* self);
 
 bool Floating_is_infinity (Floating* self);
 
-bool Floating_is_positive_infinity (Floating* self);
+bool Floating_is_zero (Floating* self);
 
-bool Floating_is_negative_infinity (Floating* self);
+bool Floating_is_number (Floating* self);
+
+bool Floating_is_regular (Floating* self);
+
+bool Floating_is_positive (Floating* self);
+
+bool Floating_is_negative (Floating* self);
+
+int Floating_sign (Floating* self);
+
