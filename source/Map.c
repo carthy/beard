@@ -25,7 +25,9 @@
 static inline Map*
 invalidate_cache (Map* self)
 {
-	self->cache.pairs = NULL;
+	self->cache.length = 0;
+
+	self->cache.pairs  = NULL;
 	self->cache.keys   = NULL;
 	self->cache.values = NULL;
 
@@ -193,9 +195,14 @@ Map_values (Map* self)
 uint64_t
 Map_length (Map* self)
 {
-	Word_t size;
+	if (self->cache.length > 0) {
+		return self->cache.length;
+	}
 
+	Word_t size;
 	JLC(size, self->array, 0, -1);
+
+	self->cache.length = size;
 
 	return size;
 }
