@@ -309,7 +309,7 @@ String_hash (String* self)
 		encoding = 0;
 	}
 
-	CACHE(self)->hash = siphash(RUNTIME_FOR(self)->sip_key, self->buffer, self->bytes) ^ encoding;
+	CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), self->buffer, self->bytes) ^ encoding;
 
 	return CACHE(self)->hash;
 }
