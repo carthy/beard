@@ -26,17 +26,17 @@ bool Map_has (Map* self, uint64_t hash);
 
 Tuple* Map_put (Map* self, uint64_t hash, Value* key, Value* value);
 
-Tuple* Map_put_tuple (Map* self, uint64_t hash, Tuple* pair);
+Tuple* Map_put_pair (Map* self, uint64_t hash, Tuple* pair);
 
 Value* Map_get_value (Map* self, uint64_t hash);
 
 Value* Map_get_key (Map* self, uint64_t hash);
 
-Tuple* Map_get_tuple (Map* self, uint64_t hash);
+Tuple* Map_get_pair (Map* self, uint64_t hash);
 
 Tuple* Map_delete (Map* self, uint64_t hash);
 
-Vector* Map_tuples (Map* self);
+Vector* Map_pairs (Map* self);
 
 Vector* Map_keys (Map* self);
 

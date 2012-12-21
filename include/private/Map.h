@@ -28,7 +28,7 @@ struct Map {
 	Pvoid_t array;
 
 	struct {
-		Vector* tuples;
+		Vector* pairs;
 		Vector* keys;
 		Vector* values;
 	} cache;
