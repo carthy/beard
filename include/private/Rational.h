@@ -29,4 +29,6 @@ struct Rational {
 
 void Rational_destroy (Rational* self);
 
+Rational* Rational_set_numerator_gmp (Rational* self, mpz_t* numerator);
+
 #endif

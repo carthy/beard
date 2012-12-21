@@ -136,6 +136,17 @@ Rational_set_string_with_base (Rational* self, const char* string, int base)
 	return self;
 }
 
+Rational*
+Rational_set_numerator_gmp (Rational* self, mpz_t* numerator)
+{
+	assert(self);
+	assert(numerator);
+
+	mpq_set_num(*self->value, *numerator);
+
+	return self;
+}
+
 void
 Rational_destroy (Rational* self)
 {
