@@ -51,9 +51,25 @@ test_floating_add (void* data)
 end:;
 }
 
+void
+test_floating_hash (void* data)
+{
+	Floating* num = Floating_new(runtime);
+
+	tt_int_op(Floating_hash(Floating_set_double(num, 2)), ==, Floating_hash(Floating_set_double(num, 2)));
+	tt_int_op(Floating_hash(Floating_set_string(num, "2.3498583948580303")), ==, Floating_hash(Floating_set_string(num, "2.3498583948580303")));
+	tt_int_op(Floating_hash(Floating_set_string(num, "23.498583948580303")), ==, Floating_hash(Floating_set_string(num, "23.498583948580303")));
+
+	tt_int_op(Floating_hash(Floating_set_string(num, "23.498583948580303")), !=, Floating_hash(Floating_set_string(num, "2.3498583948580303")));
+
+end:
+	Floating_destroy(num);
+}
+
 struct testcase_t floating_tests[] = {
 	{ "new", test_floating_new },
 	{ "add", test_floating_add },
+	{ "hash", test_floating_hash },
 
 	END_OF_TESTCASES
 };
