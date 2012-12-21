@@ -146,6 +146,40 @@ end:
 }
 
 void
+test_integer_pow(void* data)
+{
+	Integer*  num  = Integer_set(Integer_new(runtime), -2);
+	Integer*  num2 = Integer_set(Integer_new(runtime), 2);
+	Integer*  num3 = Integer_set(Integer_new(runtime), 3);
+	Integer*  num4 = (Integer*) Integer_pow(num, num2);
+	Integer*  num5 = (Integer*) Integer_pow(num, num3);
+	Rational* num6 = (Rational*) Integer_pow(num2, num);
+	Integer*  num7 = Integer_set(Integer_new(runtime), 4);
+	Integer*  num8 = Integer_set(Integer_new(runtime), -8);
+	Rational* num9 = Rational_set(Rational_new(runtime), 1L, 4);
+
+	tt_assert(IS_INTEGER(num4));
+	tt_assert(IS_INTEGER(num5));
+	tt_assert(IS_RATIONAL(num6));
+	tt_assert(INTEGER_IS_GMP(num4));
+	tt_assert(INTEGER_IS_GMP(num5));
+	tt_assert(Integer_eq(num4, (Value*) num7));
+	tt_assert(Integer_eq(num5, (Value*) num8));
+	/*tt_assert(Rational_eq(num6, (Value*) num9));*/
+
+end:
+	Integer_destroy(num);
+	Integer_destroy(num2);
+	Integer_destroy(num3);
+	Integer_destroy(num4);
+	Integer_destroy(num5);
+	Rational_destroy(num6);
+	Integer_destroy(num7);
+	Integer_destroy(num8);
+	Rational_destroy(num9);
+}
+
+void
 test_integer_is_odd (void* data)
 {
 	Integer* num  = Integer_set(Integer_new(runtime), 32L);
@@ -195,6 +229,7 @@ struct testcase_t integer_tests[] = {
 	{ "sub", test_integer_sub },
 	{ "mul", test_integer_mul },
 	{ "div", test_integer_div },
+	{ "pow", test_integer_pow },
 	{ "neg", test_integer_neg },
 	{ "is_odd", test_integer_is_odd },
 	{ "is_even", test_integer_is_even },

@@ -591,7 +591,9 @@ Integer_pow (Integer* self, Integer* exponent)
 			(INTEGER_IS_GMP(exponent) && mpz_cmp_si(*INTEGER_GET_GMP(exponent), 1) == 0)) {
 		result = (Value*) Integer_dup(self);
 	}
-	else if (INTEGER_IS_NATIVE(exponent) && INTEGER_GET_NATIVE(exponent) == 0) {
+	// if the exponent is 0, return either 1 or -1
+	else if (INTEGER_IS_NATIVE(exponent) && INTEGER_GET_NATIVE(exponent) == 0 ||
+			(INTEGER_IS_GMP(exponent) && mpz_cmp_ui(INTEGER_GET_GMP(exponent), 0L) == 0)) {
 		if ((INTEGER_IS_NATIVE(self) && INTEGER_GET_NATIVE(self) < 0) ||
 				(INTEGER_IS_GMP(self) && mpz_cmp_si(*INTEGER_GET_GMP(self), 0) < 0)) {
 			result = (Value*) Integer_set_native(Integer_new(RUNTIME_FOR(self)), -1);
