@@ -22,21 +22,21 @@ void
 test_floating_new (void* data)
 {
 	Floating* num  = Floating_new(runtime);
-	Floating* num2 = Floating_set_infinity(Floating_new(runtime));
+	Floating* num2 = Floating_set_positive_infinity(Floating_new(runtime));
 	Floating* num3 = Floating_set_negative_infinity(Floating_new(runtime));
 	Floating* num4 = Floating_set_double(Floating_new(runtime), 2);
 
 	tt_assert(num);
-	tt_assert(FLOATING_IS_NAN(num));
+	tt_assert(Floating_is_nan(num));
 
 	tt_assert(num2);
-	tt_assert(FLOATING_IS_INFINITY(num2));
+	tt_assert(Floating_is_infinity(num2) && Floating_is_positive(num2));
 
 	tt_assert(num3);
-	tt_assert(FLOATING_IS_NEGATIVE_INFINITY(num3));
+	tt_assert(Floating_is_infinity(num3) && Floating_is_negative(num3));
 
 	tt_assert(num4);
-	tt_assert(FLOATING_IS_GMP(num4));
+	tt_assert(Floating_is_regular(num4));
 
 end:
 	Floating_destroy(num);
