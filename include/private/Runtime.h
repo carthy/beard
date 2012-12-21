@@ -60,4 +60,7 @@ struct Runtime {
 #define CACHE(s) \
 	(&(self->cache))
 
+#define SIPHASH(runtime, buffer, length) \
+	siphash((runtime)->sip_key, (const unsigned char*) buffer, length)
+
 #endif
