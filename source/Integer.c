@@ -270,7 +270,7 @@ Integer_lt (Integer* self, Value* number)
 			return INTEGER_GET_NATIVE(self) < INTEGER_GET_NATIVE(other);
 		}
 		else {
-			return mpz_cmp_si(*INTEGER_GET_GMP(other), INTEGER_GET_NATIVE(self)) < 0;
+			return mpz_cmp_si(*INTEGER_GET_GMP(other), INTEGER_GET_NATIVE(self)) > 0;
 		}
 	}
 	else {
