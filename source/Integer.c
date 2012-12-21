@@ -22,6 +22,14 @@
 #include <public/Rational.h>
 #include <private/common.h>
 
+static inline Integer*
+invalidate_cache (Integer* self)
+{
+	CACHE(self)->hash = 0;
+
+	return self;
+}
+
 Integer*
 Integer_new (Runtime* rt)
 {
@@ -29,6 +37,8 @@ Integer_new (Runtime* rt)
 
 	self->type      = INTEGER_TYPE_NATIVE;
 	self->as.native = 0;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -44,6 +54,8 @@ Integer_set_native (Integer* self, long value)
 
 	self->type      = INTEGER_TYPE_NATIVE;
 	self->as.native = value;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -68,6 +80,8 @@ Integer_set_string (Integer* self, const char* string)
 		self->as.native = value;
 	}
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -91,6 +105,8 @@ Integer_set_string_with_base (Integer* self, const char* string, int base)
 		self->as.native = value;
 	}
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -107,6 +123,8 @@ Integer_set_gmp (Integer* self, mpz_t* gmp)
 	}
 
 	self->type = INTEGER_TYPE_GMP;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -573,4 +591,27 @@ Integer_get_bits (Integer* self)
 		case INTEGER_TYPE_GMP:
 			return mpz_sizeinbase(*INTEGER_GET_GMP(self), 2);
 	}
+}
+
+uint64_t
+Integer_hash (Integer* self)
+{
+	if (CACHE(self)->hash) {
+		return CACHE(self)->hash;
+	}
+
+	if (INTEGER_IS_NATIVE(self)) {
+		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), &INTEGER_GET_NATIVE(self), sizeof(INTEGER_GET_NATIVE(self)));
+	}
+	else {
+		size_t size   = mpz_sizeinbase(*INTEGER_GET_GMP(self), 32) + 2;
+		char*  string = malloc(size);
+
+		mpz_get_str(string, 32, *INTEGER_GET_GMP(self));
+		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size);
+
+		free(string);
+	}
+
+	return CACHE(self)->hash;
 }

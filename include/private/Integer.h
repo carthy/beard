@@ -40,6 +40,10 @@ struct Integer {
 
 	IntegerType  type;
 	IntegerValue as;
+
+	struct {
+		uint64_t hash;
+	} cache;
 };
 
 Integer* Integer_set_gmp (Integer* self, mpz_t* gmp);

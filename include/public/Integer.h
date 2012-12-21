@@ -59,3 +59,5 @@ Value* Integer_div (Integer* self, Value* other);
 bool Integer_is_odd (Integer* self);
 
 bool Integer_is_even (Integer* self);
+
+uint64_t Integer_hash (Integer* self);
