@@ -136,7 +136,7 @@ test_integer_div(void* data)
 	tt_assert(IS_RATIONAL(num3));
 	tt_assert(IS_RATIONAL(num4));
 
-	/*tt_assert(Rational_eq(num1, (Value*) num2))*/
+	tt_assert(Rational_eq(num3, (Value*) num4))
 
 end:
 	Integer_destroy(num);
@@ -165,7 +165,7 @@ test_integer_pow(void* data)
 	tt_assert(INTEGER_IS_GMP(num5));
 	tt_assert(Integer_eq(num4, (Value*) num7));
 	tt_assert(Integer_eq(num5, (Value*) num8));
-	/*tt_assert(Rational_eq(num6, (Value*) num9));*/
+	tt_assert(Rational_eq(num6, (Value*) num9));
 
 end:
 	Integer_destroy(num);
