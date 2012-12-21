@@ -20,6 +20,8 @@ typedef struct Integer Integer;
 
 Integer* Integer_new (Runtime* rt);
 
+Integer* Integer_dup (Integer* self);
+
 #define Integer_set(self, X) _Generic((X), \
 	char:  Integer_set_native, \
 	short: Integer_set_native, \

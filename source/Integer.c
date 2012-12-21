@@ -44,6 +44,24 @@ Integer_new (Runtime* rt)
 }
 
 Integer*
+Integer_dup (Integer* self)
+{
+	Integer* dup = Integer_new(RUNTIME_FOR(self));
+
+	if (INTEGER_IS_NATIVE(self)) {
+		Integer_set_native(dup, INTEGER_GET_NATIVE(self));
+	}
+	else {
+		mpz_t* gmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+		mpz_set(*gmp, *INTEGER_GET_GMP(self));
+
+		Integer_set_gmp(dup, gmp);
+	}
+
+	return dup;
+}
+
+Integer*
 Integer_set_native (Integer* self, long value)
 {
 	assert(self);
