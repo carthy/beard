@@ -50,6 +50,15 @@ Rational* Rational_set_integer (Rational* self, Integer* numerator, Integer* den
 		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), NIL) : \
 		Rational_set_native(ARGS_FIRST(__VA_ARGS__), ARGS_SECOND(__VA_ARGS__), ARGS_THIRD(__VA_ARGS__)))
 
+#define Rational_set_numerator(self, X) _Generic((X), \
+	long:     Rational_set_numerator_native,  \
+	Integer*: Rational_set_numerator_integer  \
+)(self, X)
+
+Rational* Rational_set_numerator_native (Rational* self, long numerator);
+
+Rational* Rational_set_numerator_integer (Rational* self, Integer* numerator);
+
 Rational* Rational_set_string (Rational* self, const char* string);
 
 Rational* Rational_set_string_with_base (Rational* self, const char* string, int base);

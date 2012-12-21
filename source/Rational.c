@@ -137,12 +137,38 @@ Rational_set_string_with_base (Rational* self, const char* string, int base)
 }
 
 Rational*
+Rational_set_numerator_native (Rational* self, long numerator)
+{
+	assert(self);
+
+	mpz_set_si(mpq_numref(*self->value), numerator);
+
+	return self;
+}
+
+Rational*
 Rational_set_numerator_gmp (Rational* self, mpz_t* numerator)
 {
 	assert(self);
 	assert(numerator);
 
 	mpq_set_num(*self->value, *numerator);
+
+	return self;
+}
+
+Rational*
+Rational_set_numerator_integer (Rational* self, Integer* numerator)
+{
+	assert(self);
+	assert(numerator);
+
+	if (INTEGER_IS_NATIVE(numerator)) {
+		mpz_set_si(mpq_numref(*self->value), INTEGER_GET_NATIVE(numerator));
+	}
+	else {
+		mpq_set_num(*self->value, *INTEGER_GET_GMP(numerator));
+	}
 
 	return self;
 }
