@@ -57,4 +57,7 @@ struct Runtime {
 #define GC_SAVE_RATIONAL(rt, value) \
 	GC_put_rational(rt->garbage_collector, value)
 
+#define CACHE(s) \
+	(&(self->cache))
+
 #endif
