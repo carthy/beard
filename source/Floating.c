@@ -22,12 +22,22 @@
 #include <private/Rational.h>
 #include <private/common.h>
 
+static inline Floating*
+invalidate_cache (Floating* self)
+{
+	CACHE(self)->hash = 0;
+
+	return self;
+}
+
 Floating*
 Floating_new (Runtime* rt)
 {
 	Floating* self = (Floating*) GC_ALLOCATE(rt, FLOATING);
 
 	self->value = GC_NEW_FLOATING(rt);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -47,6 +57,7 @@ Floating_set_nan (Floating* self)
 {
 	mpfr_set_nan(*self->value);
 
+	invalidate_cache(self);
 
 	return self;
 }
@@ -62,6 +73,7 @@ Floating_set_positive_infinity (Floating* self)
 {
 	mpfr_set_inf(*self->value, 1);
 
+	invalidate_cache(self);
 
 	return self;
 }
@@ -71,6 +83,7 @@ Floating_set_negative_infinity (Floating* self)
 {
 	mpfr_set_inf(*self->value, -1);
 
+	invalidate_cache(self);
 
 	return self;
 }
@@ -86,6 +99,7 @@ Floating_set_positive_zero (Floating* self)
 {
 	mpfr_set_zero(*self->value, 1);
 
+	invalidate_cache(self);
 
 	return self;
 }
@@ -95,6 +109,8 @@ Floating_set_negative_zero (Floating* self)
 {
 	mpfr_set_zero(*self->value, -1);
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -103,6 +119,7 @@ Floating_set_precision (Floating* self, unsigned long precision)
 {
 	mpfr_set_prec(*self->value, precision);
 
+	invalidate_cache(self);
 
 	return precision;
 }
@@ -120,6 +137,7 @@ Floating_set_double (Floating* self, double number)
 
 	mpfr_set_d(*self->value, number, MPFR_RNDN);
 
+	invalidate_cache(self);
 
 	return self;
 }
@@ -131,6 +149,8 @@ Floating_set_string (Floating* self, const char* string)
 
 	mpfr_set_str(*self->value, string, 0, MPFR_RNDN);
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -141,6 +161,7 @@ Floating_set_string_with_base (Floating* self, const char* string, int base)
 
 	mpfr_set_str(*self->value, string, base, MPFR_RNDN);
 
+	invalidate_cache(self);
 
 	return self;
 }
@@ -241,4 +262,18 @@ Floating_sign (Floating* self)
 	return mpfr_sgn(*self->value);
 }
 
+uint64_t
+Floating_hash (Floating* self)
+{
+	if (CACHE(self)->hash) {
+		return CACHE(self)->hash;
+	}
+
+	mpfr_exp_t exp;
+	char*      string = mpfr_get_str(NULL, &exp, 32, 0, *self->value, MPFR_RNDN);
+	size_t     size   = strlen(string);
+
+	CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size + 1) ^ ((VALUE_TYPE_FLOATING << 4) ^ exp);
+
+	return CACHE(self)->hash;
 }

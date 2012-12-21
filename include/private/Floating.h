@@ -28,6 +28,9 @@ struct Floating {
 
 	mpfr_t* value;
 
+	struct {
+		uint64_t hash;
+	} cache;
 };
 
 void Floating_destroy (Floating* self);

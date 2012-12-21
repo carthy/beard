@@ -78,3 +78,4 @@ bool Floating_is_negative (Floating* self);
 
 int Floating_sign (Floating* self);
 
+uint64_t Floating_hash (Floating* self);
