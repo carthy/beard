@@ -235,9 +235,39 @@ Rational_denominator (Rational* self)
 }
 
 bool
-Rational_eq (Rational* self, Value* other)
+Rational_eq (Rational* self, Value* number)
 {
-	return NIL;
+	assert(IS_RATIONAL(number) || IS_FLOATING(number) || IS_INTEGER(number));
+
+	if (IS_FLOATING(number)) {
+		return Floating_eq((Floating*) number, (Value*) self);
+	}
+
+	if (IS_RATIONAL(number)) {
+		return mpq_equal(*self->value, *((Rational*) number)->value);
+	}
+
+	Integer* other = (Integer*) number;
+	bool     result;
+
+	if (INTEGER_IS_NATIVE(number)) {
+		result = mpq_cmp_si(*self->value, INTEGER_GET_NATIVE(other), 1L);
+	}
+	else {
+		if (mpz_fits_slong_p(*INTEGER_GET_GMP(other))) {
+			result = mpq_cmp_si(*self->value, mpz_get_ui(*INTEGER_GET_GMP(other)), 1L);
+		}
+		else {
+			mpq_t* tmp = GC_NEW_RATIONAL(RUNTIME_FOR(self));
+			mpq_set_z(*tmp, *INTEGER_GET_GMP(other));
+
+			result = mpq_equal(*self->value, *tmp);
+
+			GC_SAVE_RATIONAL(RUNTIME_FOR(self), tmp);
+		}
+	}
+
+	return result;
 }
 
 bool
