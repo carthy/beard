@@ -58,6 +58,8 @@ Value* Integer_mul (Integer* self, Value* other);
 
 Value* Integer_div (Integer* self, Value* other);
 
+Value* Integer_pow (Integer* self, Integer* exponent);
+
 bool Integer_is_odd (Integer* self);
 
 bool Integer_is_even (Integer* self);

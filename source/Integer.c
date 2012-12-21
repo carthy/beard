@@ -19,7 +19,7 @@
 #include <private/Runtime.h>
 #include <private/Integer.h>
 #include <public/Floating.h>
-#include <public/Rational.h>
+#include <private/Rational.h>
 #include <private/common.h>
 
 static inline Integer*
@@ -571,6 +571,101 @@ Integer_div (Integer* self, Value* number)
 			else {
 				result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)), self, other);
 			}
+		}
+	}
+
+	return result;
+}
+
+Value*
+Integer_pow (Integer* self, Integer* exponent)
+{
+	Value* result;
+
+	// if the number is 0 or 1, or the exponent is 1, return the number
+	if ((INTEGER_IS_NATIVE(self) &&
+			(INTEGER_GET_NATIVE(self) == 0 || INTEGER_GET_NATIVE(self) == 1)) ||
+			(INTEGER_IS_GMP(self) &&
+			 (mpz_cmp_si(*INTEGER_GET_GMP(self), 0) == 0 || mpz_cmp_si(*INTEGER_GET_GMP(self), 1) == 0)) ||
+			(INTEGER_IS_NATIVE(exponent) && INTEGER_GET_NATIVE(exponent) == 1) ||
+			(INTEGER_IS_GMP(exponent) && mpz_cmp_si(*INTEGER_GET_GMP(exponent), 1) == 0)) {
+		result = (Value*) Integer_dup(self);
+	}
+	else if (INTEGER_IS_NATIVE(exponent) && INTEGER_GET_NATIVE(exponent) == 0) {
+		if ((INTEGER_IS_NATIVE(self) && INTEGER_GET_NATIVE(self) < 0) ||
+				(INTEGER_IS_GMP(self) && mpz_cmp_si(*INTEGER_GET_GMP(self), 0) < 0)) {
+			result = (Value*) Integer_set_native(Integer_new(RUNTIME_FOR(self)), -1);
+		}
+		else {
+			result = (Value*) Integer_set_native(Integer_new(RUNTIME_FOR(self)), 1);
+		}
+	}
+	else {
+		bool          exp_is_negative = false;
+		unsigned long exp;
+
+		if (INTEGER_IS_NATIVE(exponent)) {
+			if (INTEGER_GET_NATIVE(exponent) < 0) {
+				exp             = -INTEGER_GET_NATIVE(exponent);
+				exp_is_negative = true;
+			}
+			else {
+				exp = INTEGER_GET_NATIVE(exponent);
+			}
+		}
+		else {
+			if (mpz_cmp_si(*INTEGER_GET_GMP(exponent), 0) < 0) {
+				mpz_t* tmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+				mpz_neg(*tmp, *INTEGER_GET_GMP(self));
+
+				if (mpz_fits_ulong_p(*tmp)) {
+					exp = mpz_get_ui(*tmp);
+				}
+				else {
+					GC_SAVE_INTEGER(RUNTIME_FOR(exponent), tmp);
+
+					return (Value*) Floating_set_infinity(Floating_new(RUNTIME_FOR(self)));
+				}
+
+				GC_SAVE_INTEGER(RUNTIME_FOR(self), tmp);
+
+				exp_is_negative = true;
+			}
+			else {
+				if (mpz_fits_ulong_p(*INTEGER_GET_GMP(exponent))) {
+					exp = mpz_get_ui(*INTEGER_GET_GMP(exponent));
+				}
+				else {
+					return (Value*) Floating_set_infinity(Floating_new(RUNTIME_FOR(self)));
+				}
+			}
+		}
+
+		mpz_t* tmp = GC_NEW_INTEGER(RUNTIME_FOR(self));
+
+		if (INTEGER_IS_NATIVE(self)) {
+			if (INTEGER_GET_NATIVE(self) < 0) {
+				mpz_ui_pow_ui(*tmp, -INTEGER_GET_NATIVE(self), exp);
+
+				if (IS_ODD(exp)) {
+					mpz_neg(*tmp, *tmp);
+				}
+			} else {
+				mpz_ui_pow_ui(*tmp, INTEGER_GET_NATIVE(self), exp);
+			}
+		}
+		else {
+			mpz_pow_ui(*tmp, *INTEGER_GET_GMP(self), exp);
+		}
+
+		if (exp_is_negative) {
+			result = (Value*) Rational_new(RUNTIME_FOR(self));
+
+			Rational_set_numerator((Rational*) result, 1L);
+			Rational_set_denominator_gmp((Rational*) result, tmp);
+		}
+		else {
+			result = (Value*) Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), tmp);
 		}
 	}
 

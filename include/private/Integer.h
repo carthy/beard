@@ -90,6 +90,12 @@ void Integer_destroy (Integer* self);
 	((s1) > (LONG_MAX >> (s2))) \
 )
 
+#define IS_ODD(i) \
+	(((i) & 1) != 0)
+
+#define IS_EVEN(i) \
+	(((i) & 1) == 0)
+
 inline int Integer_get_bits (Integer* self);
 
 #endif
