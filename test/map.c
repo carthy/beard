@@ -89,7 +89,7 @@ end:
 }
 
 void
-test_map_tuples (void* data)
+test_map_pairs (void* data)
 {
 	Map* map = Map_new(runtime);
 
@@ -97,10 +97,10 @@ test_map_tuples (void* data)
 	Map_put(map, hash_for(TRUE), TRUE, FALSE);
 	Map_put(map, hash_for(FALSE), FALSE, NIL);
 
-	Vector* tuples = Map_tuples(map);
+	Vector* pairs = Map_pairs(map);
 
-	for (uint64_t i = 0; i < Vector_length(tuples); i++) {
-		Tuple* pair = Vector_get(tuples, i);
+	for (uint64_t i = 0; i < Vector_length(pairs); i++) {
+		Tuple* pair = Vector_get(pairs, i);
 
 		if (is_nil(Tuple_get(pair, 0))) {
 			tt_assert(is_true(Tuple_get(pair, 1)));
@@ -165,9 +165,9 @@ struct testcase_t map_tests[] = {
 	{ "get", test_map_get },
 	{ "delete", test_map_delete },
 
-	{ "tuples", test_map_tuples },
-	{ "keys", test_map_tuples },
-	{ "values", test_map_tuples },
+	{ "pairs", test_map_pairs },
+	{ "keys", test_map_pairs },
+	{ "values", test_map_pairs },
 
 	END_OF_TESTCASES
 };
