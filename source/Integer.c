@@ -626,7 +626,7 @@ Integer_pow (Integer* self, Integer* exponent)
 				else {
 					GC_SAVE_INTEGER(RUNTIME_FOR(exponent), tmp);
 
-					return (Value*) Floating_set_infinity(Floating_new(RUNTIME_FOR(self)));
+					return (Value*) Floating_set_positive_infinity(Floating_new(RUNTIME_FOR(self)));
 				}
 
 				GC_SAVE_INTEGER(RUNTIME_FOR(self), tmp);
@@ -638,7 +638,7 @@ Integer_pow (Integer* self, Integer* exponent)
 					exp = mpz_get_ui(*INTEGER_GET_GMP(exponent));
 				}
 				else {
-					return (Value*) Floating_set_infinity(Floating_new(RUNTIME_FOR(self)));
+					return (Value*) Floating_set_positive_infinity(Floating_new(RUNTIME_FOR(self)));
 				}
 			}
 		}
