@@ -29,7 +29,6 @@ struct String {
 
 	uint64_t length;
 	uint64_t bytes;
-	uint64_t hash;
 
 	struct {
 		Encoding type : 8;
@@ -40,6 +39,10 @@ struct String {
 	} encoding;
 
 	UChar* buffer;
+
+	struct {
+		uint64_t hash;
+	} cache;
 };
 
 void String_destroy (String* self);

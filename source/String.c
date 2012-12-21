@@ -20,6 +20,14 @@
 #include <private/String.h>
 #include <private/common.h>
 
+static inline String*
+invalidate_cache (String* self)
+{
+	self->cache.hash = 0;
+
+	return self;
+}
+
 static inline const UChar*
 find_non_ascii (const UChar* start, const UChar* end)
 {
@@ -157,7 +165,6 @@ String_new (Runtime* rt)
 
 	self->length = 0;
 	self->bytes  = 0;
-	self->hash   = 0;
 
 	self->encoding.type    = ENCODING_UTF8;
 	self->encoding.checked = true;
@@ -165,6 +172,8 @@ String_new (Runtime* rt)
 	self->encoding.at7bit  = true;
 
 	self->buffer = NULL;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -199,11 +208,12 @@ String_set_cstr (String* self, const char* str)
 
 	self->length = strlen(str);
 	self->bytes  = self->length;
-	self->hash   = 0;
 
 	self->buffer = malloc(self->bytes + 1);
 	memcpy(self->buffer, str, self->bytes);
 	self->buffer[self->bytes] = 0;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -220,11 +230,12 @@ String_set_cstr_with_encoding (String* self, const char* str, Encoding encoding)
 
 	self->bytes  = strlen(str);
 	self->length = onigenc_strlen_null(String_get_onigenc(self), (UChar*) str);
-	self->hash   = 0;
 
 	self->buffer = malloc(self->bytes + 1);
 	memcpy(self->buffer, str, self->bytes);
 	self->buffer[self->bytes] = 0;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -238,7 +249,6 @@ String_set_buffer (String* self, const void* buffer, uint64_t length)
 
 	self->length = length;
 	self->bytes  = length;
-	self->hash   = 0;
 
 	self->encoding.checked = false;
 	self->encoding.type    = ENCODING_NONE;
@@ -246,6 +256,8 @@ String_set_buffer (String* self, const void* buffer, uint64_t length)
 	self->buffer = malloc(length + 1);
 	memcpy(self->buffer, buffer, length);
 	self->buffer[self->bytes] = 0;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -262,11 +274,12 @@ String_set_buffer_with_encoding (String* self, const void* buffer, uint64_t leng
 
 	self->length = onigenc_strlen(String_get_onigenc(self), (UChar*) buffer, ((UChar*) buffer) + length);
 	self->bytes  = length;
-	self->hash   = 0;
 
 	self->buffer = malloc(length + 1);
 	memcpy(self->buffer, buffer, length);
 	self->buffer[self->bytes] = 0;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -286,8 +299,8 @@ String_bytes (String* self)
 uint64_t
 String_hash (String* self)
 {
-	if (self->hash) {
-		return self->hash;
+	if (self->cache.hash) {
+		return self->cache.hash;
 	}
 
 	int encoding = String_get_encoding(self);
@@ -296,9 +309,9 @@ String_hash (String* self)
 		encoding = 0;
 	}
 
-	self->hash = siphash(RUNTIME_FOR(self)->sip_key, self->buffer, self->bytes) ^ encoding;
+	self->cache.hash = siphash(RUNTIME_FOR(self)->sip_key, self->buffer, self->bytes) ^ encoding;
 
-	return self->hash;
+	return self->cache.hash;
 }
 
 Encoding
