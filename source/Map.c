@@ -206,3 +206,17 @@ Map_length (Map* self)
 
 	return size;
 }
+
+// FIXME: this is unoptimal
+uint64_t
+Map_hash (Map* self)
+{
+	uint64_t hash  = 0;
+	Vector*  pairs = Map_pairs(self);
+
+	for (uint64_t i = 0, length = Vector_length(pairs); i < length; i++) {
+		hash += hash_for(Vector_get(pairs, i));
+	}
+
+	return hash;
+}
