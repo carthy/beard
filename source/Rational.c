@@ -343,11 +343,13 @@ Rational_hash (Rational* self)
 		return CACHE(self)->hash;
 	}
 
-	size_t size   = mpz_sizeinbase(mpq_numref(*self->value), base) + mpz_sizeinbase(mpq_denref(*self->value), base) + 3;
+	size_t size   = mpz_sizeinbase(mpq_numref(*self->value), 32) + mpz_sizeinbase(mpq_denref(*self->value), 32) + 3;
 	char*  string = malloc(size);
 
 	mpq_get_str(string, 32, *self->value);
 	CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size) ^ (VALUE_TYPE_RATIONAL << 4);
 
 	free(string);
+
+	return CACHE(self)->hash;
 }
