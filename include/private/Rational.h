@@ -25,6 +25,10 @@ struct Rational {
 	Value descriptor;
 
 	mpq_t* value;
+
+	struct {
+		uint64_t hash;
+	} cache;
 };
 
 void Rational_destroy (Rational* self);

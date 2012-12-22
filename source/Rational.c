@@ -23,6 +23,14 @@
 #include <private/Floating.h>
 #include <private/Rational.h>
 
+static inline Rational*
+invalidate_cache (Rational* self)
+{
+	CACHE(self)->hash = 0;
+
+	return self;
+}
+
 Rational*
 Rational_new (Runtime* rt)
 {
@@ -31,6 +39,8 @@ Rational_new (Runtime* rt)
 	Rational* self = (Rational*) GC_ALLOCATE(rt, RATIONAL);
 
 	self->value = GC_NEW_RATIONAL(rt);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -47,6 +57,8 @@ Rational*
 	else {
 		mpq_set_si(*self->value, numerator, denominator);
 	}
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -111,6 +123,8 @@ Rational*
 		}
 	}
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -121,6 +135,8 @@ Rational_set_string (Rational* self, const char* string)
 	assert(string);
 
 	mpq_set_str(*self->value, string, 0);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -133,6 +149,8 @@ Rational_set_string_with_base (Rational* self, const char* string, int base)
 
 	mpq_set_str(*self->value, string, base);
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -142,6 +160,8 @@ Rational_set_numerator_native (Rational* self, long numerator)
 	assert(self);
 
 	mpz_set_si(mpq_numref(*self->value), numerator);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -153,6 +173,8 @@ Rational_set_numerator_gmp (Rational* self, mpz_t* numerator)
 	assert(numerator);
 
 	mpq_set_num(*self->value, *numerator);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -170,6 +192,8 @@ Rational_set_numerator_integer (Rational* self, Integer* numerator)
 		mpq_set_num(*self->value, *INTEGER_GET_GMP(numerator));
 	}
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -179,6 +203,8 @@ Rational_set_denominator_native (Rational* self, long denominator)
 	assert(self);
 
 	mpz_set_si(mpq_denref(*self->value), denominator);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -190,6 +216,8 @@ Rational_set_denominator_gmp (Rational* self, mpz_t* denominator)
 	assert(denominator);
 
 	mpq_set_den(*self->value, *denominator);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -206,6 +234,8 @@ Rational_set_denominator_integer (Rational* self, Integer* denominator)
 	else {
 		mpq_set_num(*self->value, *INTEGER_GET_GMP(denominator));
 	}
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -304,4 +334,20 @@ Value*
 Rational_div (Rational* self, Value* other)
 {
 	return NIL;
+}
+
+uint64_t
+Rational_hash (Rational* self)
+{
+	if (CACHE(self)->hash) {
+		return CACHE(self)->hash;
+	}
+
+	size_t size   = mpz_sizeinbase(mpq_numref(*self->value), base) + mpz_sizeinbase(mpq_denref(*self->value), base) + 3;
+	char*  string = malloc(size);
+
+	mpq_get_str(string, 32, *self->value);
+	CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size) ^ (VALUE_TYPE_RATIONAL << 4);
+
+	free(string);
 }
