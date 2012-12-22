@@ -716,7 +716,7 @@ Integer_hash (Integer* self)
 	}
 
 	if (INTEGER_IS_NATIVE(self)) {
-		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), &INTEGER_GET_NATIVE(self), sizeof(INTEGER_GET_NATIVE(self)));
+		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), &INTEGER_GET_NATIVE(self), sizeof(INTEGER_GET_NATIVE(self))) ^ (VALUE_TYPE_INTEGER << 4);
 	}
 	else {
 		size_t size   = mpz_sizeinbase(*INTEGER_GET_GMP(self), 32) + 2;
