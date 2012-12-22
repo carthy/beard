@@ -100,7 +100,7 @@ test_map_pairs (void* data)
 	Vector* pairs = Map_pairs(map);
 
 	for (uint64_t i = 0; i < Vector_length(pairs); i++) {
-		Tuple* pair = Vector_get(pairs, i);
+		Tuple* pair = (Tuple*) Vector_get(pairs, i);
 
 		if (is_nil(Tuple_get(pair, 0))) {
 			tt_assert(is_true(Tuple_get(pair, 1)));
