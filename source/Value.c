@@ -19,6 +19,14 @@
 #include <private/common.h>
 #include <private/Value.h>
 
+#include <public/Integer.h>
+#include <public/Floating.h>
+#include <public/Rational.h>
+#include <public/String.h>
+#include <public/Tuple.h>
+#include <public/Vector.h>
+#include <public/Map.h>
+
 bool
 is_nil (Value* self)
 {
@@ -137,6 +145,27 @@ hash_for (Value* value)
 	}
 	else {
 		switch (value->type) {
+			case VALUE_TYPE_INTEGER:
+				return Integer_hash((Integer*) value);
+
+			case VALUE_TYPE_FLOATING:
+				return Floating_hash((Floating*) value);
+
+			case VALUE_TYPE_RATIONAL:
+				return Rational_hash((Rational*) value);
+
+			case VALUE_TYPE_STRING:
+				return String_hash((String*) value);
+
+			case VALUE_TYPE_TUPLE:
+				return Tuple_hash((Tuple*) value);
+
+			case VALUE_TYPE_VECTOR:
+				return Vector_hash((Vector*) value);
+
+			case VALUE_TYPE_MAP:
+				return Map_hash((Map*) value);
+
 			default:
 				assert(false);
 		}
