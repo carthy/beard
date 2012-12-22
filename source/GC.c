@@ -22,6 +22,7 @@
 #include <private/Integer.h>
 #include <private/Floating.h>
 #include <private/Rational.h>
+#include <private/Complex.h>
 #include <private/Regexp.h>
 #include <private/String.h>
 #include <private/Tuple.h>
@@ -77,6 +78,22 @@ _mpq_destructor (void* value)
 	free(value);
 }
 
+static void*
+_mpc_constructor (void)
+{
+	mpc_t* value = malloc(sizeof(mpc_t));
+	mpc_init2(*value, mpfr_get_default_prec());
+
+	return value;
+}
+
+static void
+_mpc_destructor (void* value)
+{
+	mpc_clear(*(mpc_t*) value);
+	free(value);
+}
+
 GC*
 GC_new (Runtime* rt)
 {
@@ -89,6 +106,7 @@ GC_new (Runtime* rt)
 	self->integer  = FreeList_new(_mpz_constructor, _mpz_destructor);
 	self->floating = FreeList_new(_mpfr_constructor, _mpfr_destructor);
 	self->rational = FreeList_new(_mpq_constructor, _mpq_destructor);
+	self->complex  = FreeList_new(_mpc_constructor, _mpc_destructor);
 
 	return self;
 }
@@ -126,6 +144,10 @@ GC_allocate (GC* self, ValueType type)
 
 		case VALUE_TYPE_RATIONAL:
 			value = malloc(sizeof(Rational));
+			break;
+
+		case VALUE_TYPE_COMPLEX:
+			value = malloc(sizeof(Complex));
 			break;
 
 		case VALUE_TYPE_REGEXP:
@@ -193,4 +215,16 @@ void
 GC_put_rational (GC* self, mpq_t* value)
 {
 	FreeList_put(self->rational, value);
+}
+
+mpc_t*
+GC_get_complex (GC* self)
+{
+	return FreeList_get(self->complex);
+}
+
+void
+GC_put_complex (GC* self, mpc_t* value)
+{
+	FreeList_put(self->complex, value);
 }

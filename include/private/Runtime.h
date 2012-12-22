@@ -57,6 +57,12 @@ struct Runtime {
 #define GC_SAVE_RATIONAL(rt, value) \
 	GC_put_rational(rt->garbage_collector, value)
 
+#define GC_NEW_COMPLEX(rt) \
+	GC_get_complex(rt->garbage_collector)
+
+#define GC_SAVE_COMPLEX(rt, value) \
+	GC_put_complex(rt->garbage_collector, value)
+
 #define CACHE(s) \
 	(&(self->cache))
 

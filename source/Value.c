@@ -62,6 +62,12 @@ is_rational (Value* self)
 }
 
 bool
+is_complex (Value* self)
+{
+	return IS_COMPLEX(self);
+}
+
+bool
 is_regexp (Value* self)
 {
 	return IS_REGEXP(self);

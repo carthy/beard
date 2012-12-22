@@ -35,6 +35,7 @@ struct Value {
 #define IS_INTEGER(v)  (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_INTEGER))
 #define IS_FLOATING(v) (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_FLOATING))
 #define IS_RATIONAL(v) (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_RATIONAL))
+#define IS_COMPLEX(v)  (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_COMPLEX))
 #define IS_REGEXP(v)   (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_REGEXP))
 #define IS_STRING(v)   (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_STRING))
 #define IS_TUPLE(v)    (!(IS_NIL(v) || IS_BOOLEAN(v)) && (((Value*) (v))->type == VALUE_TYPE_TUPLE))

@@ -16,47 +16,16 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BEARD_GC_H
-#define BEARD_GC_H
+#ifndef BEARD_COMPLEX_H
+#define BEARD_COMPLEX_H
 
-#include <private/Value.h>
-#include <private/FreeList.h>
-
-#include <gmp.h>
-#include <mpfr.h>
+#include <public/Complex.h>
 #include <mpc.h>
 
-typedef struct GC {
-	Runtime* runtime;
+struct Complex {
+	Value descriptor;
 
-	FreeList* integer;
-	FreeList* floating;
-	FreeList* rational;
-	FreeList* complex;
-} GC;
-
-GC* GC_new (Runtime* rt);
-
-void GC_destroy (GC* self);
-
-Value* GC_allocate (GC* self, ValueType type);
-
-void GC_run (GC* self);
-
-mpz_t* GC_get_integer (GC* self);
-
-void GC_put_integer (GC* self, mpz_t* value);
-
-mpfr_t* GC_get_floating (GC* self);
-
-void GC_put_floating (GC* self, mpfr_t* value);
-
-mpq_t* GC_get_rational (GC* self);
-
-void GC_put_rational (GC* self, mpq_t* value);
-
-mpc_t* GC_get_complex (GC* self);
-
-void GC_put_complex (GC* self, mpc_t* value);
+	mpc_t* value;
+};
 
 #endif
