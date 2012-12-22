@@ -107,3 +107,16 @@ Vector_length (Vector* self)
 
 	return self->length;
 }
+
+// FIXME: this is unoptimal
+uint64_t
+Vector_hash (Vector* self)
+{
+	uint64_t hash = 0;
+
+	for (uint64_t i = 0; i < self->length; i++) {
+		hash += hash_for(self->items[i]);
+	}
+
+	return hash;
+}

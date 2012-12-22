@@ -33,3 +33,5 @@ Vector* Vector_insert_first (Vector* self, Value* value);
 Vector* Vector_insert_last (Vector* self, Value* value);
 
 uint64_t Vector_length (Vector* self);
+
+uint64_t Vector_hash (Vector* self);
