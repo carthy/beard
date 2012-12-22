@@ -87,3 +87,16 @@ Tuple_size (Tuple* self)
 {
 	return self->size;
 }
+
+// FIXME: this is unoptimal
+uint64_t
+Tuple_hash (Tuple* self)
+{
+	uint64_t hash = 0;
+
+	for (int i = 0, length = self->size; i < length; i++) {
+		hash += hash_for(self->items[i]);
+	}
+
+	return hash;
+}

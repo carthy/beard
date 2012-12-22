@@ -32,3 +32,5 @@ Value* Tuple_get (Tuple* self, int index);
 Value** Tuple_items (Tuple* self);
 
 int Tuple_size (Tuple* self);
+
+uint64_t Tuple_hash (Tuple* self);
