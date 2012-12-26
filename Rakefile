@@ -107,7 +107,7 @@ namespace :build do
 		header = ''
 
 		%w[Value Runtime Integer String].each {|name|
-			header << File.read("include/public/#{name}.h")
+			header << File.read("include/public/#{name}.h").sub(/\A.*\*\/\n/m, '')
 		}
 
 		File.open('beard.h', 'w') {|f|
