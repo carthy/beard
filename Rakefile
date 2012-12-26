@@ -2,9 +2,6 @@ require 'rake'
 require 'rake/clean'
 require 'tmpdir'
 
-CC     = ENV['CC']     || 'clang'
-AR     = ENV['AR']     || 'ar'
-RANLIB = ENV['RANLIB'] || 'ranlib'
 CFLAGS = "-Wall -Werror-implicit-function-declaration -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/mpc/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
 
 SOURCES      = FileList['source/**/*.c']
@@ -34,7 +31,7 @@ task :build, :mode do |t, args|
 end
 
 namespace :build do
-	@FLAGS = %Q{CC=#{CC} AR=#{AR} RANLIB=#{RANLIB} CFLAGS="-g0 -O3 -funroll-loops"}
+	@FLAGS = %Q{CC=clang CFLAGS="-g0 -O3 -funroll-loops"}
 
 	task :beard => ['libbeard.a', 'beard.h']
 
@@ -84,7 +81,7 @@ namespace :build do
 
 	task :siphash => 'submodules:siphash' do
 		Dir.chdir 'vendor/siphash' do
-			sh "#{CC} #{CFLAGS} -o siphash.o -c siphash.c"
+			sh "clang #{CFLAGS} -o siphash.o -c siphash.c"
 		end
 	end
 
@@ -98,11 +95,11 @@ namespace :build do
 
 				FileUtils.mkpath "#{path}/#{File.basename(name)}"
 				FileUtils.chdir "#{path}/#{File.basename(name)}" do
-					sh "#{AR} x #{real}"
+					sh "ar x #{real}"
 				end
 			}
 
-			sh "#{AR} rcs libbeard.a #{OBJECTS} #{objects} #{path}/*/**.o"
+			sh "ar rcs libbeard.a #{OBJECTS} #{objects} #{path}/*/**.o"
 		}
 	end
 
@@ -163,7 +160,7 @@ namespace :test do
 	}
 
 	file 'test/run' => ['libbeard.a', 'beard.h', *files] do
-		sh "#{CC} #{CFLAGS} -Ivendor/tinytest -o test/run test/run.c vendor/tinytest/tinytest.c -pthread -ldl -L. -lbeard"
+		sh "clang #{CFLAGS} -Ivendor/tinytest -o test/run test/run.c vendor/tinytest/tinytest.c -pthread -ldl -L. -lbeard"
 	end
 end
 
@@ -216,7 +213,7 @@ namespace :submodules do
 end
 
 rule '.o' => '.c' do |t|
-	sh "#{CC} #{CFLAGS} -o #{t.name} -c #{t.source}"
+	sh "clang #{CFLAGS} -o #{t.name} -c #{t.source}"
 end
 
 rule '.h'
