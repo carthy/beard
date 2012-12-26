@@ -43,11 +43,17 @@ Runtime_new (void)
 	mpz_inits(rand, max, NULL);
 	mpz_set_ui(max, UINT8_MAX);
 
-	for (uint8_t i = 0; i < sizeof(self->sip_key); i++) {
+	for (uint8_t i = 0; i < sizeof(self->hash.siphash); i++) {
 		mpz_urandomm(rand, self->random.slow, max);
 
-		self->sip_key[i] = mpz_get_ui(rand);
+		self->hash.siphash[i] = mpz_get_ui(rand);
 	}
+
+	mpz_urandomm(rand, self->random.slow, max);
+	self->hash.crapwow = mpz_get_ui(rand);
+
+	mpz_urandomm(rand, self->random.slow, max);
+	self->hash.murmur3 = mpz_get_ui(rand);
 
 	mpz_clears(rand, max, NULL);
 

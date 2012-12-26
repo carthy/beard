@@ -89,7 +89,7 @@ Tuple_size (Tuple* self)
 }
 
 // FIXME: this is unoptimal
-uint64_t
+hash_t
 Tuple_hash (Tuple* self)
 {
 	uint64_t hash = 0;

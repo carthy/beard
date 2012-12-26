@@ -19,6 +19,8 @@
 #ifndef BEARD_RUNTIME_H
 #define BEARD_RUNTIME_H
 
+#include <hash.h>
+
 #include <public/Runtime.h>
 #include <private/GC.h>
 
@@ -30,7 +32,11 @@ struct Runtime {
 		gmp_randstate_t slow;
 	} random;
 
-	uint8_t sip_key[16];
+	struct {
+		uint8_t siphash[16];
+		hash_t  crapwow;
+		hash_t  murmur3;
+	} hash;
 };
 
 #define RUNTIME_FOR(value) \
@@ -67,6 +73,40 @@ struct Runtime {
 	(&(self->cache))
 
 #define SIPHASH(runtime, buffer, length) \
-	siphash((runtime)->sip_key, (const unsigned char*) buffer, length)
+	siphash((runtime)->hash.siphash, buffer, length)
+
+#define SIPHASH_WITH(runtime, data) \
+	siphash_with((runtime)->hash.siphash, data)
+
+#define CRAPWOW(runtime, buffer, length) \
+	crapwow((runtime)->hash.crapwow, buffer, length)
+
+#define CRAPWOW_WITH(runtime, data) \
+	crapwow_with((runtime)->hash.crapwow, data)
+
+#define MURMUR3(runtime, buffer, length) \
+	murmur3((runtime)->hash.murmur3, buffer, length)
+
+#define MURMUR3_WITH(runtime, data) \
+	murmur3_with((runtime)->hash.murmur3, data)
+
+#define MURMUR3_INIT(runtime) \
+	murmur3_init(murmur3_new(), (runtime)->hash.murmur3)
+
+#define MURMUR3_UPDATE(state, buffer, length) \
+	murmur3_update(state, buffer, length)
+
+#define MURMUR3_UPDATE_WITH(state, data) \
+	murmur3_update_with(state, data)
+
+#define MURMUR3_FINAL(state) ({ \
+	hash_t hash; \
+\
+	murmur3_final(state); \
+	hash = murmur3_fetch(state); \
+	murmur3_free(state); \
+\
+	hash; \
+})
 
 #endif

@@ -70,6 +70,6 @@ uint64_t String_length (String* self);
 
 uint64_t String_bytes (String* self);
 
-uint64_t String_hash (String* self);
+hash_t String_hash (String* self);
 
 Encoding String_get_encoding (String* self);

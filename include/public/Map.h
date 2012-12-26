@@ -44,4 +44,4 @@ Vector* Map_values (Map* self);
 
 uint64_t Map_length (Map* self);
 
-uint64_t Map_hash (Map* self);
+hash_t Map_hash (Map* self);

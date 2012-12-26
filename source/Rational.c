@@ -336,18 +336,24 @@ Rational_div (Rational* self, Value* other)
 	return NIL;
 }
 
-uint64_t
+hash_t
 Rational_hash (Rational* self)
 {
 	if (CACHE(self)->hash) {
 		return CACHE(self)->hash;
 	}
 
+	murmur3_t* state = MURMUR3_INIT(RUNTIME_FOR(self));
+
+	MURMUR3_UPDATE_WITH(state, VALUE_TYPE_RATIONAL);
+
 	size_t size   = mpz_sizeinbase(mpq_numref(*self->value), 32) + mpz_sizeinbase(mpq_denref(*self->value), 32) + 3;
 	char*  string = malloc(size);
-
 	mpq_get_str(string, 32, *self->value);
-	CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size) ^ (VALUE_TYPE_RATIONAL << 4);
+
+	MURMUR3_UPDATE(state, string, size);
+
+	CACHE(self)->hash = MURMUR3_FINAL(state);
 
 	free(string);
 

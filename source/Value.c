@@ -17,6 +17,7 @@
  */
 
 #include <private/common.h>
+#include <private/Runtime.h>
 #include <private/Value.h>
 
 #include <public/Integer.h>

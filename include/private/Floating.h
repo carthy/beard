@@ -29,7 +29,7 @@ struct Floating {
 	mpfr_t* value;
 
 	struct {
-		uint64_t hash;
+		hash_t hash;
 	} cache;
 };
 

@@ -708,7 +708,7 @@ Integer_get_bits (Integer* self)
 	}
 }
 
-uint64_t
+hash_t
 Integer_hash (Integer* self)
 {
 	if (CACHE(self)->hash) {
@@ -716,14 +716,20 @@ Integer_hash (Integer* self)
 	}
 
 	if (INTEGER_IS_NATIVE(self)) {
-		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), &INTEGER_GET_NATIVE(self), sizeof(INTEGER_GET_NATIVE(self))) ^ (VALUE_TYPE_INTEGER << 4);
+		CACHE(self)->hash = CRAPWOW_WITH(RUNTIME_FOR(self), INTEGER_GET_NATIVE(self));
 	}
 	else {
+		murmur3_t* state = MURMUR3_INIT(RUNTIME_FOR(self));
+
+		MURMUR3_UPDATE_WITH(state, VALUE_TYPE_INTEGER);
+
 		size_t size   = mpz_sizeinbase(*INTEGER_GET_GMP(self), 32) + 2;
 		char*  string = malloc(size);
-
 		mpz_get_str(string, 32, *INTEGER_GET_GMP(self));
-		CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size) ^ (VALUE_TYPE_INTEGER << 4);
+
+		MURMUR3_UPDATE(state, string, size);
+
+		CACHE(self)->hash = MURMUR3_FINAL(state);
 
 		free(string);
 	}

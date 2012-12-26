@@ -262,18 +262,27 @@ Floating_sign (Floating* self)
 	return mpfr_sgn(*self->value);
 }
 
-uint64_t
+hash_t
 Floating_hash (Floating* self)
 {
 	if (CACHE(self)->hash) {
 		return CACHE(self)->hash;
 	}
 
+	murmur3_t* state = MURMUR3_INIT(RUNTIME_FOR(self));
+
+	MURMUR3_UPDATE_WITH(state, VALUE_TYPE_FLOATING);
+
 	mpfr_exp_t exp;
 	char*      string = mpfr_get_str(NULL, &exp, 32, 0, *self->value, MPFR_RNDN);
 	size_t     size   = strlen(string);
 
-	CACHE(self)->hash = SIPHASH(RUNTIME_FOR(self), string, size + 1) ^ ((VALUE_TYPE_FLOATING << 4) ^ exp);
+	MURMUR3_UPDATE_WITH(state, exp);
+	MURMUR3_UPDATE(state, string, size);
+
+	CACHE(self)->hash = MURMUR3_FINAL(state);
+
+	free(string);
 
 	return CACHE(self)->hash;
 }

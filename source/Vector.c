@@ -109,7 +109,7 @@ Vector_length (Vector* self)
 }
 
 // FIXME: this is unoptimal
-uint64_t
+hash_t
 Vector_hash (Vector* self)
 {
 	uint64_t hash = 0;

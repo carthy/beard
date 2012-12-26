@@ -41,7 +41,7 @@ struct String {
 	UChar* buffer;
 
 	struct {
-		uint64_t hash;
+		hash_t hash;
 	} cache;
 };
 

@@ -29,8 +29,6 @@
 #include <assert.h>
 #include <errno.h>
 
-#include <siphash.h>
-
 #include <public/magic.h>
 
 #endif

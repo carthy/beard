@@ -208,7 +208,7 @@ Map_length (Map* self)
 }
 
 // FIXME: this is unoptimal
-uint64_t
+hash_t
 Map_hash (Map* self)
 {
 	uint64_t hash  = 0;

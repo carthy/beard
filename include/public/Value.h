@@ -62,4 +62,4 @@ ValueType type_of (Value* self);
 
 #include <stdint.h>
 
-uint64_t hash_for (Value* value);
+hash_t hash_for (Value* value);

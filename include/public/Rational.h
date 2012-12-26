@@ -90,4 +90,4 @@ Value* Rational_mul (Rational* self, Value* other);
 
 Value* Rational_div (Rational* self, Value* other);
 
-uint64_t Rational_hash (Rational* self);
+hash_t Rational_hash (Rational* self);
