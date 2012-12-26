@@ -13,12 +13,12 @@
 [submodule "vendor/jemalloc"]
 	path = vendor/jemalloc
 	url = git://github.com/carthy/beard.jemalloc
-[submodule "vendor/siphash"]
-	path = vendor/siphash
-	url = git://github.com/carthy/beard.siphash
 [submodule "vendor/mpfr"]
 	path = vendor/mpfr
 	url = git://github.com/carthy/beard.mpfr
 [submodule "vendor/mpc"]
 	path = vendor/mpc
 	url = git://github.com/carthy/beard.mpc
+[submodule "vendor/hash"]
+	path = vendor/hash
+	url = git://github.com/carthy/beard.hash

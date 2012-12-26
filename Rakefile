@@ -2,7 +2,7 @@ require 'rake'
 require 'rake/clean'
 require 'tmpdir'
 
-CFLAGS = "-Wall -Werror-implicit-function-declaration -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/mpc/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/siphash #{ENV['CFLAGS']}"
+CFLAGS = "-Wall -Werror-implicit-function-declaration -std=c11 -Iinclude -Ivendor/gmp -Ivendor/mpfr/src -Ivendor/mpc/src -Ivendor/onigmo -Ivendor/judy/src -Ivendor/jemalloc/include/jemalloc -Ivendor/hash #{ENV['CFLAGS']}"
 
 SOURCES      = FileList['source/**/*.c']
 OBJECTS      = SOURCES.ext('o')
@@ -13,7 +13,7 @@ DEPENDENCIES = FileList[
 	'vendor/onigmo/.libs/libonig.a',
 	'vendor/judy/src/obj/.libs/libJudy.a',
 	'vendor/jemalloc/lib/libjemalloc.a',
-	'vendor/siphash/siphash.o'
+	'vendor/hash/hash.a'
 ]
 
 task :default => :build
@@ -79,9 +79,9 @@ namespace :build do
 		end
 	end
 
-	task :siphash => 'submodules:siphash' do
-		Dir.chdir 'vendor/siphash' do
-			sh "clang #{CFLAGS} -o siphash.o -c siphash.c"
+	task :hash => 'submodules:hash' do
+		Dir.chdir 'vendor/hash' do
+			sh 'rake build[release]'
 		end
 	end
 
@@ -139,8 +139,8 @@ namespace :build do
 		Rake::Task['build:jemalloc'].invoke
 	end
 
-	file 'vendor/siphash/siphash.o' do
-		Rake::Task['build:siphash'].invoke
+	file 'vendor/hash/hash.a' do
+		Rake::Task['build:hash'].invoke
 	end
 end
 
@@ -172,11 +172,11 @@ namespace :submodules do
 
 	task :gmp      => 'vendor/gmp/configure'
 	task :mpfr     => 'vendor/mpfr/configure'
-	task :mpc     => 'vendor/mpc/configure'
+	task :mpc      => 'vendor/mpc/configure'
 	task :onigmo   => 'vendor/onigmo/configure.in'
 	task :judy     => 'vendor/judy/configure'
 	task :jemalloc => 'vendor/jemalloc/configure.ac'
-	task :siphash  => 'vendor/siphash/siphash.h'
+	task :hash     => 'vendor/hash/Rakefile'
 	task :tinytest => 'vendor/tinytest/tinytest.c'
 
 	file 'vendor/gmp/configure' do
@@ -203,7 +203,7 @@ namespace :submodules do
 		Rake::Task['submodules:fetch'].invoke
 	end
 
-	file 'vendor/siphash/siphash.h' do
+	file 'vendor/hash/Rakefile' do
 		Rake::Task['submodules:fetch'].invoke
 	end
 
@@ -229,8 +229,8 @@ task :clobber do
 		end
 	}
 
-	Dir.chdir 'vendor/siphash' do
-		sh 'rm -f siphash.o'
+	Dir.chdir 'vendor/hash' do
+		sh 'rake clobber'
 	end
 end
 
