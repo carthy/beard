@@ -54,7 +54,7 @@ Map_destroy (Map* self)
 }
 
 bool
-Map_has (Map* self, uint64_t hash)
+Map_has (Map* self, hash_t hash)
 {
 	Word_t  ind = hash;
 	Word_t* val = NULL;
@@ -65,13 +65,13 @@ Map_has (Map* self, uint64_t hash)
 }
 
 Tuple*
-Map_put (Map* self, uint64_t hash, Value* key, Value* value)
+Map_put (Map* self, hash_t hash, Value* key, Value* value)
 {
 	return Map_put_pair(self, hash, Tuple_new_with(RUNTIME_FOR(self), key, value));
 }
 
 Tuple*
-Map_put_pair (Map* self, uint64_t hash, Tuple* pair)
+Map_put_pair (Map* self, hash_t hash, Tuple* pair)
 {
 	Word_t  ind = hash;
 	Word_t* val = NULL;
@@ -87,19 +87,19 @@ Map_put_pair (Map* self, uint64_t hash, Tuple* pair)
 }
 
 Value*
-Map_get_value (Map* self, uint64_t hash)
+Map_get_value (Map* self, hash_t hash)
 {
 	return Tuple_get(Map_get_pair(self, hash), 1);
 }
 
 Value*
-Map_get_key (Map* self, uint64_t hash)
+Map_get_key (Map* self, hash_t hash)
 {
 	return Tuple_get(Map_get_pair(self, hash), 0);
 }
 
 Tuple*
-Map_get_pair (Map* self, uint64_t hash)
+Map_get_pair (Map* self, hash_t hash)
 {
 	Word_t  ind = hash;
 	Word_t* val = NULL;
@@ -111,7 +111,7 @@ Map_get_pair (Map* self, uint64_t hash)
 }
 
 Tuple*
-Map_delete (Map* self, uint64_t hash)
+Map_delete (Map* self, hash_t hash)
 {
 	Word_t  ind = hash;
 	Word_t  res = 0;
@@ -207,16 +207,15 @@ Map_length (Map* self)
 	return size;
 }
 
-// FIXME: this is unoptimal
 hash_t
 Map_hash (Map* self)
 {
-	uint64_t hash  = 0;
-	Vector*  pairs = Map_pairs(self);
+	Vector*    pairs = Map_pairs(self);
+	murmur3_t* state = MURMUR3_INIT(RUNTIME_FOR(self));
 
-	for (uint64_t i = 0, length = Vector_length(pairs); i < length; i++) {
-		hash += hash_for(Vector_get(pairs, i));
+	for (size_t i = 0, length = Vector_length(pairs); i < length; i++) {
+		MURMUR3_UPDATE_WITH(state, hash_for(Vector_get(pairs, i)));
 	}
 
-	return hash;
+	return MURMUR3_FINAL(state);
 }
