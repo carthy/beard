@@ -24,7 +24,7 @@
 struct Tuple {
 	Value descriptor;
 
-	int     size;
+	size_t  size;
 	Value** items;
 };
 

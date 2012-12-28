@@ -23,7 +23,7 @@
 #include <stdarg.h>
 
 Tuple*
-Tuple_new (Runtime* rt, int size)
+Tuple_new (Runtime* rt, size_t size)
 {
 	Tuple* self = (Tuple*) GC_ALLOCATE(rt, TUPLE);
 
@@ -36,13 +36,13 @@ Tuple_new (Runtime* rt, int size)
 }
 
 Tuple*
-(Tuple_new_with) (Runtime* rt, int size, ...)
+(Tuple_new_with) (Runtime* rt, size_t size, ...)
 {
 	Tuple* self = Tuple_new(rt, size);
 
 	va_list args;
 	va_start(args, size);
-	for (int i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		self->items[i] = va_arg(args, Value*);
 	}
 	va_end(args);
@@ -59,7 +59,7 @@ Tuple_destroy (Tuple* self)
 }
 
 Value*
-Tuple_set (Tuple* self, int index, Value* value)
+Tuple_set (Tuple* self, size_t index, Value* value)
 {
 	assert(index < Tuple_size(self));
 
@@ -69,7 +69,7 @@ Tuple_set (Tuple* self, int index, Value* value)
 }
 
 Value*
-Tuple_get (Tuple* self, int index)
+Tuple_get (Tuple* self, size_t index)
 {
 	assert(index < Tuple_size(self));
 
@@ -82,7 +82,7 @@ Tuple_items (Tuple* self)
 	return self->items;
 }
 
-int
+size_t
 Tuple_size (Tuple* self)
 {
 	return self->size;

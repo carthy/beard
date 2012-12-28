@@ -18,19 +18,19 @@
 
 typedef struct Tuple Tuple;
 
-Tuple* Tuple_new (Runtime* rt, int size);
+Tuple* Tuple_new (Runtime* rt, size_t size);
 
-Tuple* Tuple_new_with (Runtime* rt, int size, ...);
+Tuple* Tuple_new_with (Runtime* rt, size_t size, ...);
 
 #define Tuple_new_with(rt, ...) \
 	Tuple_new_with(rt, ARGS_LENGTH(__VA_ARGS__), __VA_ARGS__)
 
-Value* Tuple_set (Tuple* self, int index, Value* value);
+Value* Tuple_set (Tuple* self, size_t index, Value* value);
 
-Value* Tuple_get (Tuple* self, int index);
+Value* Tuple_get (Tuple* self, size_t index);
 
 Value** Tuple_items (Tuple* self);
 
-int Tuple_size (Tuple* self);
+size_t Tuple_size (Tuple* self);
 
 hash_t Tuple_hash (Tuple* self);
