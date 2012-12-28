@@ -108,15 +108,14 @@ Vector_length (Vector* self)
 	return self->length;
 }
 
-// FIXME: this is unoptimal
 hash_t
 Vector_hash (Vector* self)
 {
-	uint64_t hash = 0;
+	murmur3_t* state = MURMUR3_INIT(RUNTIME_FOR(self));
 
-	for (uint64_t i = 0; i < self->length; i++) {
-		hash += hash_for(self->items[i]);
+	for (size_t i = 0; i < self->length; i++) {
+		MURMUR3_UPDATE_WITH(state, hash_for(self->items[i]));
 	}
 
-	return hash;
+	return MURMUR3_FINAL(state);
 }
