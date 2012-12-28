@@ -143,7 +143,7 @@ Map_pairs (Map* self)
 	Vector_resize(result, size);
 
 	JLF(value, self->array, index);
-	for (uint64_t i = 0; value != NULL; i++) {
+	for (size_t i = 0; value != NULL; i++) {
 		Vector_set(result, i, (Value*) *value);
 
 		JLN(value, self->array, index);
@@ -164,7 +164,7 @@ Map_keys (Map* self)
 	Vector* pairs  = Map_pairs(self);
 	Vector* result = Vector_resize(Vector_new(RUNTIME_FOR(self)), Vector_length(pairs));
 
-	for (uint64_t i = 0, length = Vector_length(pairs); i < length; i++) {
+	for (size_t i = 0, length = Vector_length(pairs); i < length; i++) {
 		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(pairs, i), 0));
 	}
 
@@ -183,7 +183,7 @@ Map_values (Map* self)
 	Vector* pairs  = Map_pairs(self);
 	Vector* result = Vector_resize(Vector_new(RUNTIME_FOR(self)), Vector_length(pairs));
 
-	for (uint64_t i = 0, length = Vector_length(pairs); i < length; i++) {
+	for (size_t i = 0, length = Vector_length(pairs); i < length; i++) {
 		Vector_set(result, i, Tuple_get((Tuple*) Vector_get(pairs, i), 1));
 	}
 
@@ -192,7 +192,7 @@ Map_values (Map* self)
 	return result;
 }
 
-uint64_t
+size_t
 Map_length (Map* self)
 {
 	if (self->cache.length > 0) {

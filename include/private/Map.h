@@ -28,7 +28,7 @@ struct Map {
 	Pvoid_t array;
 
 	struct {
-		uint64_t length;
+		size_t length;
 
 		Vector* pairs;
 		Vector* keys;
