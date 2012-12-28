@@ -88,15 +88,14 @@ Tuple_size (Tuple* self)
 	return self->size;
 }
 
-// FIXME: this is unoptimal
 hash_t
 Tuple_hash (Tuple* self)
 {
-	uint64_t hash = 0;
+	murmur3_t* state = MURMUR3_INIT(RUNTIME_FOR(self));
 
-	for (int i = 0, length = self->size; i < length; i++) {
-		hash += hash_for(self->items[i]);
+	for (size_t i = 0, length = self->size; i < length; i++) {
+		MURMUR3_UPDATE_WITH(state, hash_for(self->items[i]));
 	}
 
-	return hash;
+	return MURMUR3_FINAL(state);
 }
