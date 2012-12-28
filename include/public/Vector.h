@@ -20,18 +20,18 @@ typedef struct Vector Vector;
 
 Vector* Vector_new (Runtime* rt);
 
-Vector* Vector_resize (Vector* self, uint64_t size);
+Vector* Vector_resize (Vector* self, size_t size);
 
-Value* Vector_set (Vector* self, uint64_t index, Value* value);
+Value* Vector_set (Vector* self, size_t index, Value* value);
 
-Value* Vector_get (Vector* self, uint64_t index);
+Value* Vector_get (Vector* self, size_t index);
 
-Vector* Vector_insert (Vector* self, Value* value, uint64_t index);
+Vector* Vector_insert (Vector* self, Value* value, size_t index);
 
 Vector* Vector_insert_first (Vector* self, Value* value);
 
 Vector* Vector_insert_last (Vector* self, Value* value);
 
-uint64_t Vector_length (Vector* self);
+size_t Vector_length (Vector* self);
 
 hash_t Vector_hash (Vector* self);

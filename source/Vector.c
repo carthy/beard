@@ -39,7 +39,7 @@ Vector_destroy (Vector* self)
 }
 
 Vector*
-Vector_resize (Vector* self, uint64_t length)
+Vector_resize (Vector* self, size_t length)
 {
 	if (length > self->length) {
 		self->items = realloc(self->items, length * sizeof(Value*));
@@ -56,7 +56,7 @@ Vector_resize (Vector* self, uint64_t length)
 }
 
 Value*
-Vector_set (Vector* self, uint64_t index, Value* value)
+Vector_set (Vector* self, size_t index, Value* value)
 {
 	assert(index < Vector_length(self));
 
@@ -66,7 +66,7 @@ Vector_set (Vector* self, uint64_t index, Value* value)
 }
 
 Value*
-Vector_get (Vector* self, uint64_t index)
+Vector_get (Vector* self, size_t index)
 {
 	assert(index < Vector_length(self));
 
@@ -74,7 +74,7 @@ Vector_get (Vector* self, uint64_t index)
 }
 
 Vector*
-Vector_insert (Vector* self, Value* value, uint64_t index)
+Vector_insert (Vector* self, Value* value, size_t index)
 {
 	assert(self);
 	assert(index == 0 || index <= self->length);
@@ -100,7 +100,7 @@ Vector_insert_last (Vector* self, Value* value)
 	return Vector_insert(self, value, self->length);
 }
 
-uint64_t
+size_t
 Vector_length (Vector* self)
 {
 	assert(self);

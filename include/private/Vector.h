@@ -24,8 +24,8 @@
 struct Vector {
 	Value descriptor;
 
-	Value**  items;
-	uint64_t length;
+	Value** items;
+	size_t  length;
 };
 
 void Vector_destroy (Vector* self);
