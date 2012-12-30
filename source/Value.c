@@ -89,6 +89,12 @@ is_string (Value* self)
 }
 
 bool
+is_bitmap (Value* self)
+{
+	return IS_BITMAP(self);
+}
+
+bool
 is_tuple (Value* self)
 {
 	return IS_TUPLE(self);

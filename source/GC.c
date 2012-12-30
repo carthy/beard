@@ -25,6 +25,7 @@
 #include <private/Complex.h>
 #include <private/Regexp.h>
 #include <private/String.h>
+#include <private/Bitmap.h>
 #include <private/Tuple.h>
 #include <private/Vector.h>
 #include <private/Map.h>
@@ -156,6 +157,10 @@ GC_allocate (GC* self, ValueType type)
 
 		case VALUE_TYPE_STRING:
 			value = malloc(sizeof(String));
+			break;
+
+		case VALUE_TYPE_BITMAP:
+			value = malloc(sizeof(Bitmap));
 			break;
 
 		case VALUE_TYPE_TUPLE:
