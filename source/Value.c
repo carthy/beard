@@ -28,6 +28,16 @@
 #include <public/Vector.h>
 #include <public/Map.h>
 
+Value*
+Value_init (Value* self, Runtime* runtime, ValueType type)
+{
+	self->runtime = runtime;
+	self->type    = type;
+	self->frozen  = false;
+
+	return self;
+}
+
 bool
 is_nil (Value* self)
 {
@@ -142,6 +152,20 @@ type_of (Value* self)
 	else {
 		return self->type;
 	}
+}
+
+bool
+is_frozen (Value* value)
+{
+	return IS_FROZEN(value);
+}
+
+Value*
+freeze (Value* value)
+{
+	value->frozen = true;
+
+	return value;
 }
 
 uint64_t

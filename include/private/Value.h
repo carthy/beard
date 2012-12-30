@@ -23,7 +23,8 @@
 #include <public/Runtime.h>
 
 struct Value {
-	ValueType type;
+	ValueType type   : 8;
+	bool      frozen : 1;
 
 	struct Runtime* runtime;
 };
@@ -46,5 +47,7 @@ struct Value {
 
 #define IS_FALSY(v)  (IS_NIL(v) || IS_FALSE(v))
 #define IS_TRUTHY(v) (!IS_FALSY(v))
+
+#define IS_FROZEN(v) (((Value*) (v))->frozen)
 
 #endif

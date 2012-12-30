@@ -62,5 +62,7 @@ bool is_truthy (Value* self);
 
 ValueType type_of (Value* self);
 
+bool   is_frozen (Value* self);
+Value* freeze (Value* self);
 
 hash_t hash_for (Value* value);

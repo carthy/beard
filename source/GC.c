@@ -180,10 +180,7 @@ GC_allocate (GC* self, ValueType type)
 			break;
 	}
 
-	value->type    = type;
-	value->runtime = self->runtime;
-
-	return value;
+	return Value_init(value, self->runtime, type);
 }
 
 mpz_t*
