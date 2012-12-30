@@ -62,6 +62,5 @@ bool is_truthy (Value* self);
 
 ValueType type_of (Value* self);
 
-#include <stdint.h>
 
 hash_t hash_for (Value* value);
