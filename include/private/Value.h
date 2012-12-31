@@ -19,7 +19,8 @@
 #ifndef BEARD_VALUE_H
 #define BEARD_VALUE_H
 
-#include <private/common.h>
+#include <stdbool.h>
+
 #include <public/Value.h>
 #include <public/Runtime.h>
 
