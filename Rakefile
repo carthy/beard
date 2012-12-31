@@ -104,7 +104,7 @@ namespace :build do
 	end
 
 	file 'beard.h' => FileList['include/public/*.h'] do
-		header  = File.read('vendor/hash/include/common.h').sub(/\A.*\*\/\n/m, '')
+		header  = File.read('include/public/common.h')
 		header << File.read('include/public/magic.h').sub(/\A.*\*\/\n/m, '')
 
 		%w[Value Runtime Integer String].each {|name|

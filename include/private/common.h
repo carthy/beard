@@ -19,16 +19,13 @@
 #ifndef BEARD_COMMON_H
 #define BEARD_COMMON_H
 
+#include <public/common.h>
+#include <public/magic.h>
+
 #include <stdlib.h>
 #include <jemalloc.h>
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <string.h>
-
 #include <assert.h>
 #include <errno.h>
-
-#include <public/magic.h>
 
 #endif

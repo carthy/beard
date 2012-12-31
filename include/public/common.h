@@ -16,30 +16,16 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-typedef struct Map Map;
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
 
-Map* Map_new (Runtime* rt);
+typedef unsigned long hash_t;
+typedef unsigned long word_t;
 
-bool Map_has (Map* self, hash_t hash);
+#define __SIZEOF_HASH__ __SIZEOF_LONG__
+#define __SIZEOF_WORD__ __SIZEOF_LONG__
 
-Tuple* Map_put (Map* self, hash_t hash, Value* key, Value* value);
-
-Tuple* Map_put_pair (Map* self, hash_t hash, Tuple* pair);
-
-Value* Map_get_value (Map* self, hash_t hash);
-
-Value* Map_get_key (Map* self, hash_t hash);
-
-Tuple* Map_get_pair (Map* self, hash_t hash);
-
-Tuple* Map_delete (Map* self, hash_t hash);
-
-Vector* Map_pairs (Map* self);
-
-Vector* Map_keys (Map* self);
-
-Vector* Map_values (Map* self);
-
-size_t Map_length (Map* self);
-
-hash_t Map_hash (Map* self);
+#define HASH_BIT (__SIZEOF_HASH__ * CHAR_BIT)
+#define WORD_BIT (__SIZEOF_WORD__ * CHAR_BIT)
