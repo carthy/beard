@@ -34,7 +34,8 @@ invalidate_cache (Map* self)
 	return self;
 }
 
-Map* Map_new (Runtime* rt)
+Map*
+Map_new (Runtime* rt)
 {
 	Map* self = (Map*) GC_ALLOCATE(rt, MAP);
 
