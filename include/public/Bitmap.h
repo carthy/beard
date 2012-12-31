@@ -17,3 +17,15 @@
  */
 
 typedef struct Bitmap Bitmap;
+
+Bitmap* Bitmap_new (Runtime* rt);
+
+Bitmap* Bitmap_set (Bitmap* self, size_t index);
+
+Bitmap* Bitmap_unset (Bitmap* self, size_t index);
+
+Bitmap* Bitmap_put (Bitmap* self, size_t index, bool value);
+
+bool Bitmap_get (Bitmap* self, size_t index);
+
+size_t Bitmap_bits (Bitmap* self);

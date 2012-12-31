@@ -23,6 +23,10 @@
 
 struct Bitmap {
 	Value descriptor;
+
+	Pvoid_t array;
 };
+
+void Bitmap_destroy (Bitmap* self);
 
 #endif

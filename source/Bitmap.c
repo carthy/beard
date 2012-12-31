@@ -19,3 +19,69 @@
 #include <private/common.h>
 #include <private/Runtime.h>
 #include <private/Bitmap.h>
+
+Bitmap*
+Bitmap_new (Runtime* rt)
+{
+	Bitmap* self = (Bitmap*) GC_ALLOCATE(rt, BITMAP);
+
+	self->array = NULL;
+
+	return self;
+}
+
+void
+Bitmap_destroy (Bitmap* self)
+{
+	Word_t freed;
+
+	J1FA(freed, self->array);
+}
+
+Bitmap*
+Bitmap_set (Bitmap* self, size_t index)
+{
+	Word_t ind = index;
+	Word_t res;
+
+	J1S(res, self->array, ind);
+
+	return self;
+}
+
+Bitmap*
+Bitmap_unset (Bitmap* self, size_t index)
+{
+	Word_t ind = index;
+	Word_t res;
+
+	J1U(res, self->array, ind);
+
+	return self;
+}
+
+Bitmap*
+Bitmap_put (Bitmap* self, size_t index, bool value)
+{
+	return value ? Bitmap_set(self, index) : Bitmap_unset(self, index);
+}
+
+bool
+Bitmap_get (Bitmap* self, size_t index)
+{
+	Word_t res;
+
+	J1T(res, self->array, index);
+
+	return res;
+}
+
+size_t
+Bitmap_bits (Bitmap* self)
+{
+	Word_t size;
+
+	J1C(size, self->array, 0, -1);
+
+	return size;
+}
