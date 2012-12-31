@@ -24,6 +24,7 @@
 #include <public/Floating.h>
 #include <public/Rational.h>
 #include <public/String.h>
+#include <public/Bitmap.h>
 #include <public/Tuple.h>
 #include <public/Vector.h>
 #include <public/Map.h>
@@ -187,6 +188,9 @@ hash_for (Value* value)
 
 			case VALUE_TYPE_STRING:
 				return String_hash((String*) value);
+
+			case VALUE_TYPE_BITMAP:
+				return Bitmap_hash((Bitmap*) value);
 
 			case VALUE_TYPE_TUPLE:
 				return Tuple_hash((Tuple*) value);

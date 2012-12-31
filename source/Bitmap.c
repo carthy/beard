@@ -20,12 +20,23 @@
 #include <private/Runtime.h>
 #include <private/Bitmap.h>
 
+static inline Bitmap*
+invalidate_cache (Bitmap* self)
+{
+	CACHE(self)->hash = 0;
+	CACHE(self)->bits = 0;
+
+	return self;
+}
+
 Bitmap*
 Bitmap_new (Runtime* rt)
 {
 	Bitmap* self = (Bitmap*) GC_ALLOCATE(rt, BITMAP);
 
 	self->array = NULL;
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -46,6 +57,8 @@ Bitmap_set (Bitmap* self, size_t index)
 
 	J1S(res, self->array, ind);
 
+	invalidate_cache(self);
+
 	return self;
 }
 
@@ -56,6 +69,8 @@ Bitmap_unset (Bitmap* self, size_t index)
 	Word_t res;
 
 	J1U(res, self->array, ind);
+
+	invalidate_cache(self);
 
 	return self;
 }
@@ -79,9 +94,38 @@ Bitmap_get (Bitmap* self, size_t index)
 size_t
 Bitmap_bits (Bitmap* self)
 {
-	Word_t size;
+	if (CACHE(self)->bits > 0) {
+		return CACHE(self)->bits;
+	}
 
+	Word_t size;
 	J1C(size, self->array, 0, -1);
 
+	CACHE(self)->bits = size;
+
 	return size;
+}
+
+hash_t
+Bitmap_hash (Bitmap* self)
+{
+	if (CACHE(self)->hash) {
+		return CACHE(self)->hash;
+	}
+
+	murmur3_t* state = MURMUR3_INIT(RUNTIME_FOR(self));
+
+	Word_t  index  = 0;
+	Word_t* value  = NULL;
+
+	JLF(value, self->array, index);
+	while (value != NULL) {
+		MURMUR3_UPDATE_WITH(state, (uint8_t) *value);
+
+		JLN(value, self->array, index);
+	}
+
+	CACHE(self)->hash = MURMUR3_FINAL(state);
+
+	return CACHE(self)->hash;
 }

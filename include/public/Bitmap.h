@@ -29,3 +29,5 @@ Bitmap* Bitmap_put (Bitmap* self, size_t index, bool value);
 bool Bitmap_get (Bitmap* self, size_t index);
 
 size_t Bitmap_bits (Bitmap* self);
+
+hash_t Bitmap_hash (Bitmap* self);

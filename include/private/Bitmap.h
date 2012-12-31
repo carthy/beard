@@ -25,6 +25,11 @@ struct Bitmap {
 	Value descriptor;
 
 	Pvoid_t array;
+
+	struct {
+		hash_t hash;
+		size_t bits;
+	} cache;
 };
 
 void Bitmap_destroy (Bitmap* self);
