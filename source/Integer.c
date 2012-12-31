@@ -539,7 +539,7 @@ Integer_div (Integer* self, Value* number)
 				mpz_t* value = GC_NEW_INTEGER(RUNTIME_FOR(self));
 				mpz_divexact(*value, *tmp, *INTEGER_GET_GMP(other));
 
-				Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
+				result = (Value*) Integer_set_gmp(Integer_new(RUNTIME_FOR(self)), value);
 			}
 			else {
 				result = (Value*) Rational_set(Rational_new(RUNTIME_FOR(self)), self, other);
