@@ -16,9 +16,10 @@
  * along with beard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <private/Runtime.h>
 #include <private/common.h>
+#include <private/Runtime.h>
 
+#include <private/Value.h>
 #include <private/Integer.h>
 #include <private/Floating.h>
 #include <private/Rational.h>

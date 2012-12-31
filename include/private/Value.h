@@ -19,6 +19,7 @@
 #ifndef BEARD_VALUE_H
 #define BEARD_VALUE_H
 
+#include <private/common.h>
 #include <public/Value.h>
 #include <public/Runtime.h>
 
@@ -28,6 +29,8 @@ struct Value {
 
 	struct Runtime* runtime;
 };
+
+Value* Value_init (Value* self, Runtime* runtime, ValueType type);
 
 #define IS_NIL(v)      (((Value*) v) == (Value*) 0)
 #define IS_TRUE(v)     (((Value*) v) == (Value*) 1)
